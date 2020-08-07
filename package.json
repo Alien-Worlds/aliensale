@@ -1,0 +1,21 @@
+{
+  "name": "alienworlds-eth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bip39": "^3.0.2",
+    "eosjs": "^21.0.2",
+    "ethereumjs-tx": "^2.1.2",
+    "ethereumjs-util": "^7.0.4",
+    "hdkey": "^2.0.1",
+    "node-fetch": "^2.6.0",
+    "text-encoding": "^0.7.0",
+    "web3": "^1.2.11"
+  }
+}

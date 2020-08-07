@@ -1,0 +1,162 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.1",
+    "types": [],
+    "structs": [
+        {
+            "name": "addaddress",
+            "base": "",
+            "fields": [
+                {
+                    "name": "address_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "currency",
+                    "type": "symbol"
+                },
+                {
+                    "name": "address",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "address_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "address_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "foreign_symbol",
+                    "type": "symbol_code"
+                },
+                {
+                    "name": "foreign_address",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "clearsales",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "createsale",
+            "base": "",
+            "fields": [
+                {
+                    "name": "native_address",
+                    "type": "name"
+                },
+                {
+                    "name": "items",
+                    "type": "extended_asset[]"
+                },
+                {
+                    "name": "currency",
+                    "type": "symbol"
+                }
+            ]
+        },
+        {
+            "name": "payment",
+            "base": "",
+            "fields": [
+                {
+                    "name": "sale_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "tx_id",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "sale_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "sale_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "address_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "native_address",
+                    "type": "name"
+                },
+                {
+                    "name": "foreign_address",
+                    "type": "string"
+                },
+                {
+                    "name": "items",
+                    "type": "extended_asset[]"
+                },
+                {
+                    "name": "price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "sale_time",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "completed",
+                    "type": "bool"
+                },
+                {
+                    "name": "completed_tx_id",
+                    "type": "string"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "addaddress",
+            "type": "addaddress",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "clearsales",
+            "type": "clearsales",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "createsale",
+            "type": "createsale",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "payment",
+            "type": "payment",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "addresses",
+            "type": "address_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "sales",
+            "type": "sale_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": []
+}
