@@ -22,10 +22,12 @@ const update_accounts = async () => {
     my_accounts = [];
     const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'sales', limit: 1000});
     res.rows.forEach((row) => {
-        const addr = row.foreign_address.toLowerCase();
+        if (row.foreign_symbol === 'ETH'){
+            const addr = row.foreign_address.toLowerCase();
 
-        my_accounts.push(addr);
-        sales[addr] = row;
+            my_accounts.push(addr);
+            sales[addr] = row;
+        }
     });
 };
 
@@ -68,7 +70,7 @@ const check = async (block_num = 'latest') => {
                     }
                 });
 
-                console.log(actions);
+                // console.log(actions);
 
                 const eos_res = await api.transact({actions}, {
                     blocksBehind: 3,
