@@ -71,6 +71,15 @@ void aliensale::createsale(name native_address, vector<extended_asset> items, sy
     _addresses.erase(addr);
 }
 
+void aliensale::delsale(uint64_t sale_id) {
+  require_auth(get_self());
+
+    auto sale = _sales.find(sale_id);
+    check(sale != _sales.end(), "Sale not found");
+
+    _sales.erase(sale);
+}
+
 void aliensale::payment(uint64_t sale_id, string tx_id) {
     require_auth(get_self());
 

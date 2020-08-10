@@ -86,6 +86,16 @@
             ]
         },
         {
+            "name": "delsale",
+            "base": "",
+            "fields": [
+                {
+                    "name": "sale_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "editpack",
             "base": "",
             "fields": [
@@ -202,6 +212,11 @@
         {
             "name": "createsale",
             "type": "createsale",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "delsale",
+            "type": "delsale",
             "ricardian_contract": ""
         },
         {
