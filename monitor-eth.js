@@ -55,19 +55,17 @@ const check = async (block_num = 'latest') => {
                 console.log(`Sale ${sale.sale_id} is fully paid!!  ${sale.native_address} is getting some packs!`, sale);
 
                 const actions = [];
-                sale.items.forEach((item) => {
-                    actions.push({
-                        account: config.contract,
-                        name: 'payment',
-                        authorization: [{
-                            actor: config.contract,
-                            permission: config.payment_permission,
-                        }],
-                        data: {
-                            sale_id: sale.sale_id,
-                            tx_id
-                        }
-                    });
+                actions.push({
+                    account: config.contract,
+                    name: 'payment',
+                    authorization: [{
+                        actor: config.contract,
+                        permission: config.payment_permission,
+                    }],
+                    data: {
+                        sale_id: sale.sale_id,
+                        tx_id
+                    }
                 });
 
                 console.log(actions);
