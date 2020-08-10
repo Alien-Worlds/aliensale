@@ -6,9 +6,6 @@ const fetch = require("node-fetch");
 
 const config = require('./config');
 
-const project_id = 'f36ab843aa0f4b34938ea2c90bbd1c42';
-const project_secret = 'a750d5a34faf45ee9c5808ee952c6345';
-
 const endpoint = `https://${config.network}.infura.io/v3/${config.project_id}`;
 const ws_endpoint = `wss://${config.network}.infura.io/ws/v3/${config.project_id}`;
 
@@ -87,7 +84,7 @@ const check = async (block_num = 'latest') => {
 }
 
 const run = async () => {
-    let block_num = 8447677;
+    let block_num = 8452601;
 
 
     while (true){
