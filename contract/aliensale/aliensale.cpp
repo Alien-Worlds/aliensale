@@ -4,7 +4,31 @@ using namespace alienworlds;
 
 aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(s, code, ds),
                                                                        _addresses(get_self(), get_self().value),
-                                                                       _sales(get_self(), get_self().value) {}
+                                                                       _sales(get_self(), get_self().value),
+                                                                       _packs(get_self(), get_self().value) {}
+
+
+void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price) {
+    require_auth(get_self());
+
+    _packs.emplace(get_self(), [&](auto &p){
+        p.pack_id      = pack_id;
+        p.pack_asset   = pack_asset;
+        p.native_price = native_price;
+    });
+}
+
+void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price) {
+    require_auth(get_self());
+
+    auto pack = _packs.find(pack_id);
+    check(pack != _packs.end(), "Pack with this ID not found");
+
+    _packs.modify(pack, get_self(), [&](auto &p){
+        p.pack_asset   = pack_asset;
+        p.native_price = native_price;
+    });
+}
 
 void aliensale::addaddress(uint64_t address_id, symbol currency, string address) {
     require_auth(get_self());

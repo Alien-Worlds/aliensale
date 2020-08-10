@@ -22,6 +22,24 @@
             ]
         },
         {
+            "name": "addpack",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pack_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pack_asset",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "native_price",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
             "name": "address_item",
             "base": "",
             "fields": [
@@ -59,6 +77,42 @@
                 {
                     "name": "currency",
                     "type": "symbol"
+                }
+            ]
+        },
+        {
+            "name": "editpack",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pack_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pack_asset",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "native_price",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "pack_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pack_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pack_asset",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "native_price",
+                    "type": "asset"
                 }
             ]
         },
@@ -126,6 +180,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "addpack",
+            "type": "addpack",
+            "ricardian_contract": ""
+        },
+        {
             "name": "clearsales",
             "type": "clearsales",
             "ricardian_contract": ""
@@ -133,6 +192,11 @@
         {
             "name": "createsale",
             "type": "createsale",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "editpack",
+            "type": "editpack",
             "ricardian_contract": ""
         },
         {
@@ -145,6 +209,13 @@
         {
             "name": "addresses",
             "type": "address_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "packs",
+            "type": "pack_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

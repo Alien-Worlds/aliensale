@@ -38,8 +38,20 @@ namespace alienworlds {
         typedef multi_index<"addresses"_n, address_item> addresses_table;
 
 
+        /* Records previously generated foreign addresses to send to */
+        struct [[eosio::table("packs")]] pack_item {
+            uint64_t       pack_id;
+            extended_asset pack_asset;
+            asset          native_price;
+
+            uint64_t primary_key() const { return pack_id; }
+        };
+        typedef multi_index<"packs"_n, pack_item> packs_table;
+
+
         addresses_table _addresses;
         sales_table     _sales;
+        packs_table     _packs;
 
         uint64_t compute_price(vector<extended_asset> items);
 
@@ -48,7 +60,13 @@ namespace alienworlds {
 
         aliensale(name s, name code, datastream<const char *> ds);
 
-        /* Add addresses to the unused addresses table (ETH) */
+        /* Add pack for sale */
+        [[eosio::action]] void addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price);
+
+        /* Edit pack for sale */
+        [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price);
+
+        /* Add addresses to the unused addresses table (ETH/EOS) - for EOS, this would be a memo reference, not address */
         [[eosio::action]] void addaddress(uint64_t address_id, symbol currency, string address);
 
         /* Create a sale for pack tokens, using the provided items and currency */
