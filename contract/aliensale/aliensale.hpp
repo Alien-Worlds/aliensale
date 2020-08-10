@@ -18,6 +18,7 @@ namespace alienworlds {
             uint64_t               address_id;
             name                   native_address;
             string                 foreign_address;
+            symbol_code            foreign_symbol;
             vector<extended_asset> items;
             uint64_t               price; // in foreign satoshis / wei
             time_point_sec         sale_time;

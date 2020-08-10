@@ -166,6 +166,10 @@
                     "type": "string"
                 },
                 {
+                    "name": "foreign_symbol",
+                    "type": "symbol_code"
+                },
+                {
                     "name": "items",
                     "type": "extended_asset[]"
                 },

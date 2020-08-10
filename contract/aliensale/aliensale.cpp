@@ -55,14 +55,25 @@ void aliensale::createsale(name native_address, vector<extended_asset> items, sy
 
     string foreign_address = addr->foreign_address;
 
+    name quote_pair;
+    if (addr->foreign_symbol == symbol_code{"ETH"}){
+        quote_pair = "waxpeth"_n;
+    }
+    else if (addr->foreign_symbol == symbol_code{"EOS"}){
+        quote_pair = "waxpeos"_n;
+    }
+    else {
+        check(false, "Quote pair unknown");
+    }
 
     _sales.emplace(native_address, [&](auto &s){
         s.sale_id         = _sales.available_primary_key();
         s.address_id      = addr->address_id;
         s.native_address  = native_address;
         s.foreign_address = foreign_address;
+        s.foreign_symbol  = addr->foreign_symbol;
         s.items           = items;
-        s.price           = compute_price(items, "waxpeth"_n);
+        s.price           = compute_price(items, quote_pair);
         s.sale_time       = time_point(current_time_point().time_since_epoch());
         s.completed       = false;
     });
