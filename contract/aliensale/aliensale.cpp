@@ -11,6 +11,9 @@ aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(
 void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price) {
     require_auth(get_self());
 
+    auto pack = _packs.find(pack_id);
+    check(pack == _packs.end(), "Pack already exists with this ID");
+
     _packs.emplace(get_self(), [&](auto &p){
         p.pack_id      = pack_id;
         p.pack_asset   = pack_asset;
@@ -59,7 +62,7 @@ void aliensale::createsale(name native_address, vector<extended_asset> items, sy
         s.native_address  = native_address;
         s.foreign_address = foreign_address;
         s.items           = items;
-        s.price           = compute_price(items);
+        s.price           = compute_price(items, "waxpeth"_n);
         s.sale_time       = time_point(current_time_point().time_since_epoch());
         s.completed       = false;
     });
@@ -102,9 +105,45 @@ void aliensale::clearsales() {
     }
 }
 
+void aliensale::clearpacks() {
+    require_auth(get_self());
+
+    auto pack = _packs.begin();
+    while (pack != _packs.end()){
+        pack = _packs.erase(pack);
+    }
+}
+
 
 // Private
 
-uint64_t aliensale::compute_price(vector<extended_asset> items) {
-    return 1'000'000'000'000'000'000; // 1 eth for testing
+uint64_t aliensale::compute_price(vector<extended_asset> items, name pair) {
+    auto _datapoints = datapointstable(DELPHI_CONTRACT, pair.value);
+    auto _pairs = pairstable(DELPHI_CONTRACT, DELPHI_CONTRACT.value);
+
+    auto pair_itr = _pairs.find(pair.value);
+    check(pair_itr != _pairs.end(), "Pair not found");
+
+    auto dpi = _datapoints.get_index<"timestamp"_n>();
+    auto last_dp = dpi.rbegin();
+
+    uint64_t precision = pair_itr->quoted_precision;
+    uint64_t base_median = last_dp->median;
+
+    uint64_t satoshi_price = base_median * (uint64_t)pow(10.0, (double)precision);
+
+    auto pack_ind = _packs.get_index<"bypack"_n>();
+
+    uint64_t total = 0;
+    for (auto item: items){
+        // get price from sales packs table
+        auto pack = pack_ind.find(pack_item::extended_asset_id(item));
+        check(pack != pack_ind.end(), "Pack not found");
+
+        double pack_price = (double)pack->native_price.amount / pow(10, (double)pack->native_price.symbol.precision());
+
+        total += (uint64_t)(pack_price * (double)satoshi_price);
+    }
+
+    return total;
 }

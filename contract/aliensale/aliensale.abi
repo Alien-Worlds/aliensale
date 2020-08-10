@@ -58,6 +58,11 @@
             ]
         },
         {
+            "name": "clearpacks",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "clearsales",
             "base": "",
             "fields": []
@@ -182,6 +187,11 @@
         {
             "name": "addpack",
             "type": "addpack",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "clearpacks",
+            "type": "clearpacks",
             "ricardian_contract": ""
         },
         {
