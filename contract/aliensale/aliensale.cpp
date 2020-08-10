@@ -130,7 +130,7 @@ uint64_t aliensale::compute_price(vector<extended_asset> items, name pair) {
     uint64_t precision = pair_itr->quoted_precision;
     uint64_t base_median = last_dp->median;
 
-    uint64_t satoshi_price = base_median * (uint64_t)pow(10.0, (double)precision);
+    double conversion_price = (double)base_median / pow(10.0, (double)precision);  // in full tokens
 
     auto pack_ind = _packs.get_index<"bypack"_n>();
 
@@ -142,7 +142,7 @@ uint64_t aliensale::compute_price(vector<extended_asset> items, name pair) {
 
         double pack_price = (double)pack->native_price.amount / pow(10, (double)pack->native_price.symbol.precision());
 
-        total += (uint64_t)(pack_price * (double)satoshi_price);
+        total += (uint64_t)(pack_price * conversion_price * pow(10, (double)pair_itr->quote_symbol.precision()));
     }
 
     return total;
