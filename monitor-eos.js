@@ -92,7 +92,6 @@ const send_action = async (sale, tx_id) => {
 };
 
 const validate_transaction = async (block_num, transaction_id) => {
-    delete validations[block_num];
     console.log(`Validating ${transaction_id} from block ${block_num}`);
     const trx = await foreign_rpc.history_get_transaction(transaction_id, block_num);
     console.log(trx.trx.trx.actions);
@@ -177,8 +176,10 @@ class TraceHandler {
                                             console.log(`Found sale `, sale);
 
                                             // save to validations to check after 20 blocks
-                                            validations[block_num] = trx.id.toLowerCase();
-
+                                            if (typeof validations[block_num] === 'undefined'){
+                                                validations[block_num] = [];
+                                            }
+                                            validations[block_num].push(trx.id.toLowerCase());
 
                                         }
                                     }
@@ -196,7 +197,13 @@ class TraceHandler {
         for (let bn in validations){
             if (bn <= block_num - config.eos.number_validations){
                 console.log(`Sending for validation in ${block_num} ${bn}`);
-                validate_transaction(bn, validations[bn]);
+                const tx_ids = validations[bn];
+                delete validations[bn];
+
+                tx_ids.forEach((tx_id) => {
+                    validate_transaction(bn, tx_id);
+                });
+
             }
         }
 
