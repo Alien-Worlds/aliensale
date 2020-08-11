@@ -47,6 +47,7 @@ namespace alienworlds {
             uint64_t       pack_id;
             extended_asset pack_asset;
             asset          native_price;
+            string         metadata;
 
             uint64_t primary_key() const { return pack_id; }
             uint128_t by_pack() const { return extended_asset_id(pack_asset); };
@@ -122,10 +123,10 @@ namespace alienworlds {
         aliensale(name s, name code, datastream<const char *> ds);
 
         /* Add pack for sale */
-        [[eosio::action]] void addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price);
+        [[eosio::action]] void addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata);
 
         /* Edit pack for sale */
-        [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price);
+        [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata);
 
         /* Add addresses to the unused addresses table (ETH/EOS) - for EOS, this would be a memo reference, not address */
         [[eosio::action]] void addaddress(uint64_t address_id, symbol currency, string address);

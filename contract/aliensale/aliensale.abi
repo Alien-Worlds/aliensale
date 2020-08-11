@@ -36,6 +36,10 @@
                 {
                     "name": "native_price",
                     "type": "asset"
+                },
+                {
+                    "name": "metadata",
+                    "type": "string"
                 }
             ]
         },
@@ -110,6 +114,10 @@
                 {
                     "name": "native_price",
                     "type": "asset"
+                },
+                {
+                    "name": "metadata",
+                    "type": "string"
                 }
             ]
         },
@@ -128,6 +136,10 @@
                 {
                     "name": "native_price",
                     "type": "asset"
+                },
+                {
+                    "name": "metadata",
+                    "type": "string"
                 }
             ]
         },

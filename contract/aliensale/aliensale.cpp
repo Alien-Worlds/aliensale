@@ -8,7 +8,7 @@ aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(
                                                                        _packs(get_self(), get_self().value) {}
 
 
-void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price) {
+void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
@@ -18,10 +18,11 @@ void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset nativ
         p.pack_id      = pack_id;
         p.pack_asset   = pack_asset;
         p.native_price = native_price;
+        p.metadata     = metadata;
     });
 }
 
-void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price) {
+void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
@@ -30,6 +31,7 @@ void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, asset nati
     _packs.modify(pack, get_self(), [&](auto &p){
         p.pack_asset   = pack_asset;
         p.native_price = native_price;
+        p.metadata     = metadata;
     });
 }
 
