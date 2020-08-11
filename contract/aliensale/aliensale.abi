@@ -62,6 +62,24 @@
             ]
         },
         {
+            "name": "buy",
+            "base": "",
+            "fields": [
+                {
+                    "name": "buyer",
+                    "type": "name"
+                },
+                {
+                    "name": "pack_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "qty",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "clearpacks",
             "base": "",
             "fields": []
@@ -96,6 +114,20 @@
                 {
                     "name": "sale_id",
                     "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "deposit",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
                 }
             ]
         },
@@ -216,6 +248,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "buy",
+            "type": "buy",
+            "ricardian_contract": ""
+        },
+        {
             "name": "clearpacks",
             "type": "clearpacks",
             "ricardian_contract": ""
@@ -250,6 +287,13 @@
         {
             "name": "addresses",
             "type": "address_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "deposits",
+            "type": "deposit",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

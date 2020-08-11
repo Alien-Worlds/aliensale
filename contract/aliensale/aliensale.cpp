@@ -5,7 +5,8 @@ using namespace alienworlds;
 aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(s, code, ds),
                                                                        _addresses(get_self(), get_self().value),
                                                                        _sales(get_self(), get_self().value),
-                                                                       _packs(get_self(), get_self().value) {}
+                                                                       _packs(get_self(), get_self().value),
+                                                                       _deposits(get_self(), get_self().value) {}
 
 
 void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata) {
@@ -116,6 +117,41 @@ void aliensale::payment(uint64_t sale_id, string tx_id) {
     }
 
 
+}
+
+void aliensale::transfer(name from, name to, asset quantity, string memo) {
+    if (from == get_self() || to != get_self()){
+        return;
+    }
+
+    auto deposit = _deposits.find(from.value);
+    check(deposit == _deposits.end(), "You already have a deposit, please complete the previous sale");
+
+    _deposits.emplace(get_self(), [&](auto &d){
+        d.account  = from;
+        d.quantity = quantity;
+    });
+}
+
+void aliensale::buy(name buyer, uint64_t pack_id, uint8_t qty) {
+    // check they have correct deposit and send out packs
+    auto pack = _packs.find(pack_id);
+    check(pack != _packs.end(), "Pack not found");
+
+    auto deposit = _deposits.find(buyer.value);
+    check(deposit != _deposits.end(), "Deposit not found");
+
+    auto pack_price = pack->native_price * qty;
+    check(pack_price == deposit->quantity, "Incorrect amount deposited");
+
+    auto pack_asset = pack->pack_asset.quantity * qty;
+    string memo = "Buying packs";
+
+    action(
+        permission_level{get_self(), "xfer"_n},
+        pack->pack_asset.contract, "transfer"_n,
+        make_tuple(get_self(), buyer, pack_asset, memo)
+    ).send();
 }
 
 void aliensale::clearsales() {

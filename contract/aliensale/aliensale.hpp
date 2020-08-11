@@ -30,6 +30,16 @@ namespace alienworlds {
         typedef multi_index<"sales"_n, sale_item> sales_table;
 
 
+        /* Deposits when buying in native currency */
+        struct [[eosio::table("deposits")]] deposit {
+            name  account;
+            asset quantity;
+
+            uint64_t primary_key() const { return account.value; }
+        };
+        typedef multi_index<"deposits"_n, deposit> deposits_table;
+
+
         /* Records previously generated foreign addresses to send to */
         struct [[eosio::table("addresses")]] address_item {
             uint64_t       address_id;
@@ -114,6 +124,7 @@ namespace alienworlds {
         addresses_table _addresses;
         sales_table     _sales;
         packs_table     _packs;
+        deposits_table  _deposits;
 
         uint64_t compute_price(vector<extended_asset> items, name pair);
 
@@ -139,6 +150,12 @@ namespace alienworlds {
 
         /* Records a payment for a particular sale, this is sent by an off-chain oracle */
         [[eosio::action]] void payment(uint64_t sale_id, string tx_id);
+
+        /* Buy using deposited funds using native token */
+        [[eosio::action]] void buy(name buyer, uint64_t pack_id, uint8_t qty);
+
+        /* Receive transfers for payments in native token */
+        [[eosio::on_notify("eosio.token::transfer")]] void transfer(name from, name to, asset quantity, string memo);
 
         /* Admin only during development */
         [[eosio::action]] void clearsales();
