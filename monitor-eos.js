@@ -194,7 +194,7 @@ class TraceHandler {
 
         // Check all transactions we need to validate
         for (let bn in validations){
-            if (bn <= block_num - config.number_validations){
+            if (bn <= block_num - config.eos.number_validations){
                 console.log(`Sending for validation in ${block_num} ${bn}`);
                 validate_transaction(bn, validations[bn]);
             }
