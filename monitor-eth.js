@@ -31,6 +31,31 @@ const update_accounts = async () => {
     });
 };
 
+const send_action = async (sale, tx_id) => {
+    const actions = [];
+    actions.push({
+        account: config.contract,
+        name: 'payment',
+        authorization: [{
+            actor: config.contract,
+            permission: config.payment_permission,
+        }],
+        data: {
+            sale_id: sale.sale_id,
+            tx_id
+        }
+    });
+
+    // console.log(actions);
+
+    const eos_res = await api.transact({actions}, {
+        blocksBehind: 3,
+        expireSeconds: 30,
+    });
+
+    console.log(`Sent payment to contract ${eos_res.transaction_id}`);
+};
+
 const sleep = async (ms) => {
     return new Promise(resolve => {
         setTimeout(resolve, ms);
@@ -56,28 +81,7 @@ const check = async (block_num = 'latest') => {
             if (sale.price <= balance){
                 console.log(`Sale ${sale.sale_id} is fully paid!!  ${sale.native_address} is getting some packs!`, sale);
 
-                const actions = [];
-                actions.push({
-                    account: config.contract,
-                    name: 'payment',
-                    authorization: [{
-                        actor: config.contract,
-                        permission: config.payment_permission,
-                    }],
-                    data: {
-                        sale_id: sale.sale_id,
-                        tx_id
-                    }
-                });
-
-                // console.log(actions);
-
-                const eos_res = await api.transact({actions}, {
-                    blocksBehind: 3,
-                    expireSeconds: 30,
-                });
-
-                console.log(`Sent payment to contract ${eos_res.transaction_id}`);
+                send_action(sale, tx_id);
             }
         }
     });
