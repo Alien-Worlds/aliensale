@@ -12,8 +12,8 @@ const ethUtil = require('ethereumjs-util');
 
 const config = require('./config');
 
-const endpoint = `https://${config.network}.infura.io/v3/${config.project_id}`;
-const ws_endpoint = `wss://${config.network}.infura.io/ws/v3/${config.project_id}`;
+const endpoint = `https://${config.eth.network}.infura.io/v3/${config.eth.project_id}`;
+const ws_endpoint = `wss://${config.eth.network}.infura.io/ws/v3/${config.eth.project_id}`;
 
 const web3 = new Web3(new Web3.providers.HttpProvider(endpoint));
 
@@ -25,7 +25,7 @@ Consolidates all eth balances into a single account specified in the config
 
 const readfilePromise = async (filename) => {
     return new Promise((resolve, reject) => {
-        fs.readFile('keys.txt', (err, data) => {
+        fs.readFile(filename, (err, data) => {
             if (err){
                 reject(err);
             }
@@ -46,7 +46,7 @@ const start = async () => {
 
     let x = 0;
 
-    const consolidate_address = config.consolidate;
+    const consolidate_address = config.eth.consolidate;
 
     while (x < 500) {
         const addrNode = hdkey.derive(`m/44'/60'/0'/0/${x}`);
