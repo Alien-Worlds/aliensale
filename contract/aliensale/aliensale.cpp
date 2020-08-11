@@ -152,6 +152,8 @@ void aliensale::buy(name buyer, uint64_t pack_id, uint8_t qty) {
         pack->pack_asset.contract, "transfer"_n,
         make_tuple(get_self(), buyer, pack_asset, memo)
     ).send();
+
+    _deposits.erase(deposit);
 }
 
 void aliensale::clearsales() {
