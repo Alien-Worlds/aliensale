@@ -50,7 +50,7 @@ const submit_addresses = async (addresses, currency) => {
 
 const readfilePromise = async (filename) => {
     return new Promise((resolve, reject) => {
-        fs.readFile('keys.txt', (err, data) => {
+        fs.readFile(filename, (err, data) => {
             if (err){
                 reject(err);
             }
