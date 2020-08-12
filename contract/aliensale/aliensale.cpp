@@ -69,21 +69,32 @@ void aliensale::createsale(name native_address, vector<extended_asset> items, sy
         check(false, "Quote pair unknown");
     }
 
+    uint64_t sale_id = _sales.available_primary_key();
+    uint64_t foreign_price = compute_price(items, quote_pair);
     _sales.emplace(native_address, [&](auto &s){
-        s.sale_id         = _sales.available_primary_key();
+        s.sale_id         = sale_id;
         s.address_id      = addr->address_id;
         s.native_address  = native_address;
         s.foreign_address = foreign_address;
         s.foreign_symbol  = addr->foreign_symbol;
         s.items           = items;
-        s.price           = compute_price(items, quote_pair);
+        s.price           = foreign_price;
         s.sale_time       = time_point(current_time_point().time_since_epoch());
         s.completed       = false;
     });
 
     // remove the address
     _addresses.erase(addr);
+
+    // log sale
+    action(
+        permission_level{get_self(), "log"_n},
+        get_self(), "logsale"_n,
+        make_tuple(native_address, sale_id, foreign_price, foreign_address)
+        ).send();
 }
+
+void aliensale::logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address) {}
 
 void aliensale::delsale(uint64_t sale_id) {
   require_auth(get_self());

@@ -154,6 +154,28 @@
             ]
         },
         {
+            "name": "logsale",
+            "base": "",
+            "fields": [
+                {
+                    "name": "native_address",
+                    "type": "name"
+                },
+                {
+                    "name": "sale_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "foreign_price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "foreign_address",
+                    "type": "string"
+                }
+            ]
+        },
+        {
             "name": "pack_item",
             "base": "",
             "fields": [
@@ -275,6 +297,11 @@
         {
             "name": "editpack",
             "type": "editpack",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "logsale",
+            "type": "logsale",
             "ricardian_contract": ""
         },
         {

@@ -145,6 +145,9 @@ namespace alienworlds {
         /* Create a sale for pack tokens, using the provided items and currency */
         [[eosio::action]] void createsale(name native_address, vector<extended_asset> items, symbol currency);
 
+        /* Logs a sale which can be read by the client in action traces */
+        [[eosio::action]] void logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address);
+
         /* Remove a sale entry */
         [[eosio::action]] void delsale(uint64_t sale_id);
 
