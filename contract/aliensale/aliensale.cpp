@@ -213,7 +213,7 @@ uint64_t aliensale::compute_price(vector<extended_asset> items, name pair) {
 
         double pack_price = (double)pack->native_price.amount / pow(10, (double)pack->native_price.symbol.precision());
 
-        total += (uint64_t)(pack_price * conversion_price * pow(10, (double)pair_itr->quote_symbol.precision()));
+        total += (uint64_t)(item.quantity.amount * pack_price * conversion_price * pow(10, (double)pair_itr->quote_symbol.precision()));
     }
 
     return total;
