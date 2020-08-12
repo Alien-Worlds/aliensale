@@ -190,6 +190,7 @@ const check = async () => {
                 const existing = validations[tx.blockNumber].find(_tx => _tx.hash === tx.hash);
 
                 if (!existing){
+                    console.log(`Queing transaction ${tx.hash} for validation`);
                     validations[tx.blockNumber].push(tx);
                 }
                 else {
