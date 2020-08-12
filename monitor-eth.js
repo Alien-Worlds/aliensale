@@ -57,19 +57,25 @@ const set_start_block = async (block_num) => {
     });
 };
 
-const validate_transaction = async (block_num, tx_id) => {
-    const tx = await web3.eth.getTransaction(tx_id);
+const validate_transaction = async (block_num, tx) => {
+    // const tx = await web3.eth.getTransaction(tx_id);
     if (tx && tx.to && my_accounts.includes(tx.to.toLowerCase())){
         console.log(`Validating transaction in block ${block_num}`, tx);
-        const balance = await web3.eth.getBalance(tx.to);
+        // const balance = await web3.eth.getBalance(tx.to);
+        const bal_url = `${config.eth.etherscan_endpoint}?module=account&action=balance&address=${tx.to}&tag=latest&apikey=${config.eth.etherscan_api_key}`;
+        const bal_res = await fetch(bal_url);
+        const bal_json = await bal_res.json();
+        console.log(bal_json);
+        balance = parseInt(bal_json.result);
         console.log(`balance is ${balance}`);
         const sale = sales[tx.to.toLowerCase()];
+        console.log(`sale price ${sale.price}`);
 
         // get sale and check that our balance is > the required amount
         if (sale.price <= balance){
             console.log(`Sale ${sale.sale_id} is fully paid!!  ${sale.native_address} is getting some packs!`, sale);
 
-            send_action(sale, tx_id);
+            send_action(sale, tx.hash);
         }
     }
 };
@@ -79,7 +85,7 @@ const update_accounts = async () => {
     my_accounts = [];
     const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'sales', limit: 1000});
     res.rows.forEach((row) => {
-        if (row.foreign_symbol === 'ETH'){
+        if (row.foreign_symbol === 'ETH' && !row.completed){
             const addr = row.foreign_address.toLowerCase();
 
             my_accounts.push(addr);
@@ -105,12 +111,17 @@ const send_action = async (sale, tx_id) => {
 
     // console.log(actions);
 
-    const eos_res = await api.transact({actions}, {
-        blocksBehind: 3,
-        expireSeconds: 30,
-    });
+    try {
+        const eos_res = await api.transact({actions}, {
+            blocksBehind: 3,
+            expireSeconds: 30,
+        });
+        console.log(`Sent payment to contract ${eos_res.transaction_id}`);
+    }
+    catch (e) {
+        console.error(e.message);
+    }
 
-    console.log(`Sent payment to contract ${eos_res.transaction_id}`);
 };
 
 const sleep = async (ms) => {
@@ -119,9 +130,23 @@ const sleep = async (ms) => {
     });
 };
 
-const check = async (block_num = 'latest') => {
+const check = async () => {
+    // get current block
+    const time = parseInt(new Date().getTime() / 1000);
+    const block_url = `${config.eth.etherscan_endpoint}?module=block&action=getblocknobytime&timestamp=${time}&closest=before&apikey=${config.eth.etherscan_api_key}`;
+    const block_res = await fetch(block_url);
+    const block_json = await block_res.json();
+
+    if (block_json.status !== '1'){
+        console.error(block_json.message);
+        return;
+    }
+
+    const block_num = block_json.result;
     console.log(`Checking block ${block_num}`);
-    const block = await web3.eth.getBlock(block_num);
+    // console.log(block_json);
+
+    /* const block = await web3.eth.getBlock(block_num);
     if (!block || !block.transactions){
         throw "Could not find block"
     }
@@ -139,7 +164,42 @@ const check = async (block_num = 'latest') => {
                 validations[block_num].push(tx_id);
             }
         }
-    });
+    }); */
+
+    for (let a=0; a < my_accounts.length; a++) {
+        const acnt = my_accounts[a];
+        console.log(`Checking ${acnt} at block ${block_num}`);
+        const url = `${config.eth.etherscan_endpoint}?module=account&action=txlist&address=${acnt}&startblock=${block_num - 50}&endblock=${block_num}&sort=asc&apikey=${config.eth.etherscan_api_key}`;
+
+        // console.log(url)
+        const res = await fetch(url);
+        const json = await res.json();
+
+        // console.log(json);
+
+        if (json.result.length) {
+            const tx = json.result[0];
+            const sale = sales[tx.to.toLowerCase()];
+            // console.log(tx)
+
+            if (typeof sale !== 'undefined'){
+                if (typeof validations[tx.blockNumber] === 'undefined'){
+                    validations[tx.blockNumber] = [];
+                }
+
+                const existing = validations[tx.blockNumber].find(_tx => _tx.hash === tx.hash);
+
+                if (!existing){
+                    validations[tx.blockNumber].push(tx);
+                }
+                else {
+                    console.log(`${tx.hash} already queued for validation`)
+                }
+            }
+        }
+
+        await sleep(50);
+    }
 
 
     // Check all transactions we need to validate
@@ -147,38 +207,31 @@ const check = async (block_num = 'latest') => {
         if (bn <= block_num - config.eth.number_validations){
             console.log(`Sending for validation in ${block_num} ${bn}`);
 
-            const tx_ids = validations[bn];
+            const txs = validations[bn];
             delete validations[bn];
 
-            tx_ids.forEach((tx_id) => {
-                validate_transaction(bn, tx_id);
+            txs.forEach((tx) => {
+                validate_transaction(bn, tx);
             });
         }
     }
 
-    block_num++;
+    // block_num++;
 }
 
 const run = async () => {
-    let block_num = await get_start_block();
-
     while (true){
         try {
             await update_accounts();
 
-            await check(block_num);
-
-            if (block_num % 5 === 0 && !Object.keys(validations).length){
-                set_start_block(block_num);
-            }
-
-            block_num++;
+            await check();
         }
         catch (e){
-            await sleep(4000); // wait 7 seconds total for next block
+            console.error(e.message)
+            await sleep(4000);
         }
 
-        await sleep(3000);
+        await sleep(12000);
 
     }
 }

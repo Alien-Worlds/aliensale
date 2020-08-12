@@ -6,10 +6,10 @@ module.exports = {
     endpoint: 'https://wax-test.eosdac.io',  // native endpoint
     eth: {
         consolidate: '',  // consolidate all eth payments to this address with the consolidate script
-        project_id: '', // infura project id
-        network: 'ropsten',  // eth network
         number_validations: 4,
         default_start_block: 8473465 // start at this block to begin (script will restart from last seen block after starting)
+        etherscan_api_key: '', // etherscan api key
+        etherscan_endpoint: 'https://api-ropsten.etherscan.io/api'
     },
     eos: {
         receive_address: '',  // eos receive address
