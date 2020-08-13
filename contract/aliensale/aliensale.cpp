@@ -15,6 +15,12 @@ void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset nativ
     auto pack = _packs.find(pack_id);
     check(pack == _packs.end(), "Pack already exists with this ID");
 
+    // check pack exists with same symbol
+    uint128_t id = pack_item::extended_asset_id(pack_asset);
+    auto asset_ind = _packs.get_index<"bypack"_n>();
+    auto pack2 = asset_ind.find(id);
+    check(pack2 == asset_ind.end(), "Pack already exists with this symbol");
+
     _packs.emplace(get_self(), [&](auto &p){
         p.pack_id      = pack_id;
         p.pack_asset   = pack_asset;
@@ -34,6 +40,15 @@ void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, asset nati
         p.native_price = native_price;
         p.metadata     = metadata;
     });
+}
+
+void aliensale::delpack(uint64_t pack_id) {
+  require_auth(get_self());
+
+  auto pack = _packs.find(pack_id);
+  check(pack != _packs.end(), "Pack not found");
+
+  _packs.erase(pack);
 }
 
 void aliensale::addaddress(uint64_t address_id, symbol currency, string address) {

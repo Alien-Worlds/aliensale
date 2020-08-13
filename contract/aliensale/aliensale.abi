@@ -108,6 +108,16 @@
             ]
         },
         {
+            "name": "delpack",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pack_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "delsale",
             "base": "",
             "fields": [
@@ -287,6 +297,11 @@
         {
             "name": "createsale",
             "type": "createsale",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "delpack",
+            "type": "delpack",
             "ricardian_contract": ""
         },
         {

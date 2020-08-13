@@ -139,6 +139,9 @@ namespace alienworlds {
         /* Edit pack for sale */
         [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata);
 
+        /* Deleet pack */
+        [[eosio::action]] void delpack(uint64_t pack_id);
+
         /* Add addresses to the unused addresses table (ETH/EOS) - for EOS, this would be a memo reference, not address */
         [[eosio::action]] void addaddress(uint64_t address_id, symbol currency, string address);
 
