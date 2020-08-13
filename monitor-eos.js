@@ -19,7 +19,8 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 let my_accounts = [];
 let sales = {};
 const validations = {}; // block_num : transaction ids to validate and send payment action after 10 blocks
-
+let sr;
+let watchdog_last_block = 0;
 
 const readfilePromise = async (filename) => {
     return new Promise((resolve, reject) => {
@@ -39,7 +40,7 @@ const get_start_block = async () => {
         const res = await readfilePromise(block_filename);
 
         if (res){
-            return res;
+            return parseInt(res);
         }
     }
     catch (e){}
@@ -220,6 +221,22 @@ class TraceHandler {
 
 }
 
+
+const watchdog = () => {
+    console.log('Watchdog check...');
+    // Checks if new blocks have been received and then restarts state receiver if not updated
+    get_start_block().then(current_block => {
+        if (current_block === watchdog_last_block && watchdog_last_block > 0) {
+            console.log(`Block not increasing, restarting state receiver`);
+            sr.restart(current_block, 0xffffffff);
+        }
+        else {
+            console.log(`Blocks being received ${current_block} > ${watchdog_last_block}`);
+            watchdog_last_block = current_block;
+        }
+    });
+}
+
 const start = async (start_block) => {
 
     const delta_handler = new TraceHandler({config});
@@ -232,6 +249,8 @@ const start = async (start_block) => {
     });
     sr.registerTraceHandler(delta_handler);
     sr.start();
+
+    setInterval(watchdog, 15000);
 }
 
 const run = async () => {
