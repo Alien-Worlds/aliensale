@@ -128,7 +128,7 @@
             ]
         },
         {
-            "name": "deposit",
+            "name": "deposit_item",
             "base": "",
             "fields": [
                 {
@@ -204,6 +204,10 @@
                 {
                     "name": "metadata",
                     "type": "string"
+                },
+                {
+                    "name": "allow_sale",
+                    "type": "bool"
                 }
             ]
         },
@@ -266,6 +270,56 @@
                     "type": "string"
                 }
             ]
+        },
+        {
+            "name": "setallowed",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pack_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "is_allowed",
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "swap",
+            "base": "",
+            "fields": [
+                {
+                    "name": "buyer",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "tx_id",
+                    "type": "checksum256"
+                }
+            ]
+        },
+        {
+            "name": "swap_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "tx_id",
+                    "type": "checksum256"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                }
+            ]
         }
     ],
     "actions": [
@@ -323,6 +377,16 @@
             "name": "payment",
             "type": "payment",
             "ricardian_contract": ""
+        },
+        {
+            "name": "setallowed",
+            "type": "setallowed",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "swap",
+            "type": "swap",
+            "ricardian_contract": ""
         }
     ],
     "tables": [
@@ -335,7 +399,7 @@
         },
         {
             "name": "deposits",
-            "type": "deposit",
+            "type": "deposit_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
@@ -350,6 +414,13 @@
         {
             "name": "sales",
             "type": "sale_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "swaps",
+            "type": "swap_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

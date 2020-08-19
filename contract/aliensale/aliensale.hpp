@@ -7,7 +7,19 @@
 using namespace eosio;
 using namespace std;
 
+/*
+ * This contract is installed on the native chain and handles sales in the
+ * native currency as well foreign currencies.
+ *
+ * Native sales are handled with a simple deposit-spend pattern, foreign sales
+ * must register the sale and then the sale is completed by the monitoring
+ * scripts running on the other chains
+ *
+ * Also handles swaps of vouchers from other chains with the swap action.
+ */
+
 #define DELPHI_CONTRACT "delphioracle"_n
+#define SWAP_PACK_CONTRACT "pack.worlds"_n
 
 namespace alienworlds {
     class [[eosio::contract("aliensale")]] aliensale : public contract {
@@ -31,13 +43,26 @@ namespace alienworlds {
 
 
         /* Deposits when buying in native currency */
-        struct [[eosio::table("deposits")]] deposit {
-            name  account;
-            asset quantity;
+        struct [[eosio::table("deposits")]] deposit_item {
+          name  account;
+          asset quantity;
 
-            uint64_t primary_key() const { return account.value; }
+          uint64_t primary_key() const { return account.value; }
         };
-        typedef multi_index<"deposits"_n, deposit> deposits_table;
+        typedef multi_index<"deposits"_n, deposit_item> deposits_table;
+
+
+        /* Swaps from foreign chain, record tx_id to prevent replays */
+        struct [[eosio::table("swaps")]] swap_item {
+          name        account;
+          checksum256 tx_id;
+          asset       quantity;
+
+          uint64_t    primary_key() const { return account.value; }
+          checksum256 by_tx_id() const { return tx_id; }
+        };
+        typedef multi_index<"swaps"_n, swap_item, indexed_by<"bytxid"_n,
+            const_mem_fun<swap_item, checksum256, &swap_item::by_tx_id> > > swaps_table;
 
 
         /* Records previously generated foreign addresses to send to */
@@ -58,6 +83,7 @@ namespace alienworlds {
             extended_asset pack_asset;
             asset          native_price;
             string         metadata;
+            bool           allow_sale;
 
             uint64_t primary_key() const { return pack_id; }
             uint128_t by_pack() const { return extended_asset_id(pack_asset); };
@@ -125,6 +151,7 @@ namespace alienworlds {
         sales_table     _sales;
         packs_table     _packs;
         deposits_table  _deposits;
+        swaps_table     _swaps;
 
         uint64_t compute_price(vector<extended_asset> items, name pair);
 
@@ -159,6 +186,12 @@ namespace alienworlds {
 
         /* Buy using deposited funds using native token */
         [[eosio::action]] void buy(name buyer, uint64_t pack_id, uint8_t qty);
+
+        /* Swap from another chain (called by trusted script) */
+        [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
+
+        /* Marks the sale of the pack as allowed */
+        [[eosio::action]] void setallowed(uint64_t pack_id, bool is_allowed);
 
         /* Receive transfers for payments in native token */
         [[eosio::on_notify("eosio.token::transfer")]] void transfer(name from, name to, asset quantity, string memo);
