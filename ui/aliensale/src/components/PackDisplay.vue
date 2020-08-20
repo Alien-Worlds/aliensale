@@ -133,21 +133,20 @@ export default {
       this.packsLoaded = false
 
       this.reloadPacks()
-    }
-  },
-  watch: {
-    account (accountName) {
-      if (accountName) {
-        // load the packs
-        this.reloadPacks()
+    },
+    startListener () {
+      if (this.account.wax !== null) {
+        const atomicEndpoint = 'https://test.wax.api.atomicassets.io'
+        this.subscribe(atomicEndpoint, this.account.wax, (asset) => {
+          // console.log(asset)
+          // console.log('got asset', asset)
+          cards[asset.asset_id] = asset.data
+          this.receivedCards = Object.values(cards)
+          this.waitingPack = false
+        })
       }
-    }
-  },
-  async mounted () {
-    this.reloadPacks()
-    window.setInterval(this.reloadPacks, 3000)
-
-    const subscribe = async (atomicEndpoint, account, callback) => {
+    },
+    async subscribe (atomicEndpoint, account, callback) {
       console.log(`Subscribing to ${atomicEndpoint}`)
 
       const socketT = io(`${atomicEndpoint}/atomicassets/v1/transfers`)
@@ -168,15 +167,20 @@ export default {
         }
       })
     }
-
-    const atomicEndpoint = 'https://test.wax.api.atomicassets.io'
-    subscribe(atomicEndpoint, this.account.wax, (asset) => {
-      // console.log(asset)
-      // console.log('got asset', asset)
-      cards[asset.asset_id] = asset.data
-      this.receivedCards = Object.values(cards)
-      this.waitingPack = false
-    })
+  },
+  watch: {
+    account (accountName) {
+      if (accountName) {
+        // load the packs
+        this.reloadPacks()
+        this.startListener()
+      }
+    }
+  },
+  async mounted () {
+    this.reloadPacks()
+    this.startListener()
+    window.setInterval(this.reloadPacks, 3000)
   }
 }
 </script>
