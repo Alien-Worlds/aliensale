@@ -12,8 +12,8 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "currency",
-                    "type": "symbol"
+                    "name": "foreign_chain",
+                    "type": "name"
                 },
                 {
                     "name": "address",
@@ -34,8 +34,12 @@
                     "type": "extended_asset"
                 },
                 {
-                    "name": "native_price",
-                    "type": "asset"
+                    "name": "quote_price",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "sale_symbols",
+                    "type": "foreign_symbol[]"
                 },
                 {
                     "name": "metadata",
@@ -52,8 +56,8 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "foreign_symbol",
-                    "type": "symbol_code"
+                    "name": "foreign_chain",
+                    "type": "name"
                 },
                 {
                     "name": "foreign_address",
@@ -80,12 +84,22 @@
             ]
         },
         {
+            "name": "clearaddress",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "clearpacks",
             "base": "",
             "fields": []
         },
         {
             "name": "clearsales",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "clearswaps",
             "base": "",
             "fields": []
         },
@@ -102,8 +116,12 @@
                     "type": "extended_asset[]"
                 },
                 {
-                    "name": "currency",
-                    "type": "symbol"
+                    "name": "foreign_chain",
+                    "type": "name"
+                },
+                {
+                    "name": "settlement_currency",
+                    "type": "extended_symbol"
                 }
             ]
         },
@@ -154,12 +172,48 @@
                     "type": "extended_asset"
                 },
                 {
-                    "name": "native_price",
-                    "type": "asset"
+                    "name": "quote_price",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "sale_symbols",
+                    "type": "foreign_symbol[]"
                 },
                 {
                     "name": "metadata",
                     "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "extended_symbol",
+            "base": "",
+            "fields": [
+                {
+                    "name": "symbol",
+                    "type": "symbol"
+                },
+                {
+                    "name": "contract",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "foreign_symbol",
+            "base": "",
+            "fields": [
+                {
+                    "name": "chain",
+                    "type": "name"
+                },
+                {
+                    "name": "contract",
+                    "type": "name"
+                },
+                {
+                    "name": "symbol",
+                    "type": "symbol"
                 }
             ]
         },
@@ -198,12 +252,16 @@
                     "type": "extended_asset"
                 },
                 {
-                    "name": "native_price",
-                    "type": "asset"
+                    "name": "quote_price",
+                    "type": "extended_asset"
                 },
                 {
                     "name": "metadata",
                     "type": "string"
+                },
+                {
+                    "name": "sale_symbols",
+                    "type": "foreign_symbol[]"
                 },
                 {
                     "name": "allow_sale",
@@ -242,12 +300,20 @@
                     "type": "name"
                 },
                 {
+                    "name": "foreign_chain",
+                    "type": "name"
+                },
+                {
                     "name": "foreign_address",
                     "type": "string"
                 },
                 {
+                    "name": "foreign_contract",
+                    "type": "name"
+                },
+                {
                     "name": "foreign_symbol",
-                    "type": "symbol_code"
+                    "type": "symbol"
                 },
                 {
                     "name": "items",
@@ -308,6 +374,10 @@
             "base": "",
             "fields": [
                 {
+                    "name": "swap_id",
+                    "type": "uint64"
+                },
+                {
                     "name": "account",
                     "type": "name"
                 },
@@ -339,6 +409,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "clearaddress",
+            "type": "clearaddress",
+            "ricardian_contract": ""
+        },
+        {
             "name": "clearpacks",
             "type": "clearpacks",
             "ricardian_contract": ""
@@ -346,6 +421,11 @@
         {
             "name": "clearsales",
             "type": "clearsales",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "clearswaps",
+            "type": "clearswaps",
             "ricardian_contract": ""
         },
         {

@@ -23,14 +23,23 @@ using namespace std;
 
 namespace alienworlds {
     class [[eosio::contract("aliensale")]] aliensale : public contract {
+    public:
+        struct foreign_symbol {
+            name   chain;
+            name   contract;
+            symbol symbol;
+        };
 
     private:
+        /* Indicates a foreign sale, native sales are done using `deposit` and `buy` */
         struct [[eosio::table("sales")]] sale_item {
             uint64_t               sale_id;
             uint64_t               address_id;
             name                   native_address;
+            name                   foreign_chain;
             string                 foreign_address;
-            symbol_code            foreign_symbol;
+            name                   foreign_contract;
+            symbol                 foreign_symbol;
             vector<extended_asset> items;
             uint64_t               price; // in foreign satoshis / wei
             time_point_sec         sale_time;
@@ -38,8 +47,10 @@ namespace alienworlds {
             string                 completed_tx_id;
 
             uint64_t primary_key() const { return sale_id; }
+            uint64_t by_chain() const { return foreign_chain.value; }
         };
-        typedef multi_index<"sales"_n, sale_item> sales_table;
+        typedef multi_index<"sales"_n, sale_item, indexed_by<"bychain"_n,
+            const_mem_fun<sale_item, uint64_t, &sale_item::by_chain> > > sales_table;
 
 
         /* Deposits when buying in native currency */
@@ -52,13 +63,14 @@ namespace alienworlds {
         typedef multi_index<"deposits"_n, deposit_item> deposits_table;
 
 
-        /* Swaps from foreign chain, record tx_id to prevent replays */
+        /* Swaps a voucher from foreign chain, record tx_id to prevent replays */
         struct [[eosio::table("swaps")]] swap_item {
+          uint64_t    swap_id;
           name        account;
           checksum256 tx_id;
           asset       quantity;
 
-          uint64_t    primary_key() const { return account.value; }
+          uint64_t    primary_key() const { return swap_id; }
           checksum256 by_tx_id() const { return tx_id; }
         };
         typedef multi_index<"swaps"_n, swap_item, indexed_by<"bytxid"_n,
@@ -68,22 +80,24 @@ namespace alienworlds {
         /* Records previously generated foreign addresses to send to */
         struct [[eosio::table("addresses")]] address_item {
             uint64_t       address_id;
-            symbol_code    foreign_symbol;
+            name           foreign_chain;
             string         foreign_address;
 
             uint64_t primary_key() const { return address_id; }
-            uint64_t bysym() const { return foreign_symbol.raw(); }
+            uint64_t by_chain() const { return foreign_chain.value; }
         };
-        typedef multi_index<"addresses"_n, address_item> addresses_table;
+        typedef multi_index<"addresses"_n, address_item, indexed_by<"bychain"_n,
+            const_mem_fun<address_item, uint64_t, &address_item::by_chain> > > addresses_table;
 
 
         /* Records previously generated foreign addresses to send to */
         struct [[eosio::table("packs")]] pack_item {
-            uint64_t       pack_id;
-            extended_asset pack_asset;
-            asset          native_price;
-            string         metadata;
-            bool           allow_sale;
+            uint64_t               pack_id;
+            extended_asset         pack_asset;
+            extended_asset         quote_price;
+            string                 metadata;
+            vector<foreign_symbol> sale_symbols;
+            bool                   allow_sale;
 
             uint64_t primary_key() const { return pack_id; }
             uint128_t by_pack() const { return extended_asset_id(pack_asset); };
@@ -153,7 +167,7 @@ namespace alienworlds {
         deposits_table  _deposits;
         swaps_table     _swaps;
 
-        uint64_t compute_price(vector<extended_asset> items, name pair);
+        uint64_t compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain);
 
     public:
         using contract::contract;
@@ -161,19 +175,19 @@ namespace alienworlds {
         aliensale(name s, name code, datastream<const char *> ds);
 
         /* Add pack for sale */
-        [[eosio::action]] void addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata);
+        [[eosio::action]] void addpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata);
 
         /* Edit pack for sale */
-        [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata);
+        [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata);
 
-        /* Deleet pack */
+        /* Delete pack */
         [[eosio::action]] void delpack(uint64_t pack_id);
 
         /* Add addresses to the unused addresses table (ETH/EOS) - for EOS, this would be a memo reference, not address */
-        [[eosio::action]] void addaddress(uint64_t address_id, symbol currency, string address);
+        [[eosio::action]] void addaddress(uint64_t address_id, name foreign_chain, string address);
 
         /* Create a sale for pack tokens, using the provided items and currency */
-        [[eosio::action]] void createsale(name native_address, vector<extended_asset> items, symbol currency);
+        [[eosio::action]] void createsale(name native_address, vector<extended_asset> items, name foreign_chain, extended_symbol settlement_currency);
 
         /* Logs a sale which can be read by the client in action traces */
         [[eosio::action]] void logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address);
@@ -199,6 +213,8 @@ namespace alienworlds {
         /* Admin only during development */
         [[eosio::action]] void clearsales();
         [[eosio::action]] void clearpacks();
+        [[eosio::action]] void clearswaps();
+        [[eosio::action]] void clearaddress();
     };
 }
 

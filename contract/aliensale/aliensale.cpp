@@ -10,7 +10,7 @@ aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(
                                                                        _swaps(get_self(), get_self().value) {}
 
 
-void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata) {
+void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
@@ -25,13 +25,14 @@ void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, asset nativ
     _packs.emplace(get_self(), [&](auto &p){
         p.pack_id      = pack_id;
         p.pack_asset   = pack_asset;
-        p.native_price = native_price;
+        p.quote_price  = quote_price;
+        p.sale_symbols = sale_symbols;
         p.metadata     = metadata;
         p.allow_sale   = false;
     });
 }
 
-void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, asset native_price, string metadata) {
+void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
@@ -39,69 +40,72 @@ void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, asset nati
 
     _packs.modify(pack, get_self(), [&](auto &p){
         p.pack_asset   = pack_asset;
-        p.native_price = native_price;
+        p.quote_price  = quote_price;
+        p.sale_symbols = sale_symbols;
         p.metadata     = metadata;
     });
 }
 
 void aliensale::delpack(uint64_t pack_id) {
-  require_auth(get_self());
+    require_auth(get_self());
 
-  auto pack = _packs.find(pack_id);
-  check(pack != _packs.end(), "Pack not found");
+    auto pack = _packs.find(pack_id);
+    check(pack != _packs.end(), "Pack not found");
 
-  _packs.erase(pack);
+    _packs.erase(pack);
 }
 
-void aliensale::addaddress(uint64_t address_id, symbol currency, string address) {
+void aliensale::setallowed(uint64_t pack_id, bool is_allowed) {
+    auto pack = _packs.find(pack_id);
+    check(pack != _packs.end(), "Pack not found");
+
+    _packs.modify(pack, same_payer, [&](auto &p){
+        p.allow_sale = is_allowed;
+    });
+}
+
+void aliensale::addaddress(uint64_t address_id, name foreign_chain, string address) {
     require_auth(get_self());
 
     _addresses.emplace(get_self(), [&](auto &a){
         a.address_id      = address_id;  // normally the hd derivation path
-        a.foreign_symbol  = currency.code();
+        a.foreign_chain   = foreign_chain;
         a.foreign_address = address;
     });
 }
 
-void aliensale::createsale(name native_address, vector<extended_asset> items, symbol currency) {
+void aliensale::createsale(name native_address, vector<extended_asset> items, name foreign_chain, extended_symbol settlement_currency) {
     require_auth(native_address);
 
     // get the next available foreign address
-    auto addr = _addresses.begin();
-    while (addr != _addresses.end() && addr->foreign_symbol != currency.code()){
+    auto chain_idx = _addresses.get_index<"bychain"_n>();
+    auto addr = chain_idx.begin();
+    while (addr != chain_idx.end() && addr->foreign_chain != foreign_chain){
         addr++;
     }
-    check(addr != _addresses.end(), "Could not find payment address");
+    check(addr != chain_idx.end(), "Could not find payment address");
 
     string foreign_address = addr->foreign_address;
 
-    name quote_pair;
-    if (addr->foreign_symbol == symbol_code{"ETH"}){
-        quote_pair = "waxpeth"_n;
-    }
-    else if (addr->foreign_symbol == symbol_code{"EOS"}){
-        quote_pair = "waxpeos"_n;
-    }
-    else {
-        check(false, "Quote pair unknown");
-    }
-
     uint64_t sale_id = _sales.available_primary_key();
-    uint64_t foreign_price = compute_price(items, quote_pair);
+    uint64_t foreign_price = compute_price(items, settlement_currency, foreign_chain);
+
     _sales.emplace(native_address, [&](auto &s){
-        s.sale_id         = sale_id;
-        s.address_id      = addr->address_id;
-        s.native_address  = native_address;
-        s.foreign_address = foreign_address;
-        s.foreign_symbol  = addr->foreign_symbol;
-        s.items           = items;
-        s.price           = foreign_price;
-        s.sale_time       = time_point(current_time_point().time_since_epoch());
-        s.completed       = false;
+        s.sale_id          = sale_id;
+        s.address_id       = addr->address_id;
+        s.native_address   = native_address;
+        s.foreign_chain    = foreign_chain;
+        s.foreign_address  = foreign_address;
+        s.foreign_contract = settlement_currency.get_contract();
+        s.foreign_symbol   = settlement_currency.get_symbol();
+        s.items            = items;
+        s.price            = foreign_price;
+        s.sale_time        = time_point(current_time_point().time_since_epoch());
+        s.completed        = false;
     });
 
     // remove the address
-    _addresses.erase(addr);
+    chain_idx.erase(addr);
 
     // log sale
     action(
@@ -169,8 +173,11 @@ void aliensale::buy(name buyer, uint64_t pack_id, uint8_t qty) {
     auto deposit = _deposits.find(buyer.value);
     check(deposit != _deposits.end(), "Deposit not found");
 
-    auto pack_price = pack->native_price * qty;
+    check(pack->quote_price.quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Please use createsale for non-native sales");
+
+    auto pack_price = pack->quote_price.quantity * qty;
     check(pack_price == deposit->quantity, "Incorrect amount deposited");
+    check(pack->allow_sale, "Sale not allowed");
 
     auto pack_asset = pack->pack_asset.quantity * qty;
     string memo = "Buying packs";
@@ -209,18 +216,10 @@ void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
 
     // enter the swap
     _swaps.emplace(get_self(), [&](auto &s){
+        s.swap_id = _swaps.available_primary_key();
         s.account = buyer;
         s.tx_id = tx_id;
         s.quantity = quantity;
-    });
-}
-
-void aliensale::setallowed(uint64_t pack_id, bool is_allowed) {
-    auto pack = _packs.find(pack_id);
-    check(pack != _packs.end(), "Pack not found");
-
-    _packs.modify(pack, same_payer, [&](auto &p){
-        p.allow_sale = is_allowed;
     });
 }
 
@@ -242,23 +241,28 @@ void aliensale::clearpacks() {
     }
 }
 
+void aliensale::clearswaps() {
+    require_auth(get_self());
+
+    auto swap = _swaps.begin();
+    while (swap != _swaps.end()){
+        swap = _swaps.erase(swap);
+    }
+}
+
+void aliensale::clearaddress() {
+    require_auth(get_self());
+
+    auto address = _addresses.begin();
+    while (address != _addresses.end()){
+        address = _addresses.erase(address);
+    }
+}
+
 
 // Private
 
-uint64_t aliensale::compute_price(vector<extended_asset> items, name pair) {
-    auto _datapoints = datapointstable(DELPHI_CONTRACT, pair.value);
-    auto _pairs = pairstable(DELPHI_CONTRACT, DELPHI_CONTRACT.value);
-
-    auto pair_itr = _pairs.find(pair.value);
-    check(pair_itr != _pairs.end(), "Pair not found");
-
-    auto dpi = _datapoints.get_index<"timestamp"_n>();
-    auto last_dp = dpi.rbegin();
-
-    uint64_t precision = pair_itr->quoted_precision;
-    uint64_t base_median = last_dp->median;
-
-    double conversion_price = (double)base_median / pow(10.0, (double)precision);  // in full tokens
+uint64_t aliensale::compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain) {
 
     auto pack_ind = _packs.get_index<"bypack"_n>();
 
@@ -267,10 +271,60 @@ uint64_t aliensale::compute_price(vector<extended_asset> items, name pair) {
         // get price from sales packs table
         auto pack = pack_ind.find(pack_item::extended_asset_id(item));
         check(pack != pack_ind.end(), "Pack not found");
+        check(pack->allow_sale, "Pack sale not allowed");
 
-        double pack_price = (double)pack->native_price.amount / pow(10, (double)pack->native_price.symbol.precision());
+        bool needs_conversion = true;
+        name quote_pair;
+        if (settlement_currency.get_symbol().code() == symbol_code{"ETH"}){
+            quote_pair = "waxpeth"_n;
+        }
+        else if (settlement_currency.get_symbol().code() == symbol_code{"EOS"}){
+            quote_pair = "waxpeos"_n;
+        }
+        else if (pack->quote_price.quantity.symbol != settlement_currency.get_symbol()) {
+            check(false, "Quote pair unknown");
+        }
+        else {
+            needs_conversion = false;
+        }
 
-        total += (uint64_t)(item.quantity.amount * pack_price * conversion_price * pow(10, (double)pair_itr->quote_symbol.precision()));
+        // Check that this settlement currency is allowed for the pack
+        bool symbol_allowed = false;
+        for (auto sale_symbol: pack->sale_symbols){
+            if (sale_symbol.chain == foreign_chain
+                && sale_symbol.symbol == settlement_currency.get_symbol()
+                && sale_symbol.contract == settlement_currency.get_contract()){
+
+                symbol_allowed = true;
+                break;
+            }
+        }
+        check(symbol_allowed, "Sale currency is not allowed for this pack");
+
+        auto _datapoints = datapointstable(DELPHI_CONTRACT, quote_pair.value);
+        auto _pairs = pairstable(DELPHI_CONTRACT, DELPHI_CONTRACT.value);
+
+        double pack_price = (double)pack->quote_price.quantity.amount / pow(10, (double)pack->quote_price.quantity.symbol.precision());
+
+        if (pack->quote_price.quantity.symbol != settlement_currency.get_symbol() && needs_conversion){
+
+            auto pair_itr = _pairs.find(quote_pair.value);
+            check(pair_itr != _pairs.end(), "Pair not found");
+
+            auto dpi = _datapoints.get_index<"timestamp"_n>();
+            auto last_dp = dpi.rbegin();
+
+            uint64_t precision = pair_itr->quoted_precision;
+            uint64_t base_median = last_dp->median;
+
+            double conversion_price = (double)base_median / pow(10.0, (double)precision);  // in full tokens
+
+            total += (uint64_t)((double)item.quantity.amount * pack_price * conversion_price * pow(10, (double)pair_itr->quote_symbol.precision()));
+        }
+        else {
+            // settlement is same as quote so price is the same
+            total += (uint64_t)((double)item.quantity.amount * pack_price * pow(10, (double)settlement_currency.get_symbol().precision()));
+        }
     }
 
     return total;
