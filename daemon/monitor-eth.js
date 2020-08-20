@@ -7,7 +7,7 @@ const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
 const { TextDecoder, TextEncoder } = require('text-encoding');
 const fetch = require("node-fetch");
 
-const config = require('./config');
+const config = require('../config');
 
 const block_filename = `.block_eth_${config.eth.network}`;
 
