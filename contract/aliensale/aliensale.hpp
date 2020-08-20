@@ -190,7 +190,7 @@ namespace alienworlds {
         [[eosio::action]] void createsale(name native_address, vector<extended_asset> items, name foreign_chain, extended_symbol settlement_currency);
 
         /* Logs a sale which can be read by the client in action traces */
-        [[eosio::action]] void logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address);
+        [[eosio::action]] void logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency);
 
         /* Remove a sale entry */
         [[eosio::action]] void delsale(uint64_t sale_id);

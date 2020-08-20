@@ -236,6 +236,10 @@
                 {
                     "name": "foreign_address",
                     "type": "string"
+                },
+                {
+                    "name": "settlement_currency",
+                    "type": "extended_symbol"
                 }
             ]
         },

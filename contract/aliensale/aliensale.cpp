@@ -111,11 +111,11 @@ void aliensale::createsale(name native_address, vector<extended_asset> items, na
     action(
         permission_level{get_self(), "log"_n},
         get_self(), "logsale"_n,
-        make_tuple(native_address, sale_id, foreign_price, foreign_address)
+        make_tuple(native_address, sale_id, foreign_price, foreign_address, settlement_currency)
         ).send();
 }
 
-void aliensale::logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address) {}
+void aliensale::logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency) {}
 
 void aliensale::delsale(uint64_t sale_id) {
   require_auth(get_self());
