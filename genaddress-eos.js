@@ -4,9 +4,6 @@
 Generates 500 memo references and sends them to the contract (for eos start at 10k for the id)
  */
 
-const fs = require('fs');
-const HDKey = require('hdkey');
-const ethUtil = require('ethereumjs-util');
 const { Api, JsonRpc, Serialize } = require('eosjs');
 const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
 const { TextDecoder, TextEncoder } = require('text-encoding');
@@ -20,9 +17,7 @@ const signatureProvider = new JsSignatureProvider([config.private_key]);
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
 
-
-
-const submit_addresses = async (addresses, currency) => {
+const submit_addresses = async (addresses) => {
     const actions = [];
 
     addresses.forEach((ad) => {
@@ -35,7 +30,7 @@ const submit_addresses = async (addresses, currency) => {
             }],
             data: {
                 address_id: ad.id,
-                currency,
+                foreign_chain: 'eos',
                 address: ad.address
             }
         });
@@ -62,7 +57,7 @@ const start = async () => {
         if ((x % 20) === 0 && x > 0){
             // submit to chain
             try {
-                await submit_addresses(populate_data, '4,EOS');
+                await submit_addresses(populate_data);
             }
             catch (e){
                 console.log(`${x} failed ${e.message}`);
@@ -76,7 +71,7 @@ const start = async () => {
 
 
     if (populate_data.length){
-        await submit_addresses(populate_data, '4,EOS');
+        await submit_addresses(populate_data);
     }
 
 }

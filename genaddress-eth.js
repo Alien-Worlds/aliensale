@@ -22,7 +22,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 
 
 
-const submit_addresses = async (addresses, currency) => {
+const submit_addresses = async (addresses) => {
     const actions = [];
 
     addresses.forEach((ad) => {
@@ -35,7 +35,7 @@ const submit_addresses = async (addresses, currency) => {
             }],
             data: {
                 address_id: ad.id,
-                currency,
+                foreign_chain: 'eth',
                 address: ad.address
             }
         });
@@ -89,7 +89,7 @@ const start = async () => {
         if ((x % 20) === 0 && x > 0){
             // submit to chain
             try {
-                await submit_addresses(populate_data, '18,ETH');
+                await submit_addresses(populate_data);
             }
             catch (e){
                 console.log(`${x} failed ${e.message}`);
@@ -107,7 +107,7 @@ const start = async () => {
 
 
     if (populate_data.length){
-        await submit_addresses(populate_data, '18,ETH');
+        await submit_addresses(populate_data);
     }
 
 }
