@@ -1,0 +1,258 @@
+<template>
+  <q-page class="full-width column wrap justify-center content-stretch">
+      <div class="row justify-center text-h1">
+        Buy Packs
+      </div>
+
+      <div class="row justify-center">
+        <div v-if="!showBuyForm">
+          <div v-for="pack in packs" :key="pack.symbol">
+            <div class="row" v-if="balances[pack.symbol]">
+              <div class="col-6">{{ pack.metadata.name }}</div>
+              <div class="col-4">{{ pack.quote_price.quantity }}</div>
+              <div class="col-2"><q-btn label="Buy" @click="showBuy(pack)" /> ({{ balances[pack.symbol] }} left)</div>
+            </div>
+            <div class="row text-red" v-else style="text-decoration: line-through">
+              <div class="col-6">{{ pack.metadata.name }}</div>
+              <div class="col-4">{{ pack.quote_price.quantity }}</div>
+              <div class="col-2">Sold out!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <div v-if="showBuyForm" class="q-pa-md">
+      <div class="row justify-center">
+        <div class="row justify-center">Quantity <q-input type="number" v-model="buyQty" step="1" min="1" :max="maxBuy" /></div>
+      </div>
+
+      <div class="row justify-center">
+        <q-btn @click="hideBuyForm()" label="back" />
+
+        <div v-for="sale_symbol in buyPack.sale_symbols" :key="sale_symbol.symbol">
+            <q-btn @click="startBuy(sale_symbol)" :label="'Buy with ' + sale_symbol.symbol.split(',')[1]" />
+        </div>
+
+      </div>
+    </div>
+
+    <payment-request v-model="paymentRequest"></payment-request>
+
+  </q-page>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import PaymentRequest from 'components/PaymentRequest'
+let intervalId
+
+export default {
+  name: 'BuyPage',
+  components: {
+    'payment-request': PaymentRequest
+  },
+  data () {
+    return {
+      packs: this.$packs,
+      balances: {},
+      showBuyForm: false,
+      buyPack: '',
+      buyQty: 1,
+      paymentRequest: null
+    }
+  },
+  computed: {
+    ...mapGetters({
+      getAccountName: 'ual/getAccountName'
+    }),
+    maxBuy () {
+      let max = 25
+      if (this.buySymbol && this.balances[this.buySymbol] < 25) {
+        max = this.balances[this.buySymbol]
+      }
+      return max
+    }
+  },
+  methods: {
+    async reloadPacks () {
+      const res = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'packs' })
+      const balancesRes = await this.$wax.rpc.get_currency_balance('pack.worlds', 'sale.worlds')
+      const balances = {}
+      for (let i = 0; i < balancesRes.length; i++) {
+        const [b, s] = balancesRes[i].split(' ')
+        balances[s] = parseInt(b)
+      }
+      this.balances = balances
+
+      const packs = res.rows.map((p) => {
+        p.metadata = JSON.parse(p.metadata)
+        const [, sym] = p.pack_asset.quantity.split(' ')
+        p.symbol = sym
+        return p
+      }).filter(p => p.allow_sale)
+
+      this.packs = packs
+      console.log(packs)
+    },
+    showBuy (pack) {
+      // console.log(pack)
+      this.showBuyForm = true
+      this.buyPack = pack
+    },
+    hideBuyForm () {
+      this.showBuyForm = false
+    },
+    async createSale (account, qty, pack, saleSymbol) {
+      console.log('createSale', account, qty, pack, saleSymbol)
+      const foreignChain = saleSymbol.chain
+      // creates the sale on wax and returns the details
+      // void createsale(name native_address, vector<extended_asset> items, name foreign_chain, extended_symbol settlement_currency);
+      const actions = [{
+        account: 'sale.worlds',
+        name: 'createsale',
+        authorization: [{
+          actor: account,
+          permission: 'active'
+        }],
+        data: {
+          native_address: account,
+          items: [{ contract: 'pack.worlds', quantity: `${qty} ${pack.symbol}` }],
+          foreign_chain: foreignChain,
+          settlement_currency: { contract: saleSymbol.contract, symbol: saleSymbol.symbol }
+        }
+      }]
+      // console.log(actions)
+      const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+      // console.log(createResp)
+      if (createResp.status === 'executed' && createResp.wasBroadcast) {
+        const logData = createResp.transaction.processed.action_traces[0].inline_traces[0].act.data
+        // console.log('create data', logData)
+
+        return logData
+      }
+
+      return null
+    },
+    async buyWax (account, nativeAmount, qty, pack) {
+      console.log(account, nativeAmount, qty, pack)
+      const actions = [{
+        account: 'eosio.token',
+        name: 'transfer',
+        authorization: [{
+          actor: account,
+          permission: 'active'
+        }],
+        data: {
+          from: account,
+          to: 'sale.worlds',
+          quantity: `${nativeAmount.toFixed(8)} WAX`,
+          memo: ''
+        }
+      }, {
+        account: 'sale.worlds',
+        name: 'buy',
+        authorization: [{
+          actor: account,
+          permission: 'active'
+        }],
+        data: {
+          buyer: account,
+          pack_id: pack.pack_id,
+          qty
+        }
+      }]
+      const resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+      console.log(resp)
+      return resp
+    },
+    async buyEos (accounts, qty, pack, foreignSym) {
+      if (!this.getAccountName.eos) {
+        // make sure they are logged in, they will have to click the buy button again
+        this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
+        return
+      }
+
+      // create the sale on wax
+      // let resp = null
+      console.log('create sale for pack', pack)
+      const saleSymbol = pack.sale_symbols.filter(s => {
+        const re = new RegExp(`,${foreignSym}$`)
+        return re.test(s.symbol)
+      })[0]
+      console.log('saleSymbol', saleSymbol)
+      const logData = await this.createSale(accounts.wax, qty, pack, saleSymbol)
+      console.log('sale log', logData)
+      if (logData.foreign_address && logData.foreign_price && logData.sale_id) {
+        // log into eos if not already and send the eos payment
+
+        const [precisionStr, symbol] = logData.settlement_currency.symbol.split(',')
+        const precision = parseInt(precisionStr)
+
+        const nativeAmount = (logData.foreign_price / Math.pow(10, precision)).toFixed(precision)
+
+        this.paymentRequest = {
+          network: 'eos',
+          amount: nativeAmount,
+          contract: logData.settlement_currency.contract,
+          symbol,
+          precision,
+          from: accounts.eos,
+          to: 'alienworlds1',
+          memo: logData.foreign_address
+        }
+      } else {
+        console.error('Failed to fetch sale data', logData)
+      }
+      // return resp
+    },
+    async buyEth (account, qty, pack) {
+      const logData = await this.createSale(account, qty, pack, '18,ETH')
+
+      if (logData.foreign_address && logData.foreign_price && logData.sale_id) {
+        const nativeAmount = (logData.foreign_price / Math.pow(10, 18))
+
+        this.paymentRequest = {
+          network: 'eth',
+          amount: nativeAmount,
+          symbol: 'ETH',
+          precision: 18,
+          to: logData.foreign_address,
+          memo: ''
+        }
+      }
+    },
+    async startBuy (currency) {
+      const pack = this.buyPack
+
+      const [priceStr, nativeSym] = pack.quote_price.quantity.split(' ')
+      const price = parseFloat(priceStr)
+      const payAmount = price * this.buyQty
+
+      console.log(nativeSym)
+
+      switch (currency) {
+        case 'WAX':
+          await this.buyWax(this.getAccountName.wax, payAmount, this.buyQty, pack)
+          break
+        case 'ETH':
+          await this.buyEth(this.getAccountName.wax, this.buyQty, pack)
+          break
+        default:
+          await this.buyEos(this.getAccountName, this.buyQty, pack, nativeSym)
+          break
+      }
+    }
+  },
+  async mounted () {
+    intervalId = window.setInterval(this.reloadPacks, 5000)
+    this.reloadPacks()
+  },
+  async beforeDestroy () {
+    if (intervalId) {
+      console.log('clearing interval')
+      window.clearInterval(intervalId)
+      intervalId = null
+    }
+  }
+}
+</script>
