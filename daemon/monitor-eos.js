@@ -7,7 +7,7 @@ const { Api, JsonRpc, Serialize } = require('eosjs');
 const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
 const { TextDecoder, TextEncoder } = require('text-encoding');
 
-const config = require('./config');
+const config = require('../config');
 
 const block_filename = `.block_eos_${config.eos.chainId}`;
 
@@ -58,7 +58,7 @@ const update_accounts = async () => {
     my_accounts = [];
     const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'sales', limit: 1000});
     res.rows.forEach((row) => {
-        if (row.foreign_symbol === 'EOS'){
+        if (row.foreign_chain === 'eos'){
             const addr = row.foreign_address.toLowerCase();
 
             my_accounts.push(addr);
@@ -97,13 +97,25 @@ const validate_transaction = async (block_num, transaction_id) => {
     const trx = await foreign_rpc.history_get_transaction(transaction_id, block_num);
     console.log(trx.trx.trx.actions);
     trx.trx.trx.actions.forEach((act) => {
-        if (act.account === 'eosio.token' && act.name === 'transfer' && act.data.to === config.eos.receive_address){
+        if (act.name === 'transfer' && act.data.to === config.eos.receive_address){
             const sale = sales[act.data.memo];
             if (typeof sale !== 'undefined'){
+                console.log(`Found sale!!`, sale);
+
                 const [amount_str, sym] = act.data.quantity.split(' ');
                 const amount = parseFloat(amount_str);
+                const [required_precision_str, required_symbol] = sale.foreign_symbol.split(',');
+                const required_precision = parseInt(required_precision_str);
+                if (required_symbol !== sym){
+                    console.error(`Symbol does not match required`, required_symbol, sym);
+                    return;
+                }
+                if (sale.foreign_contract != act.account){
+                    console.error(`Wrong contract ${act.account} != ${sale.foreign_contract}`);
+                    return;
+                }
 
-                const required = sale.price / Math.pow(10, 4);
+                const required = sale.price / Math.pow(10, required_precision);
 
                 if (required <= amount){
                     console.log(`${sale.native_address} has paid for sale ${sale.sale_id}!`);
@@ -154,7 +166,7 @@ class TraceHandler {
                         //console.log(action)
                         switch (action[0]) {
                             case 'action_trace_v0':
-                                if (action[1].act.account === 'eosio.token' && action[1].act.name === 'transfer' && action[1].receiver === this.config.eos.receive_address){
+                                if (action[1].act.name === 'transfer' && action[1].receiver === this.config.eos.receive_address){
                                     // console.log(block_num, action[1], trx.id, block_timestamp);
                                     const sb = new Serialize.SerialBuffer({
                                         textEncoder: new TextEncoder,
