@@ -30,7 +30,6 @@
       </div>
 
       <div class="row justify-center">
-        {{buyPack}}
         <b-button @click="hideBuyForm()" label="back">Back</b-button>
 
         <div v-for="(sale_symbol, index) in buyPack.sale_symbols" :key="sale_symbol.symbol.split(',')[1]">
