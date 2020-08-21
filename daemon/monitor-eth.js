@@ -85,7 +85,7 @@ const update_accounts = async () => {
     my_accounts = [];
     const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'sales', limit: 1000});
     res.rows.forEach((row) => {
-        if (row.foreign_symbol === 'ETH' && !row.completed){
+        if (row.foreign_chain === 'ethereum' && !row.completed){
             const addr = row.foreign_address.toLowerCase();
 
             my_accounts.push(addr);
