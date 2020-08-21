@@ -6,7 +6,7 @@
           <img :src="pack.img" />
           {{ pack.qty }}
           {{ pack.metadata.name }}
-          <q-btn @click="openPack(pack.symbol)" label="Open one" />
+          <b-button @click="openPack(pack.symbol)" label="Open one">Open</b-button>
         </div>
       </div>
       <div v-if="!packs.length && packsLoaded">
@@ -36,6 +36,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import io from 'socket.io-client'
+import { BButton } from 'bootstrap-vue'
 let cards = {}
 
 export default {
@@ -45,6 +46,9 @@ export default {
       type: String,
       default: ''
     }
+  },
+  components: {
+    'b-button': BButton
   },
   data () {
     return {
@@ -169,7 +173,7 @@ export default {
     }
   },
   watch: {
-    account (accountName) {
+    getAccountName (accountName) {
       if (accountName) {
         // load the packs
         this.reloadPacks()

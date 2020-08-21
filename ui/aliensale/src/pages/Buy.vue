@@ -1,5 +1,5 @@
 <template>
-  <q-page class="full-width column wrap justify-center content-stretch">
+  <q-page class="">
       <div class="row justify-center text-h1">
         Buy Packs
       </div>
@@ -10,7 +10,7 @@
             <div class="row" v-if="balances[pack.symbol]">
               <div class="col-6">{{ pack.metadata.name }}</div>
               <div class="col-4">{{ pack.quote_price.quantity }}</div>
-              <div class="col-2"><q-btn label="Buy" @click="showBuy(pack)" /> ({{ balances[pack.symbol] }} left)</div>
+              <div class="col-2"><b-button label="Buy" @click="showBuy(pack)">Buy</b-button> ({{ balances[pack.symbol] }} left)</div>
             </div>
             <div class="row text-red" v-else style="text-decoration: line-through">
               <div class="col-6">{{ pack.metadata.name }}</div>
@@ -23,14 +23,18 @@
 
     <div v-if="showBuyForm" class="q-pa-md">
       <div class="row justify-center">
-        <div class="row justify-center">Quantity <q-input type="number" v-model="buyQty" step="1" min="1" :max="maxBuy" /></div>
+        <div class="row justify-center">
+          Quantity
+          <b-form-input  type="number" v-model="buyQty" step="1" min="1" :max="maxBuy"></b-form-input>
+        </div>
       </div>
 
       <div class="row justify-center">
-        <q-btn @click="hideBuyForm()" label="back" />
+        {{buyPack}}
+        <b-button @click="hideBuyForm()" label="back">Back</b-button>
 
-        <div v-for="sale_symbol in buyPack.sale_symbols" :key="sale_symbol.symbol">
-            <q-btn @click="startBuy(sale_symbol)" :label="'Buy with ' + sale_symbol.symbol.split(',')[1]" />
+        <div v-for="(sale_symbol, index) in buyPack.sale_symbols" :key="sale_symbol.symbol.split(',')[1]">
+          <b-button @click="startBuy(index)">Buy with {{sale_symbol.symbol.split(',')[1]}}</b-button>
         </div>
 
       </div>
@@ -44,12 +48,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import PaymentRequest from 'components/PaymentRequest'
+import { BButton, BFormInput } from 'bootstrap-vue'
 let intervalId
 
 export default {
   name: 'BuyPage',
   components: {
-    'payment-request': PaymentRequest
+    'payment-request': PaymentRequest,
+    'b-button': BButton,
+    'b-form-input': BFormInput
   },
   data () {
     return {
@@ -134,7 +141,7 @@ export default {
       return null
     },
     async buyWax (account, nativeAmount, qty, pack) {
-      console.log(account, nativeAmount, qty, pack)
+      console.log('buyWax', account, nativeAmount, qty, pack)
       const actions = [{
         account: 'eosio.token',
         name: 'transfer',
@@ -206,7 +213,8 @@ export default {
       // return resp
     },
     async buyEth (account, qty, pack) {
-      const logData = await this.createSale(account, qty, pack, '18,ETH')
+      const saleSymbol = pack.sale_symbols.filter(s => s.symbol === '18,ETH')[0]
+      const logData = await this.createSale(account, qty, pack, saleSymbol)
 
       if (logData.foreign_address && logData.foreign_price && logData.sale_id) {
         const nativeAmount = (logData.foreign_price / Math.pow(10, 18))
@@ -221,14 +229,16 @@ export default {
         }
       }
     },
-    async startBuy (currency) {
+    async startBuy (saleIndex) {
       const pack = this.buyPack
 
-      const [priceStr, nativeSym] = pack.quote_price.quantity.split(' ')
+      const [priceStr] = pack.quote_price.quantity.split(' ')
       const price = parseFloat(priceStr)
       const payAmount = price * this.buyQty
 
-      console.log(nativeSym)
+      const currency = pack.sale_symbols[saleIndex].symbol.split(',')[1]
+
+      console.log('startBuy', currency)
 
       switch (currency) {
         case 'WAX':
@@ -238,7 +248,7 @@ export default {
           await this.buyEth(this.getAccountName.wax, this.buyQty, pack)
           break
         default:
-          await this.buyEos(this.getAccountName, this.buyQty, pack, nativeSym)
+          await this.buyEos(this.getAccountName, this.buyQty, pack, currency)
           break
       }
     }

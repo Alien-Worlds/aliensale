@@ -21,7 +21,6 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 
 
 
-
 const submit_addresses = async (addresses) => {
     const actions = [];
 
@@ -35,7 +34,7 @@ const submit_addresses = async (addresses) => {
             }],
             data: {
                 address_id: ad.id,
-                foreign_chain: 'eth',
+                foreign_chain: 'ethereum',
                 address: ad.address
             }
         });
