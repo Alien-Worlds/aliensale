@@ -67,6 +67,7 @@ export default {
     async reloadPacks () {
       // console.log('RELOAD PACKS', this.account)
       if (this.account.wax) {
+        console.log('RELOAD PACKS')
         const ownedTokens = await this.$wax.rpc.get_currency_balance('pack.worlds', this.account.wax)
         const availableTokensRes = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'packs' })
         const availableTokens = availableTokensRes.rows.map((p) => {
@@ -140,7 +141,7 @@ export default {
     },
     startListener () {
       if (this.account.wax !== null) {
-        const atomicEndpoint = 'https://test.wax.api.atomicassets.io'
+        const atomicEndpoint = this.$config.atomicEndpoint
         this.subscribe(atomicEndpoint, this.account.wax, (asset) => {
           // console.log(asset)
           // console.log('got asset', asset)
@@ -179,12 +180,17 @@ export default {
         this.reloadPacks()
         this.startListener()
       }
+    },
+    waitingPack (wp) {
+      if (wp === false) {
+        this.reloadPacks()
+      }
     }
   },
   async mounted () {
     this.reloadPacks()
     this.startListener()
-    window.setInterval(this.reloadPacks, 3000)
+    window.setInterval(this.reloadPacks, 5000)
   }
 }
 </script>
