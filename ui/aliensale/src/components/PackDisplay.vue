@@ -67,7 +67,6 @@ export default {
     async reloadPacks () {
       // console.log('RELOAD PACKS', this.account)
       if (this.account.wax) {
-        console.log('RELOAD PACKS')
         const ownedTokens = await this.$wax.rpc.get_currency_balance('pack.worlds', this.account.wax)
         const availableTokensRes = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'packs' })
         const availableTokens = availableTokensRes.rows.map((p) => {
@@ -99,8 +98,6 @@ export default {
         this.packs = packs
         this.packsLoaded = true
         // console.log('packs', packs)
-      } else {
-
       }
     },
     async openPack (sym) {
