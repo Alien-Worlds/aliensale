@@ -44,6 +44,10 @@
                 {
                     "name": "metadata",
                     "type": "string"
+                },
+                {
+                    "name": "number_cards",
+                    "type": "uint8"
                 }
             ]
         },
@@ -182,6 +186,10 @@
                 {
                     "name": "metadata",
                     "type": "string"
+                },
+                {
+                    "name": "number_cards",
+                    "type": "uint8"
                 }
             ]
         },
@@ -266,6 +274,10 @@
                 {
                     "name": "sale_symbols",
                     "type": "foreign_symbol[]"
+                },
+                {
+                    "name": "number_cards",
+                    "type": "uint8"
                 },
                 {
                     "name": "allow_sale",
