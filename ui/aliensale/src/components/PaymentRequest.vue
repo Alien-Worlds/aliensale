@@ -18,6 +18,7 @@
           <div v-if="paymentTransactionId">
             <p>Payment completed with transaction id:</p>
             <p class="text-bold">{{ paymentTransactionId }}</p>
+            <p v-if="value.symbol !== 'WAX'">You must wait for the required number of confirmations before the packs are transferred to you</p>
           </div>
           <div v-if="value && value.amount > 0 && !paymentTransactionId">
             <p>Please pay the following amount</p>
@@ -26,8 +27,17 @@
           </div>
         </q-card-section>
         <q-card-section>
-          <q-btn @click="sendPayment" label="Pay" class="bg-primary text-white" v-if="!paymentTransactionId" />
-          <q-btn @click="closeModal" label="Close" class="bg-primary text-white" v-if="paymentTransactionId" />
+          <b-button @click="sendPayment" class="bg-primary text-white" v-if="!paymentTransactionId">Pay</b-button>
+
+          <b-button-toolbar key-nav aria-label="Toolbar with button groups">
+            <b-button-group class="mx-1">
+              <b-button @click="closeModal" class="bg-primary text-white" v-if="paymentTransactionId">Close</b-button>
+            </b-button-group>
+            <b-button-group class="mx-1">
+              <b-button @click="closeModal" to="/open" class="bg-primary text-white" v-if="paymentTransactionId">Open Packs</b-button>
+            </b-button-group>
+          </b-button-toolbar>
+
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -37,10 +47,15 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { BButton, BButtonToolbar } from 'bootstrap-vue'
 import Web3 from 'web3'
 
 export default {
   name: 'PaymentRequest',
+  components: {
+    'b-button': BButton,
+    'b-button-toolbar': BButtonToolbar
+  },
   props: ['value'],
   computed: {
     ...mapGetters({
