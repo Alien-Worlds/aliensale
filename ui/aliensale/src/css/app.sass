@@ -8,10 +8,33 @@
   src: url(../assets/fonts/nasalization-rg.ttf)  format('truetype')
 
 
-body
+body, .q-card
   background-color: #111
   color: #fff
   font-family: nasalization
+
+.navbar-dark
+  background-color: rgba(0,0,0,0.5)
+  .navbar-nav
+    .nav-link
+      color: #fff
+
+.q-card
+  padding: 20px
+
+.q-carousel__slide
+  padding: 10px !important
+  background-color: #111
+  > div
+    padding: 10px
+
+.q-card__section
+  >div
+    overflow: hidden
+
+.q-dialog__inner--minimized
+  >div
+    max-height: auto
 
 #main-content
   padding-top: 200px
