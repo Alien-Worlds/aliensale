@@ -28,8 +28,9 @@ export function setSESSION (state, payload) {
 }
 
 export function setAccountName (state, payload) {
-  state.accountName[payload.network] = payload.accountName
-  console.log('Set account name', payload)
+  const existing = JSON.parse(JSON.stringify(state.accountName))
+  existing[payload.network] = payload.accountName
+  state.accountName = existing
 }
 
 export function setPaymentInfo (state, payload) {
