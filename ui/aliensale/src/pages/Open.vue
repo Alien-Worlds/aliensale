@@ -9,12 +9,13 @@
     </div>
 
     <q-dialog v-model="confirmOpenPackShow" persistent transition-show="flip-down" transition-hide="flip-up">
-      <q-card>
+      <q-card v-if="confirmOpenPack">
         <q-card-section>
-          Are you sure you want to open this pack?
+          <p>Are you sure you want to open this pack?</p>
+          <p>{{confirmOpenPack.metadata.name}}</p>
 
           <b-button-group>
-            <b-button @click="openPack(confirmOpenPack)">Yes</b-button>
+            <b-button variant="primary" @click="openPack(confirmOpenPack)">Yes</b-button>
             <b-button @click="confirmOpenPackShow = false">No</b-button>
           </b-button-group>
         </q-card-section>
@@ -29,7 +30,7 @@
 
       <div class="d-flex flex-row flex-nowrap justify-content-center">
         <div style="width:300px;position: absolute; top:20px">
-          <div v-for="(card, cardnum) in receivedCards" :key="cardnum" class="flip-card">
+          <div v-for="(card, cardnum) in receivedCards" :key="cardnum" class="flip-card" @click="raiseCard(cardnum)">
             <div class="flip-card-inner">
               <div class="flip-card-front">
                 <img src="/card_back.png" style="width:300px;" />
@@ -54,7 +55,7 @@
         <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
           <div v-for="pack in packs" :key="pack.symbol" class="p-4 w-25">
             <div v-if="pack.qty" class="d-flex justify-content-center">
-              <div class="d-flex flex-column flex-wrap" @click="showOpenDialog(pack)">
+              <div class="d-flex flex-column flex-wrap pack" @click="showOpenDialog(pack)">
                 <img :src="'https://ipfs.io/ipfs/' + pack.img" class="mw-100" />
                 <div>
                   <div>{{ pack.qty }} packs</div>
@@ -259,6 +260,10 @@ export default {
       const xpos = this.calcXPos(cardNo, cards.length)
       cards[cardNo].style.top = '20px'
       cards[cardNo].style.left = `${xpos}px`
+      // get small random rotation
+      const deg = 10
+      const rotate = (Math.random() * deg) - deg / 2
+      cards[cardNo].style.transform = `rotate(${rotate}deg)`
       cards[cardNo].addEventListener('transitionend', () => {
         setTimeout(() => { cards[cardNo].classList.add('flipped') }, 500)
         if (cardNo >= cards.length - 1) {
@@ -268,7 +273,26 @@ export default {
     },
     revealPack () {
       for (let c = 0; c < this.openingPack.number_cards; c++) {
-        setTimeout(() => { this.revealCard(c) }, 3000 * c)
+        setTimeout(() => { this.revealCard(c) }, 2200 * c)
+      }
+    },
+    raiseCard (cardNum) {
+      const cards = document.getElementsByClassName('flip-card')
+      console.log('raising card', cards[cardNum].style.zIndex)
+      let raiseCard = true
+      if (cards[cardNum].style.zIndex === '10') {
+        // card already on top, let it go back to its place
+        console.log('lowering card')
+        raiseCard = false
+      }
+      for (let c = 0; c < cards.length; c++) {
+        cards[c].style.zIndex = 0
+        cards[c].style.top = '20px'
+      }
+
+      if (raiseCard) {
+        cards[cardNum].style.zIndex = 10
+        cards[cardNum].style.top = '0px'
       }
     },
     showOpenDialog (pack) {
@@ -328,6 +352,9 @@ export default {
   #pack-open-video {
     height: calc(100vh - 80px);
   }
+  .pack {
+    cursor: pointer;
+  }
 
   /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
   .flip-card {
@@ -339,6 +366,7 @@ export default {
     top: -520px;
     transition: all 0.3s;
     transition-timing-function: cubic-bezier(.64,.22,.45,1.26);
+    cursor: pointer;
   }
 
   /* This container is needed to position the front and back side */
