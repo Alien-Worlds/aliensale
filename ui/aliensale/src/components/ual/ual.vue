@@ -11,7 +11,7 @@
             icon="close"
             @click="closeModal"
           >
-            <q-tooltip content-class="bg-secondary text-white">{{getCurrentNetwork}} {{$t('ual.close')}}</q-tooltip>
+            <q-tooltip content-class="bg-secondary text-white">{{$t('ual.close')}}</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section>

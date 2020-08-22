@@ -2,6 +2,7 @@
 export async function renderLoginModal ({ commit }, network) {
   commit('setShouldRenderLoginModal', true)
   commit('setCurrentNetwork', network)
+  commit('bar_msg', `Log into ${network} network`)
 }
 
 export async function logout ({ state, commit }) {
@@ -18,7 +19,7 @@ export async function logout ({ state, commit }) {
         .then(() => {
           console.log('Logged out!')
           commit('setActiveAuthenticator', false)
-          commit('setAccountName', {})
+          commit('setAccountName', { network, accountName: null })
           commit('setSESSION', { data: { accountName: null, authenticatorName: null }, network })
         })
         .catch(e => {

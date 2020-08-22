@@ -47,13 +47,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BButton, BButtonToolbar } from 'bootstrap-vue'
+import { BButton, BButtonGroup, BButtonToolbar } from 'bootstrap-vue'
 import Web3 from 'web3'
 
 export default {
   name: 'PaymentRequest',
   components: {
     'b-button': BButton,
+    'b-button-group': BButtonGroup,
     'b-button-toolbar': BButtonToolbar
   },
   props: ['value'],

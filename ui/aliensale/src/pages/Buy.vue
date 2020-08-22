@@ -19,10 +19,13 @@
             </div>
           </div>
         </div>
+        <div v-if="!packs.length">
+          No packs are available for sale at the moment
+        </div>
       </div>
 
     <div v-if="showBuyForm" class="q-pa-md">
-      <div class="row justify-center">
+      <div class="row justify-center mb-4">
         <div class="row justify-center">
           Quantity
           <b-form-input  type="number" v-model="buyQty" step="1" min="1" :max="maxBuy"></b-form-input>
@@ -30,11 +33,17 @@
       </div>
 
       <div class="row justify-center">
-        <b-button @click="hideBuyForm()" label="back">Back</b-button>
 
-        <div v-for="(sale_symbol, index) in buyPack.sale_symbols" :key="sale_symbol.symbol.split(',')[1]">
-          <b-button @click="startBuy(index)">Buy with {{sale_symbol.symbol.split(',')[1]}}</b-button>
-        </div>
+        <b-button-toolbar key-nav>
+          <b-button-group class="mx-1">
+            <b-button @click="hideBuyForm()" label="back">Back</b-button>
+          </b-button-group>
+          <b-button-group class="mx-1">
+            <div v-for="(sale_symbol, index) in buyPack.sale_symbols" :key="sale_symbol.symbol.split(',')[1]">
+              <b-button @click="startBuy(index)">Buy with {{sale_symbol.symbol.split(',')[1]}}</b-button>
+            </div>
+          </b-button-group>
+        </b-button-toolbar>
 
       </div>
     </div>
@@ -47,7 +56,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import PaymentRequest from 'components/PaymentRequest'
-import { BButton, BFormInput } from 'bootstrap-vue'
+import { BButton, BFormInput, BButtonGroup, BButtonToolbar } from 'bootstrap-vue'
 let intervalId
 
 export default {
@@ -55,6 +64,8 @@ export default {
   components: {
     'payment-request': PaymentRequest,
     'b-button': BButton,
+    'b-button-group': BButtonGroup,
+    'b-button-toolbar': BButtonToolbar,
     'b-form-input': BFormInput
   },
   data () {
@@ -98,7 +109,7 @@ export default {
       }).filter(p => p.allow_sale)
 
       this.packs = packs
-      console.log(packs)
+      console.log('packs', packs)
     },
     showBuy (pack) {
       // console.log(pack)
@@ -168,7 +179,7 @@ export default {
         }
       }]
       const resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
-      console.log(resp)
+      // console.log(resp)
       return resp
     },
     async buyEos (accounts, qty, pack, foreignSym) {

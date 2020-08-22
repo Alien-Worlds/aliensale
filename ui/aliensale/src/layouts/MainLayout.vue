@@ -19,10 +19,11 @@
                   <router-link to="/redeem" class="nav-link">Redeem Voucher</router-link>
                 </li>
                 <li>
-                  <div v-if="getAccountName.wax">Logged in as {{ getAccountName.wax }} on wax</div>
-                  <div v-if="getAccountName.eos">Logged in as {{ getAccountName.eos }} on eos</div>
-
-                  <b-button @click="logout">Logout</b-button>
+                  <div v-if="getAccountName.wax">{{ getAccountName.wax }} on wax</div>
+                  <div v-if="getAccountName.eos">{{ getAccountName.eos }} on eos</div>
+                </li>
+                <li>
+                  <b-button @click="logout" v-if="getAccountName.wax || getAccountName.eos">Logout</b-button>
                 </li>
               </ul>
             </div>
