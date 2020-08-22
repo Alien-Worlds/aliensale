@@ -161,7 +161,7 @@ export default {
           }
         })
 
-        this.packs = packs
+        this.packs = packs.filter(p => p.qty) // remove packs with residual entry and no packs
         this.packsLoaded = true
         // console.log('packs', packs)
       }
@@ -248,22 +248,24 @@ export default {
         }
       })
     },
-    calcXPos (n, len) {
+    calcStyle (n, len) {
       const delta = 120 // space between cards
       const total = len * delta
-      const pos = (n / len * total) - ((total - 150) / 2)
-      return pos
+      const left = (n / len * total) - ((total - 150) / 2)
+      const centreDelta = Math.abs(left)
+      const top = 20 + centreDelta / 5
+      const rotate = left * 0.05
+      return { left, top, rotate }
     },
     revealCard (cardNo) {
       const cards = document.getElementsByClassName('flip-card')
-      console.log(`revealing ${cards.length} cards`, cards, cardNo)
-      const xpos = this.calcXPos(cardNo, cards.length)
-      cards[cardNo].style.top = '20px'
-      cards[cardNo].style.left = `${xpos}px`
-      // get small random rotation
-      const deg = 10
-      const rotate = (Math.random() * deg) - deg / 2
+      // console.log(`revealing ${cards.length} cards`, cards, cardNo)
+      const { left, top, rotate } = this.calcStyle(cardNo, cards.length)
+      // console.log({ left, top, rotate })
+      cards[cardNo].style.top = `${top}px`
+      cards[cardNo].style.left = `${left}px`
       cards[cardNo].style.transform = `rotate(${rotate}deg)`
+
       cards[cardNo].addEventListener('transitionend', () => {
         setTimeout(() => { cards[cardNo].classList.add('flipped') }, 500)
         if (cardNo >= cards.length - 1) {
@@ -278,7 +280,7 @@ export default {
     },
     raiseCard (cardNum) {
       const cards = document.getElementsByClassName('flip-card')
-      console.log('raising card', cards[cardNum].style.zIndex)
+      // console.log('raising card', cards[cardNum].style.zIndex)
       let raiseCard = true
       if (cards[cardNum].style.zIndex === '10') {
         // card already on top, let it go back to its place
@@ -286,13 +288,19 @@ export default {
         raiseCard = false
       }
       for (let c = 0; c < cards.length; c++) {
+        const { top, left, rotate } = this.calcStyle(c, cards.length)
         cards[c].style.zIndex = 0
-        cards[c].style.top = '20px'
+        cards[c].style.top = `${top}px`
+        cards[c].style.left = `${left}px`
+        cards[c].style.transform = `rotate(${rotate}deg)`
       }
 
       if (raiseCard) {
+        const { top, left, rotate } = this.calcStyle(cardNum, cards.length)
         cards[cardNum].style.zIndex = 10
-        cards[cardNum].style.top = '0px'
+        cards[cardNum].style.top = `${top - 20}px`
+        cards[cardNum].style.left = `${left}px`
+        cards[cardNum].style.transform = `rotate(${rotate}deg)`
       }
     },
     showOpenDialog (pack) {
