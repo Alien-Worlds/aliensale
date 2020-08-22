@@ -99,6 +99,7 @@ namespace alienworlds {
             vector<foreign_symbol> sale_symbols;
             uint8_t                number_cards;
             bool                   allow_sale;
+            string                 img;
 
             uint64_t primary_key() const { return pack_id; }
             uint128_t by_pack() const { return extended_asset_id(pack_asset); };
@@ -176,10 +177,10 @@ namespace alienworlds {
         aliensale(name s, name code, datastream<const char *> ds);
 
         /* Add pack for sale */
-        [[eosio::action]] void addpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards);
+        [[eosio::action]] void addpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards, string img);
 
         /* Edit pack for sale */
-        [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards);
+        [[eosio::action]] void editpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards, string img);
 
         /* Delete pack */
         [[eosio::action]] void delpack(uint64_t pack_id);

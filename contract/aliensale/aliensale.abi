@@ -48,6 +48,10 @@
                 {
                     "name": "number_cards",
                     "type": "uint8"
+                },
+                {
+                    "name": "img",
+                    "type": "string"
                 }
             ]
         },
@@ -190,6 +194,10 @@
                 {
                     "name": "number_cards",
                     "type": "uint8"
+                },
+                {
+                    "name": "img",
+                    "type": "string"
                 }
             ]
         },
@@ -282,6 +290,10 @@
                 {
                     "name": "allow_sale",
                     "type": "bool"
+                },
+                {
+                    "name": "img",
+                    "type": "string"
                 }
             ]
         },

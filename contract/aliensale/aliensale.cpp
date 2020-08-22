@@ -10,7 +10,7 @@ aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(
                                                                        _swaps(get_self(), get_self().value) {}
 
 
-void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards) {
+void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards, string img) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
@@ -30,10 +30,11 @@ void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, extended_as
         p.number_cards = number_cards;
         p.metadata     = metadata;
         p.allow_sale   = false;
+        p.img          = img;
     });
 }
 
-void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards) {
+void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards, string img) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
@@ -45,6 +46,7 @@ void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, extended_a
         p.sale_symbols = sale_symbols;
         p.number_cards = number_cards;
         p.metadata     = metadata;
+        p.img          = img;
     });
 }
 
