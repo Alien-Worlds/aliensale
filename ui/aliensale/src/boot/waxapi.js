@@ -9,4 +9,11 @@ export default ({ Vue }) => {
     textDecoder: new TextDecoder(),
     textEncoder: new TextEncoder()
   })
+
+  const eosRpc = new JsonRpc([Vue.prototype.$config.eosEndpoint])
+  Vue.prototype.$eos = new Api({
+    rpc: eosRpc,
+    textDecoder: new TextDecoder(),
+    textEncoder: new TextEncoder()
+  })
 }
