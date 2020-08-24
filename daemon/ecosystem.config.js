@@ -19,6 +19,16 @@ module.exports = {
             env: {
                 'CONFIG': 'jungle'
             }
+        },
+        {
+            name: "aliensale-voucherswap-eos",
+            script: "./voucherswap-eos.js",
+            node_args: ["--max-old-space-size=8192"],
+            autorestart: true,
+            kill_timeout: 3600,
+            env: {
+                'CONFIG': 'jungle'
+            }
         }
     ]
 };
