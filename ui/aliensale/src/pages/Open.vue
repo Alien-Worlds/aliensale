@@ -206,11 +206,17 @@ export default {
       this.$nextTick(() => { window.scrollTo(0, 0) })
 
       document.getElementById('video-container').style.display = 'block'
+      document.getElementById('pack-open-video').style.opacity = 1
       document.getElementById('pack-open-video').play()
-      document.getElementById('pack-open-video').addEventListener('ended', () => {
-        document.getElementById('video-container').style.display = 'none'
+      document.getElementById('pack-open-video').addEventListener('transitionend', () => {
+        console.log('Video transition end', document.getElementById('pack-open-video').style.opacity)
         this.videoEnded = true
         window.scrollTo(0, 0)
+        document.getElementById('video-container').style.display = 'none'
+      })
+      document.getElementById('pack-open-video').addEventListener('ended', () => {
+        console.log('Video end')
+        document.getElementById('pack-open-video').style.opacity = 0
       })
 
       this.reloadPacks()
@@ -359,6 +365,9 @@ export default {
   }
   #pack-open-video {
     height: calc(100vh - 80px);
+    opacity: 0;
+    transition: opacity 1.3s;
+    transition-timing-function: cubic-bezier(.64,.22,.45,1.26);
   }
   .pack {
     cursor: pointer;
