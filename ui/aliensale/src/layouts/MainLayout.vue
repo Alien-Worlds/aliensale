@@ -10,6 +10,9 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
+                  <router-link to="/inventory" class="nav-link">Inventory</router-link>
+                </li>
+                <li class="nav-item">
                   <router-link to="/buy" class="nav-link">Buy Packs</router-link>
                 </li>
                 <li class="nav-item">
