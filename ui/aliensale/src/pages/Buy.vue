@@ -135,10 +135,10 @@ export default {
           native_address: account,
           items: [{ contract: 'pack.worlds', quantity: `${qty} ${pack.symbol}` }],
           foreign_chain: foreignChain,
-          settlement_currency: { contract: saleSymbol.contract, symbol: saleSymbol.symbol }
+          settlement_currency: { contract: saleSymbol.contract, sym: saleSymbol.symbol }
         }
       }]
-      // console.log(actions)
+      console.log('createsale actions', actions)
       const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
       // console.log(createResp)
       if (createResp.status === 'executed' && createResp.wasBroadcast) {
@@ -202,7 +202,7 @@ export default {
       if (logData.foreign_address && logData.foreign_price && logData.sale_id) {
         // log into eos if not already and send the eos payment
 
-        const [precisionStr, symbol] = logData.settlement_currency.symbol.split(',')
+        const [precisionStr, symbol] = logData.settlement_currency.sym.split(',')
         const precision = parseInt(precisionStr)
 
         const nativeAmount = (logData.foreign_price / Math.pow(10, precision)).toFixed(precision)
