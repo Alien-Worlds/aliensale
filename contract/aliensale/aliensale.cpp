@@ -4,13 +4,14 @@ using namespace alienworlds;
 
 aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(s, code, ds),
                                                                        _addresses(get_self(), get_self().value),
-                                                                       _sales(get_self(), get_self().value),
+                                                                       _invoices(get_self(), get_self().value),
+                                                                       _auctions(get_self(), get_self().value),
                                                                        _packs(get_self(), get_self().value),
                                                                        _deposits(get_self(), get_self().value),
                                                                        _swaps(get_self(), get_self().value) {}
 
 
-void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards, string img) {
+void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, string metadata, uint8_t number_cards) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
@@ -25,28 +26,20 @@ void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, extended_as
     _packs.emplace(get_self(), [&](auto &p){
         p.pack_id      = pack_id;
         p.pack_asset   = pack_asset;
-        p.quote_price  = quote_price;
-        p.sale_symbols = sale_symbols;
         p.number_cards = number_cards;
         p.metadata     = metadata;
-        p.allow_sale   = false;
-        p.img          = img;
     });
 }
 
-void aliensale::editpack(uint64_t pack_id, extended_asset pack_asset, extended_asset quote_price, vector<foreign_symbol> sale_symbols, string metadata, uint8_t number_cards, string img) {
+void aliensale::editpack(uint64_t pack_id, string metadata, uint8_t number_cards) {
     require_auth(get_self());
 
     auto pack = _packs.find(pack_id);
     check(pack != _packs.end(), "Pack with this ID not found");
 
     _packs.modify(pack, get_self(), [&](auto &p){
-        p.pack_asset   = pack_asset;
-        p.quote_price  = quote_price;
-        p.sale_symbols = sale_symbols;
         p.number_cards = number_cards;
         p.metadata     = metadata;
-        p.img          = img;
     });
 }
 
@@ -59,15 +52,6 @@ void aliensale::delpack(uint64_t pack_id) {
     _packs.erase(pack);
 }
 
-void aliensale::setallowed(uint64_t pack_id, bool is_allowed) {
-    auto pack = _packs.find(pack_id);
-    check(pack != _packs.end(), "Pack not found");
-
-    _packs.modify(pack, same_payer, [&](auto &p){
-        p.allow_sale = is_allowed;
-    });
-}
-
 void aliensale::addaddress(uint64_t address_id, name foreign_chain, string address) {
     require_auth(get_self());
 
@@ -78,10 +62,18 @@ void aliensale::addaddress(uint64_t address_id, name foreign_chain, string addre
     });
 }
 
-void aliensale::createsale(name native_address, vector<extended_asset> items, name foreign_chain, extended_symbol settlement_currency) {
+void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty) {
     require_auth(native_address);
+    check(qty > 0, "Quantity cannot be negative");
+
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
+    name foreign_chain = auction->price_symbol.chain;
+    extended_symbol settlement_currency{auction->price_symbol.symbol, auction->price_symbol.contract};
 
     // get the next available foreign address
+    // create the sale record so that we can give the payment address and price to the user
     auto chain_idx = _addresses.get_index<"bychain"_n>();
     auto addr = chain_idx.begin();
     while (addr != chain_idx.end() && addr->foreign_chain != foreign_chain){
@@ -91,20 +83,22 @@ void aliensale::createsale(name native_address, vector<extended_asset> items, na
 
     string foreign_address = addr->foreign_address;
 
-    uint64_t sale_id = _sales.available_primary_key();
-    uint64_t foreign_price = compute_price(items, settlement_currency, foreign_chain);
 
-    _sales.emplace(native_address, [&](auto &s){
-        s.sale_id          = sale_id;
+    uint64_t invoice_id = _invoices.available_primary_key();
+    uint64_t foreign_price = auction_price(auction_id, qty);
+
+    _invoices.emplace(native_address, [&](auto &s){
+        s.invoice_id       = invoice_id;
+        s.auction_id       = auction_id;
         s.address_id       = addr->address_id;
         s.native_address   = native_address;
-        s.foreign_chain    = foreign_chain;
         s.foreign_address  = foreign_address;
-        s.foreign_contract = settlement_currency.get_contract();
-        s.foreign_symbol   = settlement_currency.get_symbol();
-        s.items            = items;
+
+        foreign_symbol    fs{foreign_chain, settlement_currency.get_contract(), settlement_currency.get_symbol()};
+
+        s.invoice_currency = fs;
         s.price            = foreign_price;
-        s.sale_time        = time_point(current_time_point().time_since_epoch());
+        s.invoice_time     = time_point(current_time_point().time_since_epoch());
         s.completed        = false;
     });
 
@@ -114,41 +108,41 @@ void aliensale::createsale(name native_address, vector<extended_asset> items, na
     // log sale
     action(
         permission_level{get_self(), "log"_n},
-        get_self(), "logsale"_n,
-        make_tuple(native_address, sale_id, foreign_price, foreign_address, settlement_currency)
-        ).send();
+        get_self(), "loginvoice"_n,
+        make_tuple(native_address, invoice_id, foreign_price, foreign_address, settlement_currency)
+    ).send();
 }
 
-void aliensale::logsale(name native_address, uint64_t sale_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency) {}
+void aliensale::loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency) {}
 
-void aliensale::delsale(uint64_t sale_id) {
-  require_auth(get_self());
-
-    auto sale = _sales.find(sale_id);
-    check(sale != _sales.end(), "Sale not found");
-
-    _sales.erase(sale);
-}
-
-void aliensale::payment(uint64_t sale_id, string tx_id) {
+void aliensale::delinvoice(uint64_t invoice_id) {
     require_auth(get_self());
 
-    auto sale = _sales.find(sale_id);
-    check(sale != _sales.end(), "Sale not found");
+    auto invoice = _invoices.find(invoice_id);
+    check(invoice != _invoices.end(), "Invoice not found");
 
-    if (!sale->completed){
-        for (auto item: sale->items){
+    _invoices.erase(invoice);
+}
+
+void aliensale::payment(uint64_t invoice_id, string tx_id) {
+    require_auth(get_self());
+
+    auto invoice = _invoices.find(invoice_id);
+    check(invoice != _invoices.end(), "Invoice not found");
+
+    if (!invoice->completed){
+        for (auto item: invoice->items){
             // send each transfer
             action(
                     permission_level{get_self(), "xfer"_n},
                     item.contract, "transfer"_n,
-                    make_tuple(get_self(), sale->native_address, item.quantity, tx_id)
+                    make_tuple(get_self(), invoice->native_address, item.quantity, tx_id)
             ).send();
         }
 
-        _sales.modify(sale, get_self(), [&](auto &s){
-            s.completed       = true;
-            s.completed_tx_id = tx_id;
+        _invoices.modify(invoice, get_self(), [&](auto &i){
+            i.completed       = true;
+            i.completed_tx_id = tx_id;
         });
     }
 
@@ -156,7 +150,10 @@ void aliensale::payment(uint64_t sale_id, string tx_id) {
 }
 
 void aliensale::transfer(name from, name to, asset quantity, string memo) {
-    if (from == get_self() || to != get_self()){
+    if (from == get_self() || to != get_self()){ // make sure transfer is to us
+        return;
+    }
+    if (from == "eosio.stake"_n || from == "eosio.ram"_n){ // system contracts
         return;
     }
 
@@ -169,32 +166,34 @@ void aliensale::transfer(name from, name to, asset quantity, string memo) {
     });
 }
 
-void aliensale::buy(name buyer, uint64_t pack_id, uint8_t qty) {
+void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty) {
+    check(qty > 0, "Quantity cannot be negative");
+    require_auth(buyer);
     // check they have correct deposit and send out packs
-    auto pack = _packs.find(pack_id);
-    check(pack != _packs.end(), "Pack not found");
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
 
     auto deposit = _deposits.find(buyer.value);
     check(deposit != _deposits.end(), "Deposit not found");
 
-    check(pack->quote_price.quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Please use createsale for non-native sales");
+    check(auction->price_symbol.symbol == symbol{symbol_code{"WAX"}, 8}, "Please use createsale for non-native sales");
 
-    auto pack_price = pack->quote_price.quantity * qty;
-    check(pack_price == deposit->quantity, "Incorrect amount deposited");
-    check(pack->allow_sale, "Sale not allowed");
+    auto pack_price = auction_price(auction_id, qty);
+    check(pack_price == deposit->quantity.amount, "Incorrect amount deposited");
 
-    auto pack_asset = pack->pack_asset.quantity * qty;
-    string memo = "Buying packs";
+    auto pack_asset = auction->pack.quantity * qty;
+    string memo = "Buying in auction";
 
     action(
         permission_level{get_self(), "xfer"_n},
-        pack->pack_asset.contract, "transfer"_n,
+        auction->pack.contract, "transfer"_n,
         make_tuple(get_self(), buyer, pack_asset, memo)
     ).send();
 
     _deposits.erase(deposit);
 }
 
+/*
 void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
     // check that tx_id hasnt been used before
     auto swp_idx = _swaps.get_index<"bytxid"_n>();
@@ -227,12 +226,74 @@ void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
     });
 }
 
-void aliensale::clearsales() {
+void aliensale::ethswap(std::vector<char> sig, string account_str) {
+    sha3_ctx      shactx;
+    unsigned char tmpmsghash[32];
+    char          tmpmsg[12];
+
+    using ecc_signature = std::array<char, 65>;
+    using ecc_public_key = array<char, 33>;
+
+//    print("\nsig 0", sig[10]);
+//    check(false, "b");
+
+    check(account_str.size() <= 12, "Account name is too long");
+
+    //Add prefix and length of signed message
+    char message[128];
+    sprintf(message, "%s%s%d%s", "\x19", "Ethereum Signed Message:\n", strlen(account_str.c_str()), account_str.c_str());
+    print("\nMessage ", message);
+
+    rhash_keccak_256_init(&shactx);
+    rhash_keccak_update(&shactx, (const unsigned char*)message, strlen(message)); // ignore the null terminator at the end of the string
+    rhash_keccak_final(&shactx, &tmpmsghash[0]);
+//    print("\nTemp Msg hash", string(tmpmsghash));
+
+    // convert the result to checksum256
+    array<uint8_t, 32> result_arr;
+    copy(begin(tmpmsghash), end(tmpmsghash), result_arr.begin());
+    auto msghash = eosio::fixed_bytes<32>(result_arr);
+
+    // convert signature bytes to an eosio signature
+    ecc_signature sig_arr;
+    copy_n(sig.begin(), 65, sig_arr.begin());
+
+    // Recover the compressed ETH public key from the message and signature
+    signature sig_eosio{ std::in_place_index<0>, sig_arr };  // 0 = k1
+    print("\nMsg hash", msghash);
+    eosio::public_key eosio_pubkey = recover_key(msghash, sig_eosio);
+    auto compressed_pubkey = std::get<0>(eosio_pubkey);
+
+    // Decompress the ETH pubkey
+    uint8_t pubkey[64];
+    // uint8_t compressed_pubkey_int
+    uECC_decompress((uint8_t *)compressed_pubkey.data() + 1, pubkey, uECC_secp256k1());
+
+    // Calculate the hash of the pubkey
+    unsigned char pubkeyhash[32];
+    rhash_keccak_256_init(&shactx);
+    rhash_keccak_update(&shactx, pubkey, 64);
+    rhash_keccak_final(&shactx, &pubkeyhash[0]);
+
+    // last 20 bytes of the hashed pubkey = ETH address
+    uint8_t eth_address[20];
+    memcpy(eth_address, pubkeyhash + 12, 20);
+
+    // convert to human readable form
+    std::string calculated_eth_address = bytetohex(eth_address, 20);
+
+    print("calculated eth address", calculated_eth_address);
+
+    check(false, "blah");
+}
+*/
+
+void aliensale::clearinvs() {
     require_auth(get_self());
 
-    auto sale = _sales.begin();
-    while (sale != _sales.end()){
-        sale = _sales.erase(sale);
+    auto invoice = _invoices.begin();
+    while (invoice != _invoices.end()){
+      invoice = _invoices.erase(invoice);
     }
 }
 
@@ -265,8 +326,19 @@ void aliensale::clearaddress() {
 
 
 // Private
+std::string aliensale::bytetohex(unsigned char *data, int len) {
+    constexpr char hexmap[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                               '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
-uint64_t aliensale::compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain) {
+    std::string s(len * 2, ' ');
+    for (int i = 0; i < len; ++i) {
+      s[2 * i]     = hexmap[(data[i] & 0xF0) >> 4];
+      s[2 * i + 1] = hexmap[data[i] & 0x0F];
+    }
+    return s;
+}
+
+/*uint64_t aliensale::compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain) {
 
     auto pack_ind = _packs.get_index<"bypack"_n>();
 
@@ -332,4 +404,28 @@ uint64_t aliensale::compute_price(vector<extended_asset> items, extended_symbol 
     }
 
     return total;
+}*/
+
+uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
+    uint32_t time_now = current_time_point().sec_since_epoch();
+    uint32_t time_into_sale = time_now - auction->start_time.sec_since_epoch();
+    check(time_now >= auction->start_time.sec_since_epoch(), "Auction has not started yet");
+
+    auto start_price = auction->start_price;
+    uint32_t current_time = 0;
+    uint32_t cycle_length = auction->period_length + auction->break_length;
+    uint32_t remainder = time_into_sale % cycle_length;
+    uint8_t period_number = (time_into_sale - remainder) / cycle_length;
+
+    // we are in the break period
+    check(remainder <= auction->period_length, "Auction is in a rest period");
+
+    if (period_number > auction->period_count) {
+        period_number = auction->period_count;
+    }
+
+    return start_price * (period_number * auction->price_step);
 }

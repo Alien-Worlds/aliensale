@@ -34,24 +34,12 @@
                     "type": "extended_asset"
                 },
                 {
-                    "name": "quote_price",
-                    "type": "extended_asset"
-                },
-                {
-                    "name": "sale_symbols",
-                    "type": "foreign_symbol[]"
-                },
-                {
                     "name": "metadata",
                     "type": "string"
                 },
                 {
                     "name": "number_cards",
                     "type": "uint8"
-                },
-                {
-                    "name": "img",
-                    "type": "string"
                 }
             ]
         },
@@ -70,6 +58,48 @@
                 {
                     "name": "foreign_address",
                     "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "auction_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "start_time",
+                    "type": "time_point"
+                },
+                {
+                    "name": "pack",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "price_symbol",
+                    "type": "foreign_symbol"
+                },
+                {
+                    "name": "start_price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "period_length",
+                    "type": "uint32"
+                },
+                {
+                    "name": "break_length",
+                    "type": "uint32"
+                },
+                {
+                    "name": "price_step",
+                    "type": "uint64"
+                },
+                {
+                    "name": "period_count",
+                    "type": "uint8"
                 }
             ]
         },
@@ -97,12 +127,12 @@
             "fields": []
         },
         {
-            "name": "clearpacks",
+            "name": "clearinvs",
             "base": "",
             "fields": []
         },
         {
-            "name": "clearsales",
+            "name": "clearpacks",
             "base": "",
             "fields": []
         },
@@ -112,24 +142,12 @@
             "fields": []
         },
         {
-            "name": "createsale",
+            "name": "delinvoice",
             "base": "",
             "fields": [
                 {
-                    "name": "native_address",
-                    "type": "name"
-                },
-                {
-                    "name": "items",
-                    "type": "extended_asset[]"
-                },
-                {
-                    "name": "foreign_chain",
-                    "type": "name"
-                },
-                {
-                    "name": "settlement_currency",
-                    "type": "extended_symbol"
+                    "name": "invoice_id",
+                    "type": "uint64"
                 }
             ]
         },
@@ -139,16 +157,6 @@
             "fields": [
                 {
                     "name": "pack_id",
-                    "type": "uint64"
-                }
-            ]
-        },
-        {
-            "name": "delsale",
-            "base": "",
-            "fields": [
-                {
-                    "name": "sale_id",
                     "type": "uint64"
                 }
             ]
@@ -176,28 +184,34 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "pack_asset",
-                    "type": "extended_asset"
-                },
-                {
-                    "name": "quote_price",
-                    "type": "extended_asset"
-                },
-                {
-                    "name": "sale_symbols",
-                    "type": "foreign_symbol[]"
-                },
-                {
                     "name": "metadata",
                     "type": "string"
                 },
                 {
                     "name": "number_cards",
                     "type": "uint8"
+                }
+            ]
+        },
+        {
+            "name": "ethswap_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "swap_id",
+                    "type": "uint64"
                 },
                 {
-                    "name": "img",
-                    "type": "string"
+                    "name": "eth_address",
+                    "type": "bytes"
+                },
+                {
+                    "name": "tx_id",
+                    "type": "checksum256"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
                 }
             ]
         },
@@ -234,7 +248,57 @@
             ]
         },
         {
-            "name": "logsale",
+            "name": "invoice_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "invoice_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "address_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "native_address",
+                    "type": "name"
+                },
+                {
+                    "name": "foreign_address",
+                    "type": "string"
+                },
+                {
+                    "name": "invoice_currency",
+                    "type": "foreign_symbol"
+                },
+                {
+                    "name": "items",
+                    "type": "extended_asset[]"
+                },
+                {
+                    "name": "price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "invoice_time",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "completed",
+                    "type": "bool"
+                },
+                {
+                    "name": "completed_tx_id",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "loginvoice",
             "base": "",
             "fields": [
                 {
@@ -242,7 +306,7 @@
                     "type": "name"
                 },
                 {
-                    "name": "sale_id",
+                    "name": "invoice_id",
                     "type": "uint64"
                 },
                 {
@@ -260,6 +324,24 @@
             ]
         },
         {
+            "name": "newinvoice",
+            "base": "",
+            "fields": [
+                {
+                    "name": "native_address",
+                    "type": "name"
+                },
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "qty",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "pack_item",
             "base": "",
             "fields": [
@@ -272,28 +354,12 @@
                     "type": "extended_asset"
                 },
                 {
-                    "name": "quote_price",
-                    "type": "extended_asset"
-                },
-                {
                     "name": "metadata",
                     "type": "string"
                 },
                 {
-                    "name": "sale_symbols",
-                    "type": "foreign_symbol[]"
-                },
-                {
                     "name": "number_cards",
                     "type": "uint8"
-                },
-                {
-                    "name": "allow_sale",
-                    "type": "bool"
-                },
-                {
-                    "name": "img",
-                    "type": "string"
                 }
             ]
         },
@@ -308,92 +374,6 @@
                 {
                     "name": "tx_id",
                     "type": "string"
-                }
-            ]
-        },
-        {
-            "name": "sale_item",
-            "base": "",
-            "fields": [
-                {
-                    "name": "sale_id",
-                    "type": "uint64"
-                },
-                {
-                    "name": "address_id",
-                    "type": "uint64"
-                },
-                {
-                    "name": "native_address",
-                    "type": "name"
-                },
-                {
-                    "name": "foreign_chain",
-                    "type": "name"
-                },
-                {
-                    "name": "foreign_address",
-                    "type": "string"
-                },
-                {
-                    "name": "foreign_contract",
-                    "type": "name"
-                },
-                {
-                    "name": "foreign_symbol",
-                    "type": "symbol"
-                },
-                {
-                    "name": "items",
-                    "type": "extended_asset[]"
-                },
-                {
-                    "name": "price",
-                    "type": "uint64"
-                },
-                {
-                    "name": "sale_time",
-                    "type": "time_point_sec"
-                },
-                {
-                    "name": "completed",
-                    "type": "bool"
-                },
-                {
-                    "name": "completed_tx_id",
-                    "type": "string"
-                }
-            ]
-        },
-        {
-            "name": "setallowed",
-            "base": "",
-            "fields": [
-                {
-                    "name": "pack_id",
-                    "type": "uint64"
-                },
-                {
-                    "name": "is_allowed",
-                    "type": "bool"
-                }
-            ]
-        },
-        {
-            "name": "swap",
-            "base": "",
-            "fields": [
-                {
-                    "name": "buyer",
-                    "type": "name"
-                },
-                {
-                    "name": "quantity",
-                    "type": "asset"
-                },
-                {
-                    "name": "tx_id",
-                    "type": "checksum256"
                 }
             ]
         },
@@ -442,13 +422,13 @@
             "ricardian_contract": ""
         },
         {
-            "name": "clearpacks",
-            "type": "clearpacks",
+            "name": "clearinvs",
+            "type": "clearinvs",
             "ricardian_contract": ""
         },
         {
-            "name": "clearsales",
-            "type": "clearsales",
+            "name": "clearpacks",
+            "type": "clearpacks",
             "ricardian_contract": ""
         },
         {
@@ -457,8 +437,8 @@
             "ricardian_contract": ""
         },
         {
-            "name": "createsale",
-            "type": "createsale",
+            "name": "delinvoice",
+            "type": "delinvoice",
             "ricardian_contract": ""
         },
         {
@@ -467,33 +447,23 @@
             "ricardian_contract": ""
         },
         {
-            "name": "delsale",
-            "type": "delsale",
-            "ricardian_contract": ""
-        },
-        {
             "name": "editpack",
             "type": "editpack",
             "ricardian_contract": ""
         },
         {
-            "name": "logsale",
-            "type": "logsale",
+            "name": "loginvoice",
+            "type": "loginvoice",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newinvoice",
+            "type": "newinvoice",
             "ricardian_contract": ""
         },
         {
             "name": "payment",
             "type": "payment",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "setallowed",
-            "type": "setallowed",
-            "ricardian_contract": ""
-        },
-        {
-            "name": "swap",
-            "type": "swap",
             "ricardian_contract": ""
         }
     ],
@@ -506,6 +476,13 @@
             "key_types": []
         },
         {
+            "name": "auctions",
+            "type": "auction_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
             "name": "deposits",
             "type": "deposit_item",
             "index_type": "i64",
@@ -513,15 +490,22 @@
             "key_types": []
         },
         {
-            "name": "packs",
-            "type": "pack_item",
+            "name": "ethswaps",
+            "type": "ethswap_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
         },
         {
-            "name": "sales",
-            "type": "sale_item",
+            "name": "invoices",
+            "type": "invoice_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "packs",
+            "type": "pack_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
