@@ -22,6 +22,44 @@
             ]
         },
         {
+            "name": "addauction",
+            "base": "",
+            "fields": [
+                {
+                    "name": "pack",
+                    "type": "extended_asset"
+                },
+                {
+                    "name": "start_time",
+                    "type": "time_point"
+                },
+                {
+                    "name": "price_symbol",
+                    "type": "foreign_symbol"
+                },
+                {
+                    "name": "start_price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "period_length",
+                    "type": "uint32"
+                },
+                {
+                    "name": "break_length",
+                    "type": "uint32"
+                },
+                {
+                    "name": "price_step",
+                    "type": "uint64"
+                },
+                {
+                    "name": "period_count",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "addpack",
             "base": "",
             "fields": [
@@ -70,12 +108,12 @@
                     "type": "uint64"
                 },
                 {
-                    "name": "start_time",
-                    "type": "time_point"
-                },
-                {
                     "name": "pack",
                     "type": "extended_asset"
+                },
+                {
+                    "name": "start_time",
+                    "type": "time_point"
                 },
                 {
                     "name": "price_symbol",
@@ -112,7 +150,7 @@
                     "type": "name"
                 },
                 {
-                    "name": "pack_id",
+                    "name": "auction_id",
                     "type": "uint64"
                 },
                 {
@@ -123,6 +161,11 @@
         },
         {
             "name": "clearaddress",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "clearauction",
             "base": "",
             "fields": []
         },
@@ -140,6 +183,16 @@
             "name": "clearswaps",
             "base": "",
             "fields": []
+        },
+        {
+            "name": "delauction",
+            "base": "",
+            "fields": [
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                }
+            ]
         },
         {
             "name": "delinvoice",
@@ -276,8 +329,8 @@
                     "type": "foreign_symbol"
                 },
                 {
-                    "name": "items",
-                    "type": "extended_asset[]"
+                    "name": "qty",
+                    "type": "uint8"
                 },
                 {
                     "name": "price",
@@ -368,7 +421,7 @@
             "base": "",
             "fields": [
                 {
-                    "name": "sale_id",
+                    "name": "invoice_id",
                     "type": "uint64"
                 },
                 {
@@ -407,6 +460,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "addauction",
+            "type": "addauction",
+            "ricardian_contract": ""
+        },
+        {
             "name": "addpack",
             "type": "addpack",
             "ricardian_contract": ""
@@ -422,6 +480,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "clearauction",
+            "type": "clearauction",
+            "ricardian_contract": ""
+        },
+        {
             "name": "clearinvs",
             "type": "clearinvs",
             "ricardian_contract": ""
@@ -434,6 +497,11 @@
         {
             "name": "clearswaps",
             "type": "clearswaps",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "delauction",
+            "type": "delauction",
             "ricardian_contract": ""
         },
         {

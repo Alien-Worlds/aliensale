@@ -52,6 +52,32 @@ void aliensale::delpack(uint64_t pack_id) {
     _packs.erase(pack);
 }
 
+void aliensale::addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t price_step, uint8_t period_count) {
+    require_auth(get_self());
+
+    uint64_t auction_id = _auctions.available_primary_key();
+    _auctions.emplace(get_self(), [&](auto &a){
+        a.auction_id = auction_id;
+        a.pack = pack;
+        a.start_time = start_time;
+        a.price_symbol = price_symbol;
+        a.start_price = start_price;
+        a.period_length = period_length;
+        a.break_length = break_length;
+        a.price_step = price_step;
+        a.period_count = period_count;
+    });
+}
+
+void aliensale::delauction(uint64_t auction_id) {
+    require_auth(get_self());
+
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
+    _auctions.erase(auction);
+}
+
 void aliensale::addaddress(uint64_t address_id, name foreign_chain, string address) {
     require_auth(get_self());
 
@@ -87,19 +113,20 @@ void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty
     uint64_t invoice_id = _invoices.available_primary_key();
     uint64_t foreign_price = auction_price(auction_id, qty);
 
-    _invoices.emplace(native_address, [&](auto &s){
-        s.invoice_id       = invoice_id;
-        s.auction_id       = auction_id;
-        s.address_id       = addr->address_id;
-        s.native_address   = native_address;
-        s.foreign_address  = foreign_address;
+    _invoices.emplace(native_address, [&](auto &i){
+        i.invoice_id       = invoice_id;
+        i.auction_id       = auction_id;
+        i.address_id       = addr->address_id;
+        i.native_address   = native_address;
+        i.foreign_address  = foreign_address;
+        i.qty              = qty;
 
         foreign_symbol    fs{foreign_chain, settlement_currency.get_contract(), settlement_currency.get_symbol()};
 
-        s.invoice_currency = fs;
-        s.price            = foreign_price;
-        s.invoice_time     = time_point(current_time_point().time_since_epoch());
-        s.completed        = false;
+        i.invoice_currency = fs;
+        i.price            = foreign_price;
+        i.invoice_time     = time_point(current_time_point().time_since_epoch());
+        i.completed        = false;
     });
 
     // remove the address
@@ -130,15 +157,23 @@ void aliensale::payment(uint64_t invoice_id, string tx_id) {
     auto invoice = _invoices.find(invoice_id);
     check(invoice != _invoices.end(), "Invoice not found");
 
+    auto auction = _auctions.find(invoice->auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
     if (!invoice->completed){
-        for (auto item: invoice->items){
-            // send each transfer
-            action(
-                    permission_level{get_self(), "xfer"_n},
-                    item.contract, "transfer"_n,
-                    make_tuple(get_self(), invoice->native_address, item.quantity, tx_id)
-            ).send();
-        }
+        auto pack_asset = auction->pack.quantity;
+        pack_asset.amount = invoice->qty;
+
+        action(
+            permission_level{get_self(), "xfer"_n},
+            auction->pack.contract, "transfer"_n,
+            make_tuple(get_self(), invoice->native_address, pack_asset, tx_id)
+        ).send();
+
+        // deduct amount bought from auction
+        _auctions.modify(auction, get_self(), [&](auto &a){
+            a.pack.quantity.amount -= invoice->qty;
+        });
 
         _invoices.modify(invoice, get_self(), [&](auto &i){
             i.completed       = true;
@@ -177,12 +212,20 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty) {
     check(deposit != _deposits.end(), "Deposit not found");
 
     check(auction->price_symbol.symbol == symbol{symbol_code{"WAX"}, 8}, "Please use createsale for non-native sales");
+    check(deposit->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Incorrect deposit symbol");
 
     auto pack_price = auction_price(auction_id, qty);
+    print("\npack price ", pack_price);
     check(pack_price == deposit->quantity.amount, "Incorrect amount deposited");
 
-    auto pack_asset = auction->pack.quantity * qty;
+    auto pack_asset = auction->pack.quantity;
+    pack_asset.amount = (uint64_t)qty;
     string memo = "Buying in auction";
+
+    // deduct amount bought from auction
+    _auctions.modify(auction, get_self(), [&](auto &a){
+        a.pack.quantity.amount -= qty;
+    });
 
     action(
         permission_level{get_self(), "xfer"_n},
@@ -306,6 +349,15 @@ void aliensale::clearpacks() {
     }
 }
 
+void aliensale::clearauction() {
+    require_auth(get_self());
+
+    auto auction = _auctions.begin();
+    while (auction != _auctions.end()){
+      auction = _auctions.erase(auction);
+    }
+}
+
 void aliensale::clearswaps() {
     require_auth(get_self());
 
@@ -338,81 +390,13 @@ std::string aliensale::bytetohex(unsigned char *data, int len) {
     return s;
 }
 
-/*uint64_t aliensale::compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain) {
-
-    auto pack_ind = _packs.get_index<"bypack"_n>();
-
-    uint64_t total = 0;
-    for (auto item: items){
-        // get price from sales packs table
-        auto pack = pack_ind.find(pack_item::extended_asset_id(item));
-        check(pack != pack_ind.end(), "Pack not found");
-        check(pack->allow_sale, "Pack sale not allowed");
-
-        bool needs_conversion = true;
-        name quote_pair;
-        if (settlement_currency.get_symbol().code() == symbol_code{"ETH"}){
-            quote_pair = "waxpeth"_n;
-        }
-        else if (settlement_currency.get_symbol().code() == symbol_code{"EOS"}){
-            quote_pair = "waxpeos"_n;
-        }
-        else if (pack->quote_price.quantity.symbol != settlement_currency.get_symbol()) {
-            check(false, "Quote pair unknown");
-        }
-        else {
-            needs_conversion = false;
-        }
-
-        // Check that this settlement currency is allowed for the pack
-        bool symbol_allowed = false;
-        for (auto sale_symbol: pack->sale_symbols){
-            if (sale_symbol.chain == foreign_chain
-                && sale_symbol.symbol == settlement_currency.get_symbol()
-                && sale_symbol.contract == settlement_currency.get_contract()){
-
-                symbol_allowed = true;
-                break;
-            }
-        }
-        check(symbol_allowed, "Sale currency is not allowed for this pack");
-
-        auto _datapoints = datapointstable(DELPHI_CONTRACT, quote_pair.value);
-        auto _pairs = pairstable(DELPHI_CONTRACT, DELPHI_CONTRACT.value);
-
-        double pack_price = (double)pack->quote_price.quantity.amount / pow(10, (double)pack->quote_price.quantity.symbol.precision());
-
-        if (pack->quote_price.quantity.symbol != settlement_currency.get_symbol() && needs_conversion){
-
-            auto pair_itr = _pairs.find(quote_pair.value);
-            check(pair_itr != _pairs.end(), "Pair not found");
-
-            auto dpi = _datapoints.get_index<"timestamp"_n>();
-            auto last_dp = dpi.rbegin();
-
-            uint64_t precision = pair_itr->quoted_precision;
-            uint64_t base_median = last_dp->median;
-
-            double conversion_price = (double)base_median / pow(10.0, (double)precision);  // in full tokens
-
-            total += (uint64_t)((double)item.quantity.amount * pack_price * conversion_price * pow(10, (double)pair_itr->quote_symbol.precision()));
-        }
-        else {
-            // settlement is same as quote so price is the same
-            total += (uint64_t)((double)item.quantity.amount * pack_price * pow(10, (double)settlement_currency.get_symbol().precision()));
-        }
-    }
-
-    return total;
-}*/
-
 uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
     auto auction = _auctions.find(auction_id);
     check(auction != _auctions.end(), "Auction not found");
 
     uint32_t time_now = current_time_point().sec_since_epoch();
-    uint32_t time_into_sale = time_now - auction->start_time.sec_since_epoch();
     check(time_now >= auction->start_time.sec_since_epoch(), "Auction has not started yet");
+    uint32_t time_into_sale = time_now - auction->start_time.sec_since_epoch();
 
     auto start_price = auction->start_price;
     uint32_t current_time = 0;
@@ -427,5 +411,5 @@ uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
         period_number = auction->period_count;
     }
 
-    return start_price * (period_number * auction->price_step);
+    return (start_price - (period_number * auction->price_step)) * qty;
 }

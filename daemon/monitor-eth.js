@@ -21,7 +21,7 @@ const signatureProvider = new JsSignatureProvider([config.private_key]);
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
 let my_accounts = [];
-let sales = {};
+let invoices = {};
 const validations = {};
 
 
@@ -68,14 +68,14 @@ const validate_transaction = async (block_num, tx) => {
         console.log(bal_json);
         balance = parseInt(bal_json.result);
         console.log(`balance is ${balance}`);
-        const sale = sales[tx.to.toLowerCase()];
-        console.log(`sale price ${sale.price}`);
+        const invoice = invoices[tx.to.toLowerCase()];
+        console.log(`invoice price ${invoice.price}`);
 
-        // get sale and check that our balance is > the required amount
-        if (sale.price <= balance){
-            console.log(`Sale ${sale.sale_id} is fully paid!!  ${sale.native_address} is getting some packs!`, sale);
+        // get invoice and check that our balance is > the required amount
+        if (invoice.price <= balance){
+            console.log(`Invoice ${invoice.invoice_id} is fully paid!!  ${invoice.native_address} is getting some packs!`, invoice);
 
-            send_action(sale, tx.hash);
+            send_action(invoice, tx.hash);
         }
     }
 };
@@ -83,18 +83,19 @@ const validate_transaction = async (block_num, tx) => {
 
 const update_accounts = async () => {
     my_accounts = [];
-    const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'sales', limit: 1000});
+    const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'invoices', limit: 1000});
     res.rows.forEach((row) => {
-        if (row.foreign_chain === 'ethereum' && !row.completed){
+        if (row.invoice_currency.chain === 'ethereum' && !row.completed){
             const addr = row.foreign_address.toLowerCase();
 
             my_accounts.push(addr);
-            sales[addr] = row;
+            invoices[addr] = row;
         }
     });
+    // console.log('Monitoring accounts', invoices)
 };
 
-const send_action = async (sale, tx_id) => {
+const send_action = async (invoice, tx_id) => {
     const actions = [];
     actions.push({
         account: config.contract,
@@ -104,7 +105,7 @@ const send_action = async (sale, tx_id) => {
             permission: config.payment_permission,
         }],
         data: {
-            sale_id: sale.sale_id,
+            invoice_id: invoice.invoice_id,
             tx_id
         }
     });
@@ -179,10 +180,10 @@ const check = async () => {
 
         if (json.result.length) {
             const tx = json.result[0];
-            const sale = sales[tx.to.toLowerCase()];
+            const invoice = invoices[tx.to.toLowerCase()];
             // console.log(tx)
 
-            if (typeof sale !== 'undefined'){
+            if (typeof invoice !== 'undefined'){
                 if (typeof validations[tx.blockNumber] === 'undefined'){
                     validations[tx.blockNumber] = [];
                 }

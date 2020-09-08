@@ -56,7 +56,7 @@
           <div v-for="pack in packs" :key="pack.symbol" class="p-4 w-25">
             <div v-if="pack.qty" class="d-flex justify-content-center">
               <div class="d-flex flex-column flex-wrap pack" @click="showOpenDialog(pack)">
-                <img :src="'https://ipfs.io/ipfs/' + pack.img" class="mw-100" />
+                <img :src="'https://ipfs.io/ipfs/' + pack.metadata.img" class="mw-100" />
                 <div>
                   <div>{{ pack.qty }} packs</div>
                   {{ pack.metadata.name }}

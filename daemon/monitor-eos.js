@@ -17,7 +17,7 @@ const signatureProvider = new JsSignatureProvider([config.private_key]);
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
 let my_accounts = [];
-let sales = {};
+let invoices = {};
 const validations = {}; // block_num : transaction ids to validate and send payment action after 10 blocks
 let sr;
 let watchdog_last_block = 0;
@@ -45,7 +45,8 @@ const get_start_block = async () => {
     }
     catch (e){}
 
-    return config.eos.default_start_block;
+    const info = await foreign_rpc.get_info();
+    return info.last_irreversible_block_num;
 };
 
 const set_start_block = async (block_num) => {
@@ -56,18 +57,18 @@ const set_start_block = async (block_num) => {
 
 const update_accounts = async () => {
     my_accounts = [];
-    const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'sales', limit: 1000});
+    const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'invoices', limit: 1000});
     res.rows.forEach((row) => {
-        if (row.foreign_chain === 'eos'){
+        if (row.invoice_currency.chain === 'eos'){
             const addr = row.foreign_address.toLowerCase();
 
             my_accounts.push(addr);
-            sales[addr] = row;
+            invoices[addr] = row;
         }
     });
 };
 
-const send_action = async (sale, tx_id) => {
+const send_action = async (invoice, tx_id) => {
     const actions = [];
     actions.push({
         account: config.contract,
@@ -77,7 +78,7 @@ const send_action = async (sale, tx_id) => {
             permission: config.payment_permission,
         }],
         data: {
-            sale_id: sale.sale_id,
+            invoice_id: invoice.invoice_id,
             tx_id
         }
     });
@@ -98,29 +99,29 @@ const validate_transaction = async (block_num, transaction_id) => {
     console.log(trx.trx.trx.actions);
     trx.trx.trx.actions.forEach((act) => {
         if (act.name === 'transfer' && act.data.to === config.eos.receive_address){
-            const sale = sales[act.data.memo];
-            if (typeof sale !== 'undefined'){
-                console.log(`Found sale!!`, sale);
+            const invoice = invoices[act.data.memo];
+            if (typeof invoice !== 'undefined'){
+                console.log(`Found invoice!!`, invoice);
 
                 const [amount_str, sym] = act.data.quantity.split(' ');
                 const amount = parseFloat(amount_str);
-                const [required_precision_str, required_symbol] = sale.foreign_symbol.split(',');
+                const [required_precision_str, required_symbol] = invoice.invoice_currency.symbol.split(',');
                 const required_precision = parseInt(required_precision_str);
                 if (required_symbol !== sym){
                     console.error(`Symbol does not match required`, required_symbol, sym);
                     return;
                 }
-                if (sale.foreign_contract != act.account){
-                    console.error(`Wrong contract ${act.account} != ${sale.foreign_contract}`);
+                if (invoice.invoice_currency.contract != act.account){
+                    console.error(`Wrong contract ${act.account} != ${invoice.invoice_currency.contract}`);
                     return;
                 }
 
-                const required = sale.price / Math.pow(10, required_precision);
+                const required = invoice.price / Math.pow(10, required_precision);
 
                 if (required <= amount){
-                    console.log(`${sale.native_address} has paid for sale ${sale.sale_id}!`);
+                    console.log(`${invoice.native_address} has paid for invoice ${invoice.invoice_id}!`);
 
-                    send_action(sale, transaction_id.toLowerCase());
+                    send_action(invoice, transaction_id.toLowerCase());
                 }
             }
         }
@@ -130,12 +131,12 @@ const validate_transaction = async (block_num, transaction_id) => {
     /*const [amount_str, sym] = quantity.split(' ');
     const amount = parseFloat(amount_str);
 
-    const required = sale.price / Math.pow(10, 4);
+    const required = invoice.price / Math.pow(10, 4);
 
     if (required <= amount){
-        console.log(`${sale.native_address} has paid for sale ${sale.sale_id}!`);
+        console.log(`${invoice.native_address} has paid for invoice ${invoice.invoice_id}!`);
 
-        send_action(sale, trx.id.toLowerCase());
+        send_action(invoice, trx.id.toLowerCase());
     }*/
 }
 
@@ -183,10 +184,10 @@ class TraceHandler {
                                         console.log(from, to, quantity, memo);
                                         await update_accounts();
 
-                                        const sale = sales[memo.toLowerCase()];
+                                        const invoice = invoices[memo.toLowerCase()];
 
-                                        if (typeof sale !== 'undefined'){
-                                            console.log(`Found sale `, sale);
+                                        if (typeof invoice !== 'undefined'){
+                                            console.log(`Found invoice `, invoice);
 
                                             // save to validations to check after 20 blocks
                                             if (typeof validations[block_num] === 'undefined'){

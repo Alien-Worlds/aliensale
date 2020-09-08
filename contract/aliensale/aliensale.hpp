@@ -44,7 +44,7 @@ namespace alienworlds {
             name                   native_address;
             string                 foreign_address;
             foreign_symbol         invoice_currency;
-            vector<extended_asset> items;
+            uint8_t                qty;
             uint64_t               price; // in foreign satoshis / wei
             time_point_sec         invoice_time;
             bool                   completed = false;
@@ -130,8 +130,8 @@ namespace alienworlds {
         /* A dutch auction period, deals with the sale of a single pack for a single price */
         struct [[eosio::table("auctions")]] auction_item {
             uint64_t       auction_id;
-            time_point     start_time;
             extended_asset pack;           // the actual pack as well as the quantity currently available for sale
+            time_point     start_time;
             foreign_symbol price_symbol;   // the currency this auction is taking place in (eg. WAX, ETH)
             uint64_t       start_price;    // always in satoshis of the currency
             uint32_t       period_length;  // length of time for a particular sale
@@ -168,38 +168,6 @@ namespace alienworlds {
             indexed_by<"value"_n, const_mem_fun<datapoints, uint64_t, &datapoints::by_value>>,
             indexed_by<"timestamp"_n, const_mem_fun<datapoints, uint64_t, &datapoints::by_timestamp>>> datapointstable;
 
-
-        //Holds the list of pairs
-        struct pairs {
-
-            bool active = false;
-            bool bounty_awarded = false;
-            bool bounty_edited_by_custodians = false;
-
-            name proposer;
-            name name;
-
-            asset bounty_amount;
-
-            std::vector<eosio::name> approving_custodians;
-            std::vector<eosio::name> approving_oracles;
-
-            symbol base_symbol;
-            asset_type base_type;
-            eosio::name base_contract;
-
-            symbol quote_symbol;
-            asset_type quote_type;
-            eosio::name quote_contract;
-
-            uint64_t quoted_precision;
-
-            uint64_t primary_key() const {return name.value;}
-
-        };
-        typedef eosio::multi_index<"pairs"_n, pairs> pairstable;
-
-
         // Local instances
         addresses_table _addresses;
         invoices_table  _invoices;
@@ -226,6 +194,12 @@ namespace alienworlds {
         /* Delete pack */
         [[eosio::action]] void delpack(uint64_t pack_id);
 
+        /* Add auction */
+        [[eosio::action]] void addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t price_step, uint8_t period_count);
+
+        /* Delete auction */
+        [[eosio::action]] void delauction(uint64_t auction_id);
+
         /* Add addresses to the unused addresses table (ETH/EOS) - for EOS, this would be a memo reference, not address */
         [[eosio::action]] void addaddress(uint64_t address_id, name foreign_chain, string address);
 
@@ -239,10 +213,10 @@ namespace alienworlds {
         [[eosio::action]] void delinvoice(uint64_t invoice_id);
 
         /* Records a payment for a particular sale, this is sent by an off-chain oracle */
-        [[eosio::action]] void payment(uint64_t sale_id, string tx_id);
+        [[eosio::action]] void payment(uint64_t invoice_id, string tx_id);
 
         /* Buy using deposited funds using native token */
-        [[eosio::action]] void buy(name buyer, uint64_t pack_id, uint8_t qty);
+        [[eosio::action]] void buy(name buyer, uint64_t auction_id, uint8_t qty);
 
         /* Swap from EOS, will be called by the watcher script */
         // [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
@@ -256,6 +230,7 @@ namespace alienworlds {
         /* Admin only during development */
         [[eosio::action]] void clearinvs();
         [[eosio::action]] void clearpacks();
+        [[eosio::action]] void clearauction();
         [[eosio::action]] void clearswaps();
         [[eosio::action]] void clearaddress();
     };
