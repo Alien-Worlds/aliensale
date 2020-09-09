@@ -1,5 +1,5 @@
 <template>
-  <q-page class="full-width column wrap justify-start content-center">
+  <q-page class="">
     <div id="video-container">
       <div>
         <video width="100%" height="240" id="pack-open-video">
@@ -48,10 +48,13 @@
 
     </div>
 
-    <div id="open-packs-list" v-if="!inOpening">
-      <div class="text-h1">Open Packs</div>
+    <div id="open-packs-list" v-if="!inOpening" class="row justify-center">
 
-      <div>
+      <div class="row justify-center text-h1">
+        Open Packs
+      </div>
+
+      <div class="w-75">
         <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
           <div v-for="pack in packs" :key="pack.symbol" class="p-4 w-25">
             <div v-if="pack.qty" class="d-flex justify-content-center">

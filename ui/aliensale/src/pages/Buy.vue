@@ -5,32 +5,38 @@
       </div>
 
       <div class="row justify-center">
-        <div>
-          <div v-for="auction in auctions" :key="auction.auction_id">
+        <div class="w-75">
+          <div v-for="auction in auctions" :key="auction.auction_id" style="padding:20px 0;border-bottom: 2px solid silver">
             <div class="row" v-if="auction.amount">
-              <div class="col-6">
-                <p>{{ auction.pack_data.metadata.name }}</p>
+              <div class="col-2">
                 <img :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" style="max-width:100px" />
               </div>
-              <div class="col-4" v-if="!auction.in_rest">
+              <div class="col-6">
+                <p>{{ auction.pack_data.metadata.name }}</p>
+              </div>
+
+              <div class="col-4" v-if="!auction.in_rest && auction.has_started">
                 <p>Current Price : {{ auction.current_price }}</p>
                 <p>Next Price : {{ auction.next_price }}</p>
+
+                <div class="row">
+                  <div class="col-4">Quantity</div>
+                  <div class="col-4"><b-form-input value="1" type="number" :id="'buyQty' + auction.auction_id" step="1" min="1" :max="auction.amount"></b-form-input></div>
+                  <div class="col-4"><b-button label="Buy" @click="startBuy(auction)">Buy</b-button> </div>
+                </div>
+                <p>({{ auction.amount }} left)</p>
               </div>
-              <div class="col-4" v-if="auction.in_rest">Auction is resting, next price will be {{ auction.next_price }}</div>
-              <div class="col-2" v-if="!auction.has_started">Auction has not started yet</div>
-              <div class="col-2" v-if="!auction.in_rest && auction.has_started">
-                Quantity
-                <b-form-input value="1" type="number" :id="'buyQty' + auction.auction_id" step="1" min="1" :max="auction.amount"></b-form-input>
-                <b-button label="Buy" @click="startBuy(auction)">Buy</b-button> <p>({{ auction.amount }} left)</p>
-              </div>
+              <div class="col-4" v-if="auction.in_rest && auction.has_started">Auction is resting, next price will be {{ auction.next_price }}</div>
+              <div class="col-4" v-if="!auction.has_started">Auction has not started yet</div>
+
               <!-- <div class="col-4">{{ pack.quote_price.quantity }}</div>-->
             </div>
             <div class="row text-red" v-else style="text-decoration: line-through">
-              <div class="col-6">
+              <div class="col-2">
                 <img :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" style="max-width:100px" />
-                {{ auction.pack_data.metadata.name }}
               </div>
-              <div class="col-2">Sold out!</div>
+              <div class="col-6">{{ auction.pack_data.metadata.name }}</div>
+              <div class="col-4">Sold out!</div>
             </div>
           </div>
         </div>
@@ -312,36 +318,6 @@ export default {
           memo: logData.foreign_address
         }
       }
-      // let resp = null
-      /* console.log('create sale for pack', pack)
-      const saleSymbol = pack.sale_symbols.filter(s => {
-        const re = new RegExp(`,${foreignSym}$`)
-        return re.test(s.symbol)
-      })[0]
-      console.log('saleSymbol', saleSymbol)
-      console.log('sale log', logData)
-      if (logData.foreign_address && logData.foreign_price && logData.sale_id) {
-        // log into eos if not already and send the eos payment
-
-        const [precisionStr, symbol] = logData.settlement_currency.sym.split(',')
-        const precision = parseInt(precisionStr)
-
-        const nativeAmount = (logData.foreign_price / Math.pow(10, precision)).toFixed(precision)
-
-        this.paymentRequest = {
-          network: 'eos',
-          amount: nativeAmount,
-          contract: logData.settlement_currency.contract,
-          symbol,
-          precision,
-          from: accounts.eos,
-          to: 'alienworlds1',
-          memo: logData.foreign_address
-        }
-      } else {
-        console.error('Failed to fetch sale data', logData)
-      }
-      // return resp */
     },
     async buyEth (account, qty, auction) {
       // const saleSymbol = pack.sale_symbols.filter(s => s.symbol === '18,ETH')[0]
@@ -389,28 +365,6 @@ export default {
           await this.buyEos(this.getAccountName, buyQty, auctionData)
           break
       }
-
-      /* const pack = this.buyPack
-
-      const [priceStr] = pack.quote_price.quantity.split(' ')
-      const price = parseFloat(priceStr)
-      const payAmount = price * this.buyQty
-
-      const currency = pack.sale_symbols[saleIndex].symbol.split(',')[1]
-
-      console.log('startBuy', currency)
-
-      switch (currency) {
-        case 'WAX':
-          await this.buyWax(this.getAccountName.wax, payAmount, this.buyQty, pack)
-          break
-        case 'ETH':
-          await this.buyEth(this.getAccountName.wax, this.buyQty, pack)
-          break
-        default:
-          await this.buyEos(this.getAccountName, this.buyQty, pack, currency)
-          break
-      } */
     }
   },
   async mounted () {
