@@ -33,10 +33,10 @@
           <div v-for="(card, cardnum) in receivedCards" :key="cardnum" class="flip-card" @click="raiseCard(cardnum)">
             <div class="flip-card-inner">
               <div class="flip-card-front">
-                <img src="/card_back.png" style="width:300px;" />
+                <img :src="'https://ipfs.io/ipfs/' + card.img" style="width:300px;" />
               </div>
               <div class="flip-card-back">
-                <img src="/tools/EQ123EG.png" style="width:300px;">
+                <img :src="'https://ipfs.io/ipfs/' + card.backimg" style="width:300px;">
               </div>
             </div>
           </div>
@@ -400,8 +400,11 @@ export default {
   }
 
   /* Do an horizontal flip when you move the mouse over the flip box container */
-  .flip-card.flipped .flip-card-inner {
+  .flip-card .flip-card-inner {
     transform: rotateY(180deg);
+  }
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(0deg);
   }
 
   /* Position the front and back side */
