@@ -31,7 +31,7 @@
       <div class="d-flex flex-row flex-nowrap justify-content-center">
         <div style="width:300px;position: absolute; top:20px">
           <div v-for="(card, cardnum) in receivedCards" :key="cardnum" class="flip-card" @click="raiseCard(cardnum)">
-            <div class="flip-card-inner">
+            <div class="flip-card-inner" :class="'rarity-' + card.rarity.toLowerCase()">
               <div class="flip-card-front">
                 <img :src="'https://ipfs.io/ipfs/' + card.img" style="width:300px;" />
               </div>
@@ -258,6 +258,7 @@ export default {
       })
     },
     calcStyle (n, len) {
+      console.log(`Calc position for ${n} of ${len}`)
       const delta = 120 // space between cards
       const total = len * delta
       const left = (n / len * total) - ((total - 150) / 2)
@@ -267,49 +268,63 @@ export default {
       return { left, top, rotate }
     },
     revealCard (cardNo) {
-      const cards = document.getElementsByClassName('flip-card')
-      // console.log(`revealing ${cards.length} cards`, cards, cardNo)
-      const { left, top, rotate } = this.calcStyle(cardNo, cards.length)
-      // console.log({ left, top, rotate })
-      cards[cardNo].style.top = `${top}px`
-      cards[cardNo].style.left = `${left}px`
-      cards[cardNo].style.transform = `rotate(${rotate}deg)`
+      const cardsElements = document.getElementsByClassName('flip-card')
+      console.log(`revealing ${cardsElements.length} cardsElements`, cardsElements, cardNo)
+      const { left, top, rotate } = this.calcStyle(cardNo, cardsElements.length)
+      console.log({ left, top, rotate })
+      cardsElements[cardNo].style.top = `${top}px`
+      cardsElements[cardNo].style.left = `${left}px`
+      cardsElements[cardNo].style.transform = `rotate(${rotate}deg)`
 
-      cards[cardNo].addEventListener('transitionend', () => {
-        setTimeout(() => { cards[cardNo].classList.add('flipped') }, 500)
-        if (cardNo >= cards.length - 1) {
-          this.revealComplete = true
-        }
-      })
+      let revealDelay = 800
+      if (cardsElements[cardNo].firstChild.classList.contains('rarity-epic')) {
+        revealDelay = 1200
+      } else if (cardsElements[cardNo].firstChild.classList.contains('rarity-legendary')) {
+        revealDelay = 4000
+      }
+
+      const flipCardFn = () => {
+        console.log('flip transition end listener, going to flip in ', revealDelay)
+        setTimeout(() => {
+          console.log(`Flipping card ${cardNo}`)
+          cardsElements[cardNo].classList.add('flipped')
+          if (cardNo >= cardsElements.length - 1) {
+            this.revealComplete = true
+          } else {
+            setTimeout(() => { this.revealCard(cardNo + 1) }, 1200)
+          }
+        }, revealDelay)
+      }
+
+      cardsElements[cardNo].addEventListener('transitionend', flipCardFn)
     },
     revealPack () {
-      for (let c = 0; c < this.openingPack.number_cards; c++) {
-        setTimeout(() => { this.revealCard(c) }, 2200 * c)
-      }
+      console.log('revealPack')
+      this.revealCard(0)
     },
     raiseCard (cardNum) {
-      const cards = document.getElementsByClassName('flip-card')
-      // console.log('raising card', cards[cardNum].style.zIndex)
+      const cardsElements = document.getElementsByClassName('flip-card')
+      // console.log('raising card', cardsElements[cardNum].style.zIndex)
       let raiseCard = true
-      if (cards[cardNum].style.zIndex === '10') {
+      if (cardsElements[cardNum].style.zIndex === '10') {
         // card already on top, let it go back to its place
         console.log('lowering card')
         raiseCard = false
       }
-      for (let c = 0; c < cards.length; c++) {
-        const { top, left, rotate } = this.calcStyle(c, cards.length)
-        cards[c].style.zIndex = 0
-        cards[c].style.top = `${top}px`
-        cards[c].style.left = `${left}px`
-        cards[c].style.transform = `rotate(${rotate}deg)`
+      for (let c = 0; c < cardsElements.length; c++) {
+        const { top, left, rotate } = this.calcStyle(c, cardsElements.length)
+        cardsElements[c].style.zIndex = 0
+        cardsElements[c].style.top = `${top}px`
+        cardsElements[c].style.left = `${left}px`
+        cardsElements[c].style.transform = `rotate(${rotate}deg)`
       }
 
       if (raiseCard) {
-        const { top, left, rotate } = this.calcStyle(cardNum, cards.length)
-        cards[cardNum].style.zIndex = 10
-        cards[cardNum].style.top = `${top - 20}px`
-        cards[cardNum].style.left = `${left}px`
-        cards[cardNum].style.transform = `rotate(${rotate}deg)`
+        const { top, left, rotate } = this.calcStyle(cardNum, cardsElements.length)
+        cardsElements[cardNum].style.zIndex = 10
+        cardsElements[cardNum].style.top = `${top - 20}px`
+        cardsElements[cardNum].style.left = `${left}px`
+        cardsElements[cardNum].style.transform = `rotate(${rotate}deg)`
       }
     },
     showOpenDialog (pack) {
@@ -334,17 +349,29 @@ export default {
       console.log(`${cards.length} cards received, waiting for ${this.openingPack.number_cards}`)
       if (cards.length >= this.openingPack.number_cards) {
         console.log('got all cards')
+        // shuffle cards
+        for (var i = cards.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1))
+          var temp = cards[i]
+          cards[i] = cards[j]
+          cards[j] = temp
+        }
         this.packReveal = true
       }
     },
     videoEnded (ve) {
       if (ve && this.packReveal) {
+        console.log('Video has ended, going to reveal pack on next tick')
         this.$nextTick(this.revealPack.bind(this))
+      } else if (ve) {
+        console.log('Video has ended but packReveal is not set')
       }
     },
     packReveal (pr) {
       if (pr && this.videoEnded) {
         this.$nextTick(this.revealPack.bind(this))
+      } else if (pr) {
+        console.log('Packreveal is set but video not ended yet')
       }
     }
   },
@@ -425,6 +452,40 @@ export default {
   .flip-card-back {
     color: white;
     transform: rotateY(180deg);
+  }
+
+  /* Glow effects for special cards */
+  @keyframes legendary-glow {
+    0% {
+      -webkit-filter: drop-shadow(0 0 2px #f0a600);
+      filter: drop-shadow(0 0 2px #f0a600);
+    }
+    100% {
+      -webkit-filter: drop-shadow(0 0 40px #f0a600);
+      filter: drop-shadow(0 0 40px #f0a600);
+    }
+  }
+  @keyframes mythical-glow {
+    0% {
+      -webkit-filter: drop-shadow(0 0 2px #9f2729);
+      filter: drop-shadow(0 0 2px #9f2729);
+    }
+    100% {
+      -webkit-filter: drop-shadow(0 0 60px #9f2729);
+      filter: drop-shadow(0 0 60px #9f2729);
+    }
+  }
+  .flip-card-inner.rarity-rare .flip-card-back {
+    filter: drop-shadow(0 0 5px #62c7e0);
+  }
+  .flip-card-inner.rarity-epic .flip-card-back {
+    filter: drop-shadow(0 0 20px #9749c9);
+  }
+  .flip-card .flip-card-inner.rarity-legendary .flip-card-back {
+    animation: legendary-glow 2.5s alternate infinite;
+  }
+  .flip-card-inner.rarity-mythical .flip-card-back {
+    animation: mythical-glow 1.5s alternate infinite;
   }
 
   .back-packs-btn {
