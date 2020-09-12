@@ -5,9 +5,9 @@
         <div class="d-flex justify-content-center">
           <div class="d-flex flex-column flex-wrap">
             <img :src="'https://ipfs.io/ipfs/' + card.data.img" class="mw-100" />
-            <div>
+            <!-- <div>
               {{ card.name }}
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
