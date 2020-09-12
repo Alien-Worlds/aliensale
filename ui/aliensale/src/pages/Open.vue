@@ -22,11 +22,11 @@
       </q-card>
     </q-dialog>
 
-    <div id="pack-reveal-container" v-if="packReveal" class="mt-8">
+    <div v-if="waitingPack && !packReveal">
+      Waiting for pack open...
+    </div>
 
-      <div v-if="waitingPack">
-        Waiting for pack open...
-      </div>
+    <div id="pack-reveal-container" v-if="packReveal" class="mt-8">
 
       <div class="d-flex flex-row flex-nowrap justify-content-center">
         <div style="width:300px;position: absolute; top:20px">
@@ -40,6 +40,21 @@
               </div>
             </div>
           </div>
+          <!-- Trilium card -->
+          <div v-if="receivedTrilium > 0" class="flip-card" @click="raiseCard('trilium')">
+            <div class="flip-card-inner rarity-trilium">
+              <div class="flip-card-front">
+                <img src="/1TLM_Card.png" style="width:300px;" />
+                <div class="flip-card-tlm">
+                  {{receivedTrilium}} TLM
+                </div>
+              </div>
+              <div class="flip-card-back">
+                <img src="https://ipfs.io/ipfs/QmW4Uzxj54kouPUM9q4r3FZz5mDqnJ86McJ39pGFLwpByM" style="width:300px;">
+              </div>
+            </div>
+          </div>
+
         </div>
         <div class="back-packs-btn" v-if="revealComplete">
           <b-button @click="returnHome()">Return to packs</b-button>
@@ -92,9 +107,10 @@
 <script>
 // import { Vue } from 'vue'
 import { mapGetters } from 'vuex'
-import io from 'socket.io-client'
+// import io from 'socket.io-client'
 import { BButton } from 'bootstrap-vue'
-let cards = {}
+import fetch from 'node-fetch'
+// let cards = {}
 
 export default {
   name: 'OpenPage',
@@ -113,7 +129,8 @@ export default {
       videoEnded: false,
       revealComplete: false,
       confirmOpenPack: null,
-      confirmOpenPackShow: false
+      confirmOpenPackShow: false,
+      receivedTrilium: 0
     }
   },
   computed: {
@@ -132,6 +149,7 @@ export default {
       this.videoEnded = false
       this.revealComplete = false
       this.confirmOpenPack = null
+      this.receivedTrilium = 0
     },
     async reloadPacks () {
       // console.log('RELOAD PACKS', this.account)
@@ -171,8 +189,8 @@ export default {
     },
     async openPack (pack) {
       const sym = pack.symbol
-      cards = {}
-      this.cards = {}
+      // cards = {}
+      // this.cards = {}
       this.openingPack = pack
 
       this.receivedCards = []
@@ -200,7 +218,10 @@ export default {
           account: this.getAccountName.wax
         }
       }]
-      await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+      const res = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+
+      // Start polling for openlog action
+      this.startPoll(res)
 
       this.waitingPack = true
       this.packsLoaded = false
@@ -224,7 +245,34 @@ export default {
 
       this.reloadPacks()
     },
-    startListener () {
+    startPoll (res) {
+      this.pollTimer = setInterval(() => { this.poll(res.transaction.processed.block_time) }, 1000)
+    },
+    async poll (checkDate) {
+      const url = `${this.$config.waxEndpoint}/v2/history/get_actions?account=${this.getAccountName.wax}&after=${checkDate}&filter=open.worlds:logopen`
+      const res = await fetch(url)
+      const json = await res.json()
+      if (json.actions.length) {
+        clearInterval(this.pollTimer)
+        const cards = []
+        const actionData = json.actions[0].act.data
+        const templateIds = actionData.chosen_cards.map(c => c.template_id)
+        const templateUrl = `${this.$config.atomicEndpoint}/atomicassets/v1/templates?ids=${templateIds.join(',')}`
+        const templatesRes = await fetch(templateUrl)
+        const templates = await templatesRes.json()
+        templateIds.forEach((tId) => {
+          const template = templates.data.find(t => `${t.template_id}` === `${tId}`)
+          cards.push(template.immutable_data)
+        })
+        this.receivedCards = cards
+
+        // Check if any trilium is in the pack
+        // console.log(actionData)
+        const [tlmStr] = actionData.ft_bonus.split(' ')
+        this.receivedTrilium = parseFloat(tlmStr).toFixed(2)
+      }
+    },
+    /* startListener () {
       if (this.getAccountName.wax !== null) {
         const atomicEndpoint = this.$config.atomicEndpoint
         this.subscribe(atomicEndpoint, this.getAccountName.wax, (asset) => {
@@ -256,7 +304,7 @@ export default {
           callback(data.asset)
         }
       })
-    },
+    }, */
     calcStyle (n, len) {
       console.log(`Calc position for ${n} of ${len}`)
       const delta = 120 // space between cards
@@ -272,9 +320,6 @@ export default {
       console.log(`revealing ${cardsElements.length} cardsElements`, cardsElements, cardNo)
       const { left, top, rotate } = this.calcStyle(cardNo, cardsElements.length)
       console.log({ left, top, rotate })
-      cardsElements[cardNo].style.top = `${top}px`
-      cardsElements[cardNo].style.left = `${left}px`
-      cardsElements[cardNo].style.transform = `rotate(${rotate}deg)`
 
       let revealDelay = 800
       if (cardsElements[cardNo].firstChild.classList.contains('rarity-epic')) {
@@ -282,7 +327,6 @@ export default {
       } else if (cardsElements[cardNo].firstChild.classList.contains('rarity-legendary')) {
         revealDelay = 4000
       }
-
       const flipCardFn = () => {
         console.log('flip transition end listener, going to flip in ', revealDelay)
         setTimeout(() => {
@@ -295,8 +339,18 @@ export default {
           }
         }, revealDelay)
       }
-
       cardsElements[cardNo].addEventListener('transitionend', flipCardFn)
+      if (cardNo === 0) {
+        setTimeout(() => {
+          cardsElements[cardNo].style.top = `${top}px`
+          cardsElements[cardNo].style.left = `${left}px`
+          cardsElements[cardNo].style.transform = `rotate(${rotate}deg)`
+        }, 1000)
+      } else {
+        cardsElements[cardNo].style.top = `${top}px`
+        cardsElements[cardNo].style.left = `${left}px`
+        cardsElements[cardNo].style.transform = `rotate(${rotate}deg)`
+      }
     },
     revealPack () {
       console.log('revealPack')
@@ -337,7 +391,7 @@ export default {
       if (accountName) {
         // load the packs
         this.reloadPacks()
-        this.startListener()
+        // this.startListener()
       }
     },
     waitingPack (wp) {
@@ -365,6 +419,7 @@ export default {
         this.$nextTick(this.revealPack.bind(this))
       } else if (ve) {
         console.log('Video has ended but packReveal is not set')
+        this.waitingPack = true
       }
     },
     packReveal (pr) {
@@ -377,8 +432,8 @@ export default {
   },
   async mounted () {
     this.reloadPacks()
-    this.startListener()
-    window.setInterval(this.reloadPacks, 5000)
+    // this.startListener()
+    // window.setInterval(this.reloadPacks, 5000)
   }
 }
 </script>
@@ -446,6 +501,14 @@ export default {
   /* Style the front side (fallback if image is missing) */
   .flip-card-front {
     color: black;
+  }
+
+  .flip-card-tlm {
+    position: relative;
+    bottom: 173px;
+    color: #232323;
+    font-size: 1.6em;
+    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #333, -1px 1px 0 #000, 1px 1px 0 #000;
   }
 
   /* Style the back side */
