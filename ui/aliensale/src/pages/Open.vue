@@ -22,7 +22,7 @@
       </q-card>
     </q-dialog>
 
-    <div v-if="waitingPack && !packReveal">
+    <div v-if="waitingPack && !packReveal && videoEnded">
       Waiting for pack open...
     </div>
 
