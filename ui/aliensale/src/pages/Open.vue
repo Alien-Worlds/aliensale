@@ -44,7 +44,7 @@
           <div v-if="receivedTrilium > 0" class="flip-card" @click="raiseCard('trilium')">
             <div class="flip-card-inner rarity-trilium">
               <div class="flip-card-front">
-                <img src="/1TLM_Card.png" style="width:300px;" />
+                <img src="https://ipfs.io/ipfs/QmXnU2R7FG931FgP5ayT1EVTdCoi7NCC5noUktmVLXNUxz" style="width:300px;" />
                 <div class="flip-card-tlm">
                   {{receivedTrilium}} TLM
                 </div>
