@@ -55,6 +55,8 @@ void aliensale::delpack(uint64_t pack_id) {
 void aliensale::addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t price_step, uint8_t period_count) {
     require_auth(get_self());
 
+    check((start_price - (price_step * period_count)) > 0, "Auction final price is not above 0");
+
     uint64_t auction_id = _auctions.available_primary_key();
     _auctions.emplace(get_self(), [&](auto &a){
         a.auction_id = auction_id;
