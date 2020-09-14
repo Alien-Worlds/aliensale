@@ -22,26 +22,16 @@
                   <router-link to="/redeem" class="nav-link">Redeem Voucher</router-link>
                 </li>
                 <li>
-                  <div v-if="getAccountName.wax">{{ getAccountName.wax }} on wax</div>
-                  <div v-if="getAccountName.eos">{{ getAccountName.eos }} on eos</div>
-                </li>
-                <li>
-                  <b-button @click="logout" v-if="getAccountName.wax || getAccountName.eos">Logout</b-button>
+                  <div class="row" style="padding-left: 30px">
+                    <div><img src="/images/wax-logo-white.png" :class="waxLogoClass" @click="login('wax')" /></div>
+                    <div><img src="/images/eos-logo.png" :class="eosLogoClass" @click="login('eos')" /></div>
+                  </div>
                 </li>
               </ul>
             </div>
           </div>
         </nav>
       </header>
-
-      <!-- <nav>
-        <router-link to="/buy">Buy Packs</router-link> |
-        <router-link to="/open">Open Packs</router-link>
-      </nav>
-      <div v-if="getAccountName.wax">Logged in as {{ getAccountName.wax }} on wax</div>
-      <div v-if="getAccountName.eos">Logged in as {{ getAccountName.eos }} on eos</div>
-
-      <q-btn @click="logout">Logout</q-btn> -->
 
       <div id="main-content">
         <router-view />
@@ -53,12 +43,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BButton } from 'bootstrap-vue'
 
 export default {
   name: 'MainLayout',
   components: {
-    'b-button': BButton
   },
   data () {
     return {
@@ -68,21 +56,45 @@ export default {
   computed: {
     ...mapGetters({
       getAccountName: 'ual/getAccountName'
-    })
+    }),
+    waxLogoClass () {
+      return (this.getAccountName.wax) ? 'login wax-login' : 'login wax-login-inactive'
+    },
+    eosLogoClass () {
+      return (this.getAccountName.eos) ? 'login eos-login' : 'login eos-login-inactive'
+    }
   },
   methods: {
     async logout () {
       // console.log('logout')
       this.$store.dispatch('ual/logout')
+    },
+    login (network) {
+      this.$store.dispatch('ual/renderLoginModal', network, { root: true })
     }
   },
   async mounted () {
     await this.$store.dispatch('ual/attemptAutoLogin')
     if (!this.getAccountName.wax) {
-      console.log('Dont have wax')
       await this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
     }
     // this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
   }
 }
 </script>
+
+<style>
+  .login {
+    height: 25px;
+    cursor: pointer;
+  }
+  .wax-login {}
+  .wax-login-inactive {
+    opacity: 0.5;
+    filter: grayscale(100%);
+  }
+  .eos-login {}
+  .eos-login-inactive {
+    opacity: 0.5;
+  }
+</style>
