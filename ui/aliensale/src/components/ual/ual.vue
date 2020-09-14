@@ -226,7 +226,6 @@ export default {
 
     console.log('UAL', this.ual)
     this.$store.commit('ual/setUAL', this.ual)
-    this.$store.dispatch('ual/attemptAutoLogin')
   },
 
   watch: {

@@ -72,12 +72,16 @@ export default {
   },
   methods: {
     async logout () {
-      console.log('logout')
+      // console.log('logout')
       this.$store.dispatch('ual/logout')
     }
   },
   async mounted () {
-    this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
+    await this.$store.dispatch('ual/attemptAutoLogin')
+    if (!this.getAccountName.wax) {
+      console.log('Dont have wax')
+      await this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
+    }
     // this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
   }
 }

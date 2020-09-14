@@ -6,26 +6,28 @@ export async function renderLoginModal ({ commit }, network) {
 }
 
 export async function logout ({ state, commit }) {
+  for (const network in state.SESSION) {
+    logoutNetwork({ state, commit, network })
+  }
+}
+async function logoutNetwork ({ state, commit, network }) {
   // console.log('logout')
-  const activeAuth = state.activeAuthenticator
+  const { authenticatorName } = state.SESSION[network]
+  const activeAuth = state.UAL[network].authenticators.find(a => a.getStyle().text === authenticatorName)
+  // const activeAuth = state.activeAuthenticator
   if (activeAuth) {
     console.log(activeAuth)
-    for (const network in activeAuth) {
-      const aa = activeAuth[network]
-      console.log(`Logging out from authenticator: ${aa.getStyle().text}`)
 
-      aa
-        .logout()
-        .then(() => {
-          console.log('Logged out!')
-          commit('setActiveAuthenticator', false)
-          commit('setAccountName', { network, accountName: null })
-          commit('setSESSION', { data: { accountName: null, authenticatorName: null }, network })
-        })
-        .catch(e => {
-          console.log(`An error occured while attempting to logout from authenticator: ${aa.getStyle().text}`, e)
-        })
-    }
+    activeAuth
+      .logout()
+      .then(() => {
+        commit('setActiveAuthenticator', false)
+        commit('setAccountName', { network, accountName: null })
+        commit('setSESSION', { data: { accountName: null, authenticatorName: null }, network })
+      })
+      .catch(e => {
+        console.log(`An error occured while attempting to logout from authenticator: ${activeAuth.getStyle().text}`, e)
+      })
   } else {
     console.log('No active authenticator found, you must be logged in before logging out.')
   }
@@ -46,60 +48,70 @@ export async function waitForAuthenticatorToLoad (_ = {}, authenticator) {
   })
 }
 export async function attemptAutoLogin ({ state, commit, dispatch }) {
-  let { accountName, authenticatorName } = state.SESSION
-
-  // check we dont have old formats
-  if (accountName && typeof accountName === 'string') {
-    accountName = null
+  for (const network in state.SESSION) {
+    await attemptAutoLoginNetwork({ state, commit, dispatch, network })
   }
-  if (authenticatorName && typeof authenticatorName === 'string') {
-    authenticatorName = null
-  }
+}
+async function attemptAutoLoginNetwork ({ state, commit, dispatch, network }) {
+  const { accountName, authenticatorName } = state.SESSION[network]
+  console.log('attemptAutoLogin', accountName, authenticatorName, network, state.SESSION[network])
 
-  if (accountName && authenticatorName) {
-    commit('setAccountName', accountName)
-    console.log(`have account name and authenticator name ${accountName} ${authenticatorName}`)
-    // dispatch('user/loggedInRoutine', accountName, { root: true })
+  return new Promise((resolve, reject) => {
+    if (accountName && authenticatorName) {
+      commit('setAccountName', accountName)
+      console.log(`have account name and authenticator name ${accountName} ${authenticatorName}`)
+      // dispatch('user/loggedInRoutine', accountName, { root: true })
 
-    window.setTimeout(async () => {
-      const authenticator = state.UAL.authenticators.find(a => a.getStyle().text === authenticatorName)
-      if (!authenticator) {
-        console.log(`Could not find authenticator ${authenticatorName}`)
-        commit('setSESSION', { accountName: null, authenticatorName: null })
-        return
-      }
-      await authenticator.reset()
-      await authenticator.init()
-      await dispatch('waitForAuthenticatorToLoad', authenticator)
-      if (authenticator.initError) {
-        console.log(
-          `Attempt to auto login with authenticator ${authenticatorName} failed.`
-        )
-        authenticator.reset()
-        // await dispatch('attemptAutoLogin')
+      window.setTimeout(async () => {
+        console.log('Timeout firing', state.UAL)
+        const authenticator = state.UAL[network].authenticators.find(a => a.getStyle().text === authenticatorName)
+        console.log('authenticator loaded', authenticator)
+        if (!authenticator) {
+          console.log(`Could not find authenticator ${authenticatorName}`)
+          commit('setSESSION', { data: { accountName: null, authenticatorName: null }, network })
+          resolve()
+          return
+        }
+        await authenticator.reset()
+        await authenticator.init()
+        await dispatch('waitForAuthenticatorToLoad', authenticator)
+        console.log('Authenticator loaded')
+        if (authenticator.initError) {
+          console.log(
+              `Attempt to auto login with authenticator ${authenticatorName} failed.`
+          )
+          authenticator.reset()
+          // await dispatch('attemptAutoLogin')
 
-        commit('setSESSION', { accountName: null, authenticatorName: null })
-        return
-      }
+          commit('setSESSION', { data: { accountName: null, authenticatorName: null }, network })
+          reject(authenticator.initError)
+          return
+        }
 
-      console.log(`Auto login for ${accountName}`)
+        console.log(`Auto login for ${accountName}`)
 
-      authenticator
-        .login(accountName)
-        .then(() => {
-          commit('setSESSION', { accountName, authenticatorName })
-          commit('setActiveAuthenticator', authenticator)
-          commit('setAccountName', accountName)
-          dispatch('user/loggedInRoutine', accountName, { root: true })
-        })
-        .catch(e => {
-          commit('setSESSION', { accountName: null, authenticatorName: null })
-          console.log('auto login error', e, e.cause)
-        })
-    }, 500)
-  } else {
-    console.log('cannot autologin')
-  }
+        authenticator
+          .login(accountName)
+          .then(async () => {
+            console.log('Login successful')
+            await commit('setSESSION', { data: { accountName, authenticatorName }, network })
+            commit('setActiveAuthenticator', authenticator)
+            // commit('setAccountName', accountName)
+            await commit('setAccountName', { network, accountName })
+            resolve()
+            // dispatch('user/loggedInRoutine', accountName, { root: true })
+          })
+          .catch(e => {
+            commit('setSESSION', { data: { accountName: null, authenticatorName: null }, network })
+            console.log('auto login error', e, e.cause)
+            resolve()
+          })
+      }, 500)
+    } else {
+      console.log('cannot autologin')
+      resolve()
+    }
+  })
 }
 
 export async function transact ({ state, dispatch, commit }, payload) {
