@@ -21,7 +21,7 @@ async function logoutNetwork ({ state, commit, network }) {
     activeAuth
       .logout()
       .then(() => {
-        commit('setActiveAuthenticator', false)
+        commit('setActiveAuthenticator', { authenticator: null, network })
         commit('setAccountName', { network, accountName: null })
         commit('setSESSION', { data: { accountName: null, authenticatorName: null }, network })
       })
@@ -95,7 +95,7 @@ async function attemptAutoLoginNetwork ({ state, commit, dispatch, network }) {
           .then(async () => {
             console.log('Login successful')
             await commit('setSESSION', { data: { accountName, authenticatorName }, network })
-            commit('setActiveAuthenticator', authenticator)
+            commit('setActiveAuthenticator', { authenticator, network })
             // commit('setAccountName', accountName)
             await commit('setAccountName', { network, accountName })
             resolve()
@@ -118,7 +118,7 @@ export async function transact ({ state, dispatch, commit }, payload) {
   const { actions, network } = payload
   console.log(`Sending transaction on ${network}`, actions)
   const { accountName, authenticatorName, permission } = state.SESSION[network]
-  console.log(`transact with stored state ${authenticatorName} ${accountName}@${permission}`, state.activeAuthenticator[network].users)
+  console.log(`transact with stored state ${authenticatorName} ${accountName}@${permission}`)
   // commit('setSigningOverlay', { show: true, status: 0, msg: 'Waiting for Signature', isShowCloseButton: false })
   const activeAuthenticator = state.activeAuthenticator[network]
   let user
