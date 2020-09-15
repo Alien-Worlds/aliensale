@@ -218,32 +218,39 @@ export default {
           account: this.getAccountName.wax
         }
       }]
-      const res = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+      try {
+        const res = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+        if (!res) {
+          return
+        }
 
-      // Start polling for openlog action
-      this.startPoll(res)
+        // Start polling for openlog action
+        this.startPoll(res)
 
-      this.waitingPack = true
-      this.packsLoaded = false
-      this.inOpening = true
-      this.confirmOpenPackShow = false
-      this.$nextTick(() => { window.scrollTo(0, 0) })
+        this.waitingPack = true
+        this.packsLoaded = false
+        this.inOpening = true
+        this.confirmOpenPackShow = false
+        this.$nextTick(() => { window.scrollTo(0, 0) })
 
-      document.getElementById('video-container').style.display = 'block'
-      document.getElementById('pack-open-video').style.opacity = 1
-      document.getElementById('pack-open-video').play()
-      document.getElementById('pack-open-video').addEventListener('transitionend', () => {
-        console.log('Video transition end', document.getElementById('pack-open-video').style.opacity)
-        this.videoEnded = true
-        window.scrollTo(0, 0)
-        document.getElementById('video-container').style.display = 'none'
-      })
-      document.getElementById('pack-open-video').addEventListener('ended', () => {
-        console.log('Video end')
-        document.getElementById('pack-open-video').style.opacity = 0
-      })
+        document.getElementById('video-container').style.display = 'block'
+        document.getElementById('pack-open-video').style.opacity = 1
+        document.getElementById('pack-open-video').play()
+        document.getElementById('pack-open-video').addEventListener('transitionend', () => {
+          console.log('Video transition end', document.getElementById('pack-open-video').style.opacity)
+          this.videoEnded = true
+          window.scrollTo(0, 0)
+          document.getElementById('video-container').style.display = 'none'
+        })
+        document.getElementById('pack-open-video').addEventListener('ended', () => {
+          console.log('Video end')
+          document.getElementById('pack-open-video').style.opacity = 0
+        })
 
-      this.reloadPacks()
+        this.reloadPacks()
+      } catch (e) {
+        this.$showError(e.message)
+      }
     },
     startPoll (res) {
       this.pollTimer = setInterval(() => { this.poll(res.transaction.processed.block_time) }, 1000)
@@ -382,8 +389,17 @@ export default {
       }
     },
     showOpenDialog (pack) {
-      this.confirmOpenPack = pack
-      this.confirmOpenPackShow = true
+      this.$swal({
+        title: 'Are you sure you want to open this pack?',
+        text: pack.metadata.name,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, open it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.openPack(pack)
+        }
+      })
     }
   },
   watch: {

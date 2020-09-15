@@ -89,9 +89,13 @@ export default {
             memo: val.memo
           }
         }]
-        const resp = await this.$store.dispatch('ual/transact', { actions, network: val.network })
-        console.log(resp)
-        this.paymentTransactionId = resp.transactionId
+        try {
+          const resp = await this.$store.dispatch('ual/transact', { actions, network: val.network })
+          console.log(resp)
+          this.paymentTransactionId = resp.transactionId
+        } catch (e) {
+          this.$showError(e.message)
+        }
       } else if (val.network === 'eth') {
         const { injectedWeb3, web3 } = await this.getWeb3()
         console.log(injectedWeb3, web3)

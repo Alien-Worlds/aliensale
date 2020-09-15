@@ -22,6 +22,7 @@ module.exports = function (/* ctx */) {
         'config',
         'i18n',
         'bootstrap',
+        'sweetalert',
         'waxapi',
         'packs'
     ],

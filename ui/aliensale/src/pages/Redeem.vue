@@ -75,9 +75,13 @@ export default {
         }
       })
 
-      await this.$store.dispatch('ual/transact', { actions, network: 'eos' })
+      try {
+        await this.$store.dispatch('ual/transact', { actions, network: 'eos' })
 
-      this.loadRedeemable()
+        this.loadRedeemable()
+      } catch (e) {
+        this.$showError(e.message)
+      }
     },
     async loginEos () {
       this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })

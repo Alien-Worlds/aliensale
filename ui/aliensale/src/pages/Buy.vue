@@ -245,17 +245,24 @@ export default {
           qty
         }
       }]
-      console.log('createsale actions', actions)
-      const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
-      // console.log(createResp)
-      if (createResp.status === 'executed' && createResp.wasBroadcast) {
-        const logData = createResp.transaction.processed.action_traces[0].inline_traces[0].act.data
-        // console.log('create data', logData)
 
-        return logData
+      let retVal = null
+
+      try {
+        console.log('createsale actions', actions)
+        const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+        // console.log(createResp)
+        if (createResp.status === 'executed' && createResp.wasBroadcast) {
+          const logData = createResp.transaction.processed.action_traces[0].inline_traces[0].act.data
+          // console.log('create data', logData)
+
+          retVal = logData
+        }
+      } catch (e) {
+        this.$showError(e.message)
       }
 
-      return null
+      return retVal
     },
     async buyWax (account, qty, auction) {
       console.log('buyWax', account, qty, auction)
@@ -286,7 +293,15 @@ export default {
         }
       }]
       // console.log(actions)
-      const resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+      let resp = null
+      try {
+        resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+
+        this.$showSuccess('Your pack has been purchased successfully, please wait a few moments and it will appear in your packs page')
+      } catch (e) {
+        this.$showError(e.message)
+      }
+
       // console.log(resp)
       return resp
     },
