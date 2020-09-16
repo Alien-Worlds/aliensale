@@ -263,7 +263,7 @@ export default {
         clearInterval(this.pollTimer)
         const cards = []
         const actionData = json.actions[0].act.data
-        const templateIds = actionData.chosen_cards.map(c => c.template_id)
+        const templateIds = actionData.chosen_cards.map(c => c.template_id).filter(c => `${c}` !== '0')
         const templateUrl = `${this.$config.atomicEndpoint}/atomicassets/v1/templates?ids=${templateIds.join(',')}`
         const templatesRes = await fetch(templateUrl)
         const templates = await templatesRes.json()
@@ -271,6 +271,16 @@ export default {
           const template = templates.data.find(t => `${t.template_id}` === `${tId}`)
           cards.push(template.immutable_data)
         })
+        // assets for land
+        const assetIds = actionData.chosen_cards.map(c => c.asset_id).filter(c => `${c}` !== '0')
+        const assetUrl = `${this.$config.atomicEndpoint}/atomicassets/v1/assets?ids=${assetIds.join(',')}`
+        const assetsRes = await fetch(assetUrl)
+        const assets = await assetsRes.json()
+        assetIds.forEach((aId) => {
+          const asset = assets.data.find(t => `${t.asset_id}` === `${aId}`)
+          cards.push(asset.data)
+        })
+
         this.receivedCards = cards
 
         // Check if any trilium is in the pack
