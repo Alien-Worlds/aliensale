@@ -8,6 +8,7 @@ const options = {
 
 Vue.use(VueSweetalert2, options)
 Vue.prototype.$showError = (err) => {
+  err = err.replace('assertion failure with message: ', '')
   Vue.swal({
     title: 'Error!',
     text: err,
