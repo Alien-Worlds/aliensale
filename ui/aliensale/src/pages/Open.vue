@@ -1,12 +1,5 @@
 <template>
   <q-page class="">
-    <div id="video-container" v-if="openingPack">
-      <div>
-        <video width="100%" height="240" id="pack-open-video">
-          <source :src="'/videos/' + openingPack.symbol + '_open.mp4'" type="video/mp4">
-        </video>
-      </div>
-    </div>
 
     <q-dialog v-model="confirmOpenPackShow" persistent transition-show="flip-down" transition-hide="flip-up">
       <q-card v-if="confirmOpenPack">
@@ -22,7 +15,15 @@
       </q-card>
     </q-dialog>
 
-    <div v-if="waitingPack && !packReveal && videoEnded">
+    <div id="video-container" v-if="openingPack">
+      <div>
+        <video width="100%" height="240" id="pack-open-video">
+          <source :src="'/videos/' + openingPack.symbol + '_open.mp4'" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <div id="waiting-container" v-if="waitingPack && !packReveal && videoEnded">
       Waiting for pack open...
     </div>
 
@@ -63,7 +64,7 @@
 
     </div>
 
-    <div id="open-packs-list" v-if="!inOpening" class="row justify-center">
+    <div id="open-packs-list-container" v-if="!inOpening" class="row justify-center">
 
       <div class="row justify-center text-h1">
         Open Packs
@@ -130,7 +131,8 @@ export default {
       revealComplete: false,
       confirmOpenPack: null,
       confirmOpenPackShow: false,
-      receivedTrilium: 0
+      receivedTrilium: 0,
+      manualFlip: false
     }
   },
   computed: {
@@ -140,16 +142,8 @@ export default {
   },
   methods: {
     returnHome () {
-      this.packReveal = false
       this.inOpening = false
-      this.receivedCards = []
-      this.waitingPack = false
-      this.packsLoaded = false
-      this.openingPack = null
-      this.videoEnded = false
-      this.revealComplete = false
-      this.confirmOpenPack = null
-      this.receivedTrilium = 0
+      this.packReveal = false
     },
     async reloadPacks () {
       // console.log('RELOAD PACKS', this.account)
@@ -194,6 +188,8 @@ export default {
       this.openingPack = pack
 
       this.receivedCards = []
+      this.revealComplete = false
+
       const actions = [{
         account: 'pack.worlds',
         name: 'transfer',
@@ -249,7 +245,28 @@ export default {
 
         this.reloadPacks()
       } catch (e) {
-        this.$showError(e.message)
+        if (e.message.indexOf('Packs are already deposited') > -1) {
+          console.log('open in progress')
+          const actions = [{
+            account: 'open.worlds',
+            name: 'open',
+            authorization: [{
+              actor: this.getAccountName.wax,
+              permission: 'active'
+            }],
+            data: {
+              account: this.getAccountName.wax
+            }
+          }]
+
+          try {
+            await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+          } catch (e) {
+            this.$showError(e.message)
+          }
+        } else {
+          this.$showError(e.message)
+        }
       }
     },
     startPoll (res) {
@@ -289,39 +306,17 @@ export default {
         this.receivedTrilium = parseFloat(tlmStr).toFixed(2)
       }
     },
-    /* startListener () {
-      if (this.getAccountName.wax !== null) {
-        const atomicEndpoint = this.$config.atomicEndpoint
-        this.subscribe(atomicEndpoint, this.getAccountName.wax, (asset) => {
-          // console.log(asset)
-          // console.log('got asset', asset)
-          cards[asset.asset_id] = asset.data
-          this.receivedCards = Object.values(cards)
-          this.waitingPack = false
-        })
+    flipCard (cardNo, callback = null) {
+      const cardsElements = document.getElementsByClassName('flip-card')
+      if (cardNo === 'trilium') {
+        cardNo = cardsElements.length - 1
+      }
+      console.log(`Flipping card ${cardNo}`)
+      cardsElements[cardNo].classList.add('flipped')
+      if (callback) {
+        callback(cardNo)
       }
     },
-    async subscribe (atomicEndpoint, account, callback) {
-      console.log(`Subscribing to ${atomicEndpoint}`)
-
-      const socketT = io(`${atomicEndpoint}/atomicassets/v1/transfers`)
-
-      socketT.on('new_transfer', (data) => {
-        console.log('transfer', data)
-        if (data.transfer.recipient_name === account && data.transfer.sender_name === 'open.worlds') {
-          data.transfer.assets.forEach(callback)
-        }
-      })
-
-      const socketA = io(`${atomicEndpoint}/atomicassets/v1/assets`)
-
-      socketA.on('new_asset', (data) => {
-        console.log('new_asset', account, data)
-        if (data.asset.owner === account) {
-          callback(data.asset)
-        }
-      })
-    }, */
     calcStyle (n, len) {
       console.log(`Calc position for ${n} of ${len}`)
       const delta = 120 // space between cards
@@ -332,7 +327,7 @@ export default {
       const rotate = left * 0.05
       return { left, top, rotate }
     },
-    revealCard (cardNo) {
+    revealCard (cardNo, flip = true) {
       const cardsElements = document.getElementsByClassName('flip-card')
       console.log(`revealing ${cardsElements.length} cardsElements`, cardsElements, cardNo)
       const { left, top, rotate } = this.calcStyle(cardNo, cardsElements.length)
@@ -342,21 +337,24 @@ export default {
       if (cardsElements[cardNo].firstChild.classList.contains('rarity-epic')) {
         revealDelay = 1200
       } else if (cardsElements[cardNo].firstChild.classList.contains('rarity-legendary')) {
-        revealDelay = 4000
+        revealDelay = 2500
       }
       const flipCardFn = () => {
         console.log('flip transition end listener, going to flip in ', revealDelay)
         setTimeout(() => {
-          console.log(`Flipping card ${cardNo}`)
-          cardsElements[cardNo].classList.add('flipped')
-          if (cardNo >= cardsElements.length - 1) {
-            this.revealComplete = true
-          } else {
-            setTimeout(() => { this.revealCard(cardNo + 1) }, 1200)
-          }
+          this.flipCard(cardNo, (cardNo) => {
+            if (cardNo >= cardsElements.length - 1) {
+              this.revealComplete = true
+            } else {
+              setTimeout(() => { this.revealCard(cardNo + 1) }, 1200)
+            }
+          })
         }, revealDelay)
       }
-      cardsElements[cardNo].addEventListener('transitionend', flipCardFn)
+      if (flip) {
+        cardsElements[cardNo].addEventListener('transitionend', flipCardFn)
+      }
+
       if (cardNo === 0) {
         setTimeout(() => {
           cardsElements[cardNo].style.top = `${top}px`
@@ -374,6 +372,29 @@ export default {
       this.revealCard(0)
     },
     raiseCard (cardNum) {
+      if (!this.revealComplete && !this.manualFlip) {
+        // switch to manual mode, dont raise cards
+        const cardsElements = document.getElementsByClassName('flip-card')
+        for (let c = 0; c < cardsElements.length; c++) {
+          this.revealCard(c, false)
+        }
+
+        if (cardsElements[cardNum].style.zIndex === '10') {
+          cardsElements[cardNum].style.zIndex = 0
+        } else {
+          cardsElements[cardNum].style.zIndex = 10
+        }
+        this.revealComplete = true
+        this.manualFlip = true
+
+        return
+      }
+      if (this.manualFlip) {
+        this.flipCard(cardNum)
+      }
+
+      this.revealComplete = true
+
       const cardsElements = document.getElementsByClassName('flip-card')
       // console.log('raising card', cardsElements[cardNum].style.zIndex)
       let raiseCard = true
@@ -573,10 +594,10 @@ export default {
     filter: drop-shadow(0 0 20px #9749c9);
   }
   .flip-card .flip-card-inner.rarity-legendary .flip-card-back {
-    animation: legendary-glow 2.5s alternate infinite;
+    animation: legendary-glow 1s alternate infinite;
   }
   .flip-card-inner.rarity-mythical .flip-card-back {
-    animation: mythical-glow 1.5s alternate infinite;
+    animation: mythical-glow 1s alternate infinite;
   }
 
   .back-packs-btn {
