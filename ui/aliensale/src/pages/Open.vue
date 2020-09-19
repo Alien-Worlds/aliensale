@@ -1,9 +1,9 @@
 <template>
   <q-page class="">
-    <div id="video-container">
+    <div id="video-container" v-if="openingPack">
       <div>
         <video width="100%" height="240" id="pack-open-video">
-          <source src="/pack_open.mp4" type="video/mp4">
+          <source :src="'/videos/' + openingPack.symbol + '_open.mp4'" type="video/mp4">
         </video>
       </div>
     </div>
@@ -426,17 +426,19 @@ export default {
       }
     },
     receivedCards (cards) {
-      console.log(`${cards.length} cards received, waiting for ${this.openingPack.number_cards}`)
-      if (cards.length >= this.openingPack.number_cards) {
-        console.log('got all cards')
-        // shuffle cards
-        for (var i = cards.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1))
-          var temp = cards[i]
-          cards[i] = cards[j]
-          cards[j] = temp
+      if (this.openingPack) {
+        console.log(`${cards.length} cards received, waiting for ${this.openingPack.number_cards}`)
+        if (cards.length >= this.openingPack.number_cards) {
+          console.log('got all cards')
+          // shuffle cards
+          for (var i = cards.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1))
+            var temp = cards[i]
+            cards[i] = cards[j]
+            cards[j] = temp
+          }
+          this.packReveal = true
         }
-        this.packReveal = true
       }
     },
     videoEnded (ve) {
