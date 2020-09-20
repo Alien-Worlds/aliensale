@@ -27,6 +27,9 @@
                     <div><img src="/images/eos-logo.png" :class="eosLogoClass" @click="login('eos')" /></div>
                   </div>
                 </li>
+                <li class="nav-item" v-if="getAccountName.wax || getAccountName.eos">
+                  <div @click="logout()" style="padding-left: 30px">Logout</div>
+                </li>
               </ul>
             </div>
           </div>
