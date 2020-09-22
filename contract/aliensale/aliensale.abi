@@ -247,6 +247,20 @@
             ]
         },
         {
+            "name": "ethswap",
+            "base": "",
+            "fields": [
+                {
+                    "name": "sig",
+                    "type": "bytes"
+                },
+                {
+                    "name": "account_str",
+                    "type": "string"
+                }
+            ]
+        },
+        {
             "name": "ethswap_item",
             "base": "",
             "fields": [
@@ -431,6 +445,24 @@
             ]
         },
         {
+            "name": "swap",
+            "base": "",
+            "fields": [
+                {
+                    "name": "buyer",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "tx_id",
+                    "type": "checksum256"
+                }
+            ]
+        },
+        {
             "name": "swap_item",
             "base": "",
             "fields": [
@@ -520,6 +552,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "ethswap",
+            "type": "ethswap",
+            "ricardian_contract": ""
+        },
+        {
             "name": "loginvoice",
             "type": "loginvoice",
             "ricardian_contract": ""
@@ -532,6 +569,11 @@
         {
             "name": "payment",
             "type": "payment",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "swap",
+            "type": "swap",
             "ricardian_contract": ""
         }
     ],

@@ -238,7 +238,7 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty) {
     _deposits.erase(deposit);
 }
 
-/*
+
 void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
     // check that tx_id hasnt been used before
     auto swp_idx = _swaps.get_index<"bytxid"_n>();
@@ -271,8 +271,16 @@ void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
     });
 }
 
+/*
+ * {
+  "address": "0x82828c12b86b0968f8ada61aca2fc4903b64deb9",
+  "msg": "evilmikehere",
+  "sig": "0xc9629f161f1a7614e884d0914771befcb591a3691cf49d4cefa5b70429add88156d042ac807c4f4e9d9059d5d118f6a83ebd9eb09947361f9dac3a9e4ebb61d91b",
+  "version": "2"
+}
+ */
 void aliensale::ethswap(std::vector<char> sig, string account_str) {
-    sha3_ctx      shactx;
+    /* sha3_ctx      shactx;
     unsigned char tmpmsghash[32];
     char          tmpmsg[12];
 
@@ -290,7 +298,7 @@ void aliensale::ethswap(std::vector<char> sig, string account_str) {
     print("\nMessage ", message);
 
     rhash_keccak_256_init(&shactx);
-    rhash_keccak_update(&shactx, (const unsigned char*)message, strlen(message)); // ignore the null terminator at the end of the string
+    rhash_keccak_update(&shactx, (const unsigned char*)message, strlen(message)-1); // ignore the null terminator at the end of the string
     rhash_keccak_final(&shactx, &tmpmsghash[0]);
 //    print("\nTemp Msg hash", string(tmpmsghash));
 
@@ -310,7 +318,7 @@ void aliensale::ethswap(std::vector<char> sig, string account_str) {
     auto compressed_pubkey = std::get<0>(eosio_pubkey);
 
     // Decompress the ETH pubkey
-    uint8_t pubkey[64];
+    uint8_t pubkey[65];
     // uint8_t compressed_pubkey_int
     uECC_decompress((uint8_t *)compressed_pubkey.data() + 1, pubkey, uECC_secp256k1());
 
@@ -328,10 +336,10 @@ void aliensale::ethswap(std::vector<char> sig, string account_str) {
     std::string calculated_eth_address = bytetohex(eth_address, 20);
 
     print("calculated eth address", calculated_eth_address);
-
+*/
     check(false, "blah");
 }
-*/
+
 
 void aliensale::clearinvs() {
     require_auth(get_self());
@@ -401,10 +409,9 @@ uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
     uint32_t time_into_sale = time_now - auction->start_time.sec_since_epoch();
 
     auto start_price = auction->start_price;
-    uint32_t current_time = 0;
     uint32_t cycle_length = auction->period_length + auction->break_length;
     uint32_t remainder = time_into_sale % cycle_length;
-    uint8_t period_number = (time_into_sale - remainder) / cycle_length;
+    uint32_t period_number = (time_into_sale - remainder) / cycle_length;
 
     // we are in the break period
     check(remainder <= auction->period_length, "Auction is in a rest period");

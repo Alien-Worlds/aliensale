@@ -219,10 +219,10 @@ namespace alienworlds {
         [[eosio::action]] void buy(name buyer, uint64_t auction_id, uint8_t qty);
 
         /* Swap from EOS, will be called by the watcher script */
-        // [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
+         [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
 
         /* Swap from ETH, account must exist in the ethswap table */
-        // [[eosio::action]] void ethswap(std::vector<char> sig, string account_str);
+         [[eosio::action]] void ethswap(std::vector<char> sig, string account_str);
 
         /* Receive transfers for payments in native token */
         [[eosio::on_notify("eosio.token::transfer")]] void transfer(name from, name to, asset quantity, string memo);
