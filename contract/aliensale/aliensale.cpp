@@ -52,10 +52,10 @@ void aliensale::delpack(uint64_t pack_id) {
     _packs.erase(pack);
 }
 
-void aliensale::addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t price_step, uint8_t period_count) {
+void aliensale::addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t first_step, uint64_t price_step, uint8_t period_count) {
     require_auth(get_self());
 
-    check((start_price - (price_step * period_count)) > 0, "Auction final price is not above 0");
+    check((start_price - (first_step + (price_step * period_count - 1))) > 0, "Auction final price is not above 0");
 
     uint64_t auction_id = _auctions.available_primary_key();
     _auctions.emplace(get_self(), [&](auto &a){
@@ -66,6 +66,7 @@ void aliensale::addauction(extended_asset pack, time_point start_time, foreign_s
         a.start_price = start_price;
         a.period_length = period_length;
         a.break_length = break_length;
+        a.first_step = first_step;
         a.price_step = price_step;
         a.period_count = period_count;
     });
@@ -420,5 +421,11 @@ uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
         period_number = auction->period_count;
     }
 
-    return (start_price - (period_number * auction->price_step)) * qty;
+    uint64_t price = start_price;
+    if (period_number >= 1){
+        price -= auction->first_step;
+    }
+    price -= (period_number - 1) * auction->price_step;
+
+    return price * qty;
 }

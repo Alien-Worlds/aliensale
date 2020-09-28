@@ -136,7 +136,8 @@ namespace alienworlds {
             uint64_t       start_price;    // always in satoshis of the currency
             uint32_t       period_length;  // length of time for a particular sale
             uint32_t       break_length;   // short break between sale periods
-            uint64_t       price_step;     // drop in price for each period
+            uint64_t       first_step;     // drop in price for first period
+            uint64_t       price_step;     // drop in price for each period after first
             uint8_t        period_count;   // number of periods, price will no longer drop after this
 
             uint64_t primary_key() const { return auction_id; }
@@ -195,7 +196,7 @@ namespace alienworlds {
         [[eosio::action]] void delpack(uint64_t pack_id);
 
         /* Add auction */
-        [[eosio::action]] void addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t price_step, uint8_t period_count);
+        [[eosio::action]] void addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t first_step, uint64_t price_step, uint8_t period_count);
 
         /* Delete auction */
         [[eosio::action]] void delauction(uint64_t auction_id);

@@ -18,6 +18,7 @@
               <div class="col-4" v-if="!auction.in_rest && auction.has_started">
                 <p>Current Price : {{ auction.current_price }}</p>
                 <p>Next Price : {{ auction.next_price }}</p>
+                <p>Period : {{ auction.current_period }}</p>
 
                 <div class="row">
                   <div class="col-4">Quantity</div>
@@ -154,13 +155,14 @@ export default {
 
       const startPrice = parseInt(auctionData.start_price)
       const stepPrice = auctionData.price_step
-      const priceSats = startPrice - (stepPrice * periodNumber)
+      const firstStepPrice = auctionData.first_step
+      const priceSats = startPrice - firstStepPrice - (stepPrice * (periodNumber - 1))
       const price = priceSats / Math.pow(10, auctionData.price_symbol.precision)
 
       return `${price} ${auctionData.price_symbol.symbol}`
     },
     currentPriceStrict (auctionData, quantity) {
-      // DSame as currentPrice but makes sure precision is correct for transfer action
+      // Same as currentPrice but makes sure precision is correct for transfer action
       const [amountStr, sym] = this.currentPrice(auctionData).split(' ')
       const amount = parseFloat(amountStr) * quantity
 
@@ -173,9 +175,11 @@ export default {
       }
 
       const startPrice = parseInt(auctionData.start_price)
+      const firstStepPrice = auctionData.first_step
       const stepPrice = auctionData.price_step
+      // console.log(`first step price = ${firstStepPrice}, next period = ${periodNumber}`)
 
-      const priceSats = startPrice - (stepPrice * periodNumber)
+      const priceSats = startPrice - firstStepPrice - (stepPrice * (periodNumber - 1))
       const price = priceSats / Math.pow(10, auctionData.price_symbol.precision)
 
       return `${price} ${auctionData.price_symbol.symbol}`
@@ -221,6 +225,7 @@ export default {
         auctions[a].pack_data = pd
 
         auctions[a].current_price = this.currentPrice(auctions[a])
+        auctions[a].current_period = this.currentPeriod(auctions[a])
         auctions[a].next_price = this.nextPrice(auctions[a])
         auctions[a].in_rest = this.inRestPeriod(auctions[a])
         auctions[a].has_started = this.hasStarted(auctions[a])

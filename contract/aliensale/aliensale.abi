@@ -50,6 +50,10 @@
                     "type": "uint32"
                 },
                 {
+                    "name": "first_step",
+                    "type": "uint64"
+                },
+                {
                     "name": "price_step",
                     "type": "uint64"
                 },
@@ -130,6 +134,10 @@
                 {
                     "name": "break_length",
                     "type": "uint32"
+                },
+                {
+                    "name": "first_step",
+                    "type": "uint64"
                 },
                 {
                     "name": "price_step",
