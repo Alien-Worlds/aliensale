@@ -425,8 +425,8 @@ uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
     uint64_t price = start_price;
     if (period_number >= 1){
         price -= auction->first_step;
+        price -= (period_number - 1) * auction->price_step;
     }
-    price -= (period_number - 1) * auction->price_step;
 
     return price * qty;
 }
