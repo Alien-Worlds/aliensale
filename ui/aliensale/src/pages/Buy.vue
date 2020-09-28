@@ -32,11 +32,11 @@
 
                   <span class="colored">{{ auction.amount }} Packs remaining</span><br>Current price <div class="price">{{ auction.current_price }}</div>
                   <p>
-                    <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyamount')">-</button>
-                    <input style="display:inline;" size="2" type="buy" id="buyamount" name="buyamount" placeholder="0" value="1" min="0" max="1000">
-                    <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyamount')">+</button>
+                    <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyQty' + auction.auction_id)">-</button>
+                    <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" max="1000">
+                    <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
                   </p>
-                  <p><button type="Buy" class="button" style="display:inline;">Buy Now</button></p>
+                  <p><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
 
                 </div>
                 <div class="col-md-1 unbox">
