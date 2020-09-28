@@ -145,10 +145,26 @@ export default {
       this.inOpening = false
       this.packReveal = false
     },
+    async getPackBalance (account) {
+      // to prevent caching
+      const url = `${this.$config.waxEndpoint}/v1/chain/get_currency_balance`
+      const res = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          account,
+          code: 'pack.worlds',
+          symbol: null,
+          _: Date.now()
+        })
+      })
+      const json = await res.json()
+      // console.log(json)
+      return json
+    },
     async reloadPacks () {
-      // console.log('RELOAD PACKS', this.account)
+      console.log('RELOAD PACKS', this.getAccountName.wax)
       if (this.getAccountName.wax) {
-        const ownedTokens = await this.$wax.rpc.get_currency_balance('pack.worlds', this.getAccountName.wax)
+        const ownedTokens = await this.getPackBalance(this.getAccountName.wax)
         const availableTokensRes = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'packs' })
         const availableTokens = availableTokensRes.rows.map((p) => {
           p.metadata = JSON.parse(p.metadata)
@@ -304,6 +320,8 @@ export default {
         // console.log(actionData)
         const [tlmStr] = actionData.ft_bonus.split(' ')
         this.receivedTrilium = parseFloat(tlmStr).toFixed(2)
+
+        this.reloadPacks()
       }
     },
     flipCard (cardNo, callback = null) {
