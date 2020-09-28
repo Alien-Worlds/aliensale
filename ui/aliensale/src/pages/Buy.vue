@@ -156,7 +156,10 @@ export default {
       const startPrice = parseInt(auctionData.start_price)
       const stepPrice = auctionData.price_step
       const firstStepPrice = auctionData.first_step
-      const priceSats = startPrice - firstStepPrice - (stepPrice * (periodNumber - 1))
+      let priceSats = startPrice
+      if (periodNumber >= 1) {
+        priceSats -= firstStepPrice - (stepPrice * (periodNumber - 1))
+      }
       const price = priceSats / Math.pow(10, auctionData.price_symbol.precision)
 
       return `${price} ${auctionData.price_symbol.symbol}`
