@@ -1,14 +1,66 @@
 <template>
   <q-page class="">
-      <div class="row justify-center text-h1">
-        Pack Auction
-      </div>
 
       <div class="row justify-center">
-        <div class="w-75">
-          <div v-for="auction in auctions" :key="auction.auction_id" style="padding:20px 0;border-bottom: 2px solid silver">
+        <div class="w-75 planet-bg">
+          <div v-for="auction in auctions" :key="auction.auction_id">
+            <div class="row justify-center text-h1 main-title">
+              {{ auction.pack_data.metadata.name }}
+            </div>
             <div class="row" v-if="auction.amount">
-              <div class="col-2">
+              <div id="full-row" class="row text-center">
+                <div class="col-md-1 unbox">
+                </div>
+                <div class="col-md-3 unbox2" style="background-color: #111111; opacity: 0.9;">
+
+                  <img  :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded" alt="Pack">
+
+                </div>
+                <div class="col-md-1 unbox"></div>
+                <div class="col-md-3 unbox2" style="background-color: #111111; opacity: 0.9;">
+
+                  <h2 class="short-hr-center"><span class="colored">4 Items</span></h2>
+                  <ul>
+                    <li class="planet" style="text-align:left;">Base : 58.8%</li>
+                    <li class="planet" style="text-align:left;">Rare : 31.1%</li>
+                    <li class="planet" style="text-align:left;">Epic : 8%</li>
+                    <li class="planet" style="text-align:left;">Legendary : 1%</li>
+                    <li class="planet" style="text-align:left;">Mythical chance : 0.1%</li>
+                  </ul>
+
+                  <br>
+
+                  <span class="colored">{{ auction.amount }} Packs remaining</span><br>Current price <div class="price">{{ auction.current_price }}</div>
+                  <p>
+                    <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyamount')">-</button>
+                    <input style="display:inline;" size="2" type="buy" id="buyamount" name="buyamount" placeholder="0" value="1" min="0" max="1000">
+                    <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyamount')">+</button>
+                  </p>
+                  <p><button type="Buy" class="button" style="display:inline;">Buy Now</button></p>
+
+                </div>
+                <div class="col-md-1 unbox">
+                </div>
+                <div class="col-md-3 unbox2" style="background-color: #111111; opacity: 0.9;">
+                  <h2 class="short-hr-center"><span class="colored">Price drop in <countdown :start="Date.parse(auction.start_time)" :period="auction.period_length" /></span></h2>
+                  Next price <div class="next-price">{{ auction.next_price }}</div>
+                  <p>&nbsp;</p>
+
+                  <h3 class="short-hr-center"><span class="colored">Twitter</span></h3>
+                  <!-- <ul>
+                    <li><span class="colored">@0.11 ETH</span> : 16</li>
+                    <li><span class="colored">@0.105 ETH</span> : 170</li>
+                    <li><span class="colored">@0.1 ETH</span> : 20</li>
+                  </ul> -->
+
+                  <div class="col-md-1 unbox">
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- <div class="col-2">
                 <img :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" style="max-width:100px" />
               </div>
               <div class="col-6">
@@ -28,7 +80,7 @@
                 <p>({{ auction.amount }} left)</p>
               </div>
               <div class="col-4" v-if="auction.in_rest && auction.has_started">Auction is resting, next price will be {{ auction.next_price }}</div>
-              <div class="col-4" v-if="!auction.has_started">Auction has not started yet</div>
+              <div class="col-4" v-if="!auction.has_started">Auction has not started yet</div> -->
 
               <!-- <div class="col-4">{{ pack.quote_price.quantity }}</div>-->
             </div>
@@ -75,10 +127,71 @@
   </q-page>
 </template>
 
+<style>
+  .main-title {
+    padding-bottom: 30px;
+    font-size: 4rem;
+  }
+  .colored {
+    color: #E48632;
+  }
+  .price {
+    font-size: 2rem;
+  }
+  .next-price {
+    font-size: 1.4rem;
+  }
+  .short-hr-center::after {
+    border-top: 2px solid;
+    border-color: #E48632;
+    content: "";
+    display: block;
+    height: 1px;
+    width: 60px;
+    margin: 13px auto 0 auto;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  li.planet {
+    background: url(/images/planet_icon.png) no-repeat left top;
+    padding-left: 34px;
+    padding-bottom: 2px;
+    font-family: nasalization;
+    font-size: 1.08rem;
+  }
+  .button {
+    background: #E48632;
+    border: none;
+    color: #FFF;
+    font-family: nasalization;
+    font-weight: 500;
+    display: block;
+    height: auto;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 5px 15px;
+    outline: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-radius: 10px;
+  }
+  .planet-bg {
+    background-image: url(/images/planetopen.png);
+    background-position: 100px center;
+    margin-bottom: 50px;
+  }
+</style>
+
 <script>
 import { mapGetters } from 'vuex'
 import PaymentRequest from 'components/PaymentRequest'
-import { BButton, BFormInput /* , BButtonGroup, BButtonToolbar */ } from 'bootstrap-vue'
+import Countdown from 'components/Countdown'
+// import { BButton, BFormInput /* , BButtonGroup, BButtonToolbar */ } from 'bootstrap-vue'
 import { Serialize } from 'eosjs'
 let intervalId
 
@@ -86,10 +199,11 @@ export default {
   name: 'BuyPage',
   components: {
     'payment-request': PaymentRequest,
-    'b-button': BButton,
+    countdown: Countdown
+    // 'b-button': BButton,
     // 'b-button-group': BButtonGroup,
     // 'b-button-toolbar': BButtonToolbar,
-    'b-form-input': BFormInput
+    // 'b-form-input': BFormInput
   },
   data () {
     return {
@@ -158,9 +272,11 @@ export default {
       const firstStepPrice = auctionData.first_step
       let priceSats = startPrice
       if (periodNumber >= 1) {
-        priceSats -= firstStepPrice - (stepPrice * (periodNumber - 1))
+        priceSats -= firstStepPrice
+        priceSats -= stepPrice * (periodNumber - 1)
       }
       const price = priceSats / Math.pow(10, auctionData.price_symbol.precision)
+      // console.log(`startPrice ${startPrice}, stepPrice ${stepPrice}, firstStepPrice ${firstStepPrice}, priceSats ${priceSats}, price ${price}, periodNumber ${periodNumber}`)
 
       return `${price} ${auctionData.price_symbol.symbol}`
     },
@@ -388,6 +504,24 @@ export default {
           await this.buyEos(this.getAccountName, buyQty, auctionData)
           break
       }
+    },
+    decrementCounter (id) {
+      const ele = document.getElementById(id)
+      let currentVal = parseInt(ele.value)
+      if (isNaN(currentVal)) {
+        currentVal = 0
+      }
+      if (currentVal > 0) {
+        ele.value = currentVal - 1
+      }
+    },
+    incrementCounter (id) {
+      const ele = document.getElementById(id)
+      let currentVal = parseInt(ele.value)
+      if (isNaN(currentVal)) {
+        currentVal = 0
+      }
+      ele.value = currentVal + 1
     }
   },
   async mounted () {
