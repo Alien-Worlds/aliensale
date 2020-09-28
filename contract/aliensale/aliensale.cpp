@@ -413,6 +413,7 @@ uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
     uint32_t cycle_length = auction->period_length + auction->break_length;
     uint32_t remainder = time_into_sale % cycle_length;
     uint32_t period_number = (time_into_sale - remainder) / cycle_length;
+    print("\nPeriod number ", period_number);
 
     // we are in the break period
     check(remainder <= auction->period_length, "Auction is in a rest period");
