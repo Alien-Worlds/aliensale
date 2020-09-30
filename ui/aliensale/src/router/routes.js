@@ -8,10 +8,11 @@ const routes = [
     ]
   },
   {
-    path: '/buy/:auction_id',
+    path: '/buy',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Buy.vue') }
+      { path: '', component: () => import('pages/BuyIndex.vue') },
+      { name: 'auction', path: '/buy/:auction_id', component: () => import('pages/Buy.vue') }
     ]
   },
   {

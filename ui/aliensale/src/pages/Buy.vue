@@ -612,7 +612,7 @@ export default {
     }
   },
   async mounted () {
-    intervalId = window.setInterval(this.reloadAuctions, 5000)
+    intervalId = window.setInterval(this.loadAuction, 5000)
     this.loadAuction()
   },
   watch: {
