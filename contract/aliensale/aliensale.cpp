@@ -8,7 +8,8 @@ aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(
                                                                        _auctions(get_self(), get_self().value),
                                                                        _packs(get_self(), get_self().value),
                                                                        _deposits(get_self(), get_self().value),
-                                                                       _swaps(get_self(), get_self().value) {}
+                                                                       _swaps(get_self(), get_self().value),
+                                                                       _ethswaps(get_self(), get_self().value) {}
 
 
 void aliensale::addpack(uint64_t pack_id, extended_asset pack_asset, string metadata, uint8_t number_cards) {
@@ -272,75 +273,51 @@ void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
     });
 }
 
-/*
- * {
-  "address": "0x82828c12b86b0968f8ada61aca2fc4903b64deb9",
-  "msg": "evilmikehere",
-  "sig": "0xc9629f161f1a7614e884d0914771befcb591a3691cf49d4cefa5b70429add88156d042ac807c4f4e9d9059d5d118f6a83ebd9eb09947361f9dac3a9e4ebb61d91b",
-  "version": "2"
-}
- */
-void aliensale::ethswap(std::vector<char> sig, string account_str) {
-    /* sha3_ctx      shactx;
-    unsigned char tmpmsghash[32];
-    char          tmpmsg[12];
-
-    using ecc_signature = std::array<char, 65>;
-    using ecc_public_key = array<char, 33>;
-
-//    print("\nsig 0", sig[10]);
-//    check(false, "b");
-
-    check(account_str.size() <= 12, "Account name is too long");
-
-    //Add prefix and length of signed message
-    char message[128];
-    sprintf(message, "%s%s%d%s", "\x19", "Ethereum Signed Message:\n", strlen(account_str.c_str()), account_str.c_str());
-    print("\nMessage ", message);
-
-    rhash_keccak_256_init(&shactx);
-    rhash_keccak_update(&shactx, (const unsigned char*)message, strlen(message)-1); // ignore the null terminator at the end of the string
-    rhash_keccak_final(&shactx, &tmpmsghash[0]);
-//    print("\nTemp Msg hash", string(tmpmsghash));
-
-    // convert the result to checksum256
-    array<uint8_t, 32> result_arr;
-    copy(begin(tmpmsghash), end(tmpmsghash), result_arr.begin());
-    auto msghash = eosio::fixed_bytes<32>(result_arr);
-
-    // convert signature bytes to an eosio signature
-    ecc_signature sig_arr;
-    copy_n(sig.begin(), 65, sig_arr.begin());
-
-    // Recover the compressed ETH public key from the message and signature
-    signature sig_eosio{ std::in_place_index<0>, sig_arr };  // 0 = k1
-    print("\nMsg hash", msghash);
-    eosio::public_key eosio_pubkey = recover_key(msghash, sig_eosio);
-    auto compressed_pubkey = std::get<0>(eosio_pubkey);
-
-    // Decompress the ETH pubkey
-    uint8_t pubkey[65];
-    // uint8_t compressed_pubkey_int
-    uECC_decompress((uint8_t *)compressed_pubkey.data() + 1, pubkey, uECC_secp256k1());
-
-    // Calculate the hash of the pubkey
-    unsigned char pubkeyhash[32];
-    rhash_keccak_256_init(&shactx);
-    rhash_keccak_update(&shactx, pubkey, 64);
-    rhash_keccak_final(&shactx, &pubkeyhash[0]);
-
-    // last 20 bytes of the hashed pubkey = ETH address
-    uint8_t eth_address[20];
-    memcpy(eth_address, pubkeyhash + 12, 20);
-
-    // convert to human readable form
-    std::string calculated_eth_address = bytetohex(eth_address, 20);
-
-    print("calculated eth address", calculated_eth_address);
-*/
-    check(false, "blah");
+void aliensale::addethswap(checksum160 eth_address, asset quantity) {
+    _ethswaps.emplace(get_self(), [&](auto &e){
+        e.ethswap_id = _ethswaps.available_primary_key();
+        e.eth_address = eth_address;
+        e.quantity = quantity;
+    });
 }
 
+void aliensale::redeemswap(uint64_t ethswap_id, checksum160 eth_address, name address) {
+    require_auth(get_self());
+
+    auto     size   = transaction_size();
+    char *   buffer = (char *)(512 < size ? malloc(size) : alloca(size));
+    uint32_t read   = read_transaction(buffer, size);
+    check(size == read, "ERR::READ_TRANSACTION_FAILED::read_transaction failed");
+    checksum256 tr_id = sha256(buffer, read);
+
+    auto ethswap = _ethswaps.find(ethswap_id);
+    check(ethswap != _ethswaps.end(), "Swap not found");
+    check(ethswap->eth_address == eth_address, "ETH address does not match");
+    check(!ethswap->complete, "Swap is already complete");
+
+    _ethswaps.modify(ethswap, get_self(), [&](auto &e){
+        e.tx_id = tr_id;
+        e.complete = true;
+    });
+
+    // send the pack tokens out
+    auto quantity = ethswap->quantity;
+    check(quantity.is_valid(), "Quantity not valid");
+    auto pack_asset = extended_asset{quantity, SWAP_PACK_CONTRACT};
+    uint128_t id = pack_item::extended_asset_id(pack_asset);
+    auto asset_ind = _packs.get_index<"bypack"_n>();
+    auto pack = asset_ind.find(id);
+    check(pack != asset_ind.end(), "Pack not found with this symbol");
+
+    auto pack_to_send = pack->pack_asset;
+    pack_to_send.quantity.amount = quantity.amount;
+    string memo = "Swap pack voucher";
+    action(
+        permission_level{get_self(), "xfer"_n},
+        pack_to_send.contract, "transfer"_n,
+        make_tuple(get_self(), address, pack_to_send.quantity, memo)
+    ).send();
+}
 
 void aliensale::clearinvs() {
     require_auth(get_self());

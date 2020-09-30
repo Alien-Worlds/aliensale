@@ -64,6 +64,20 @@
             ]
         },
         {
+            "name": "addethswap",
+            "base": "",
+            "fields": [
+                {
+                    "name": "eth_address",
+                    "type": "checksum160"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
             "name": "addpack",
             "base": "",
             "fields": [
@@ -255,30 +269,16 @@
             ]
         },
         {
-            "name": "ethswap",
-            "base": "",
-            "fields": [
-                {
-                    "name": "sig",
-                    "type": "bytes"
-                },
-                {
-                    "name": "account_str",
-                    "type": "string"
-                }
-            ]
-        },
-        {
             "name": "ethswap_item",
             "base": "",
             "fields": [
                 {
-                    "name": "swap_id",
+                    "name": "ethswap_id",
                     "type": "uint64"
                 },
                 {
                     "name": "eth_address",
-                    "type": "bytes"
+                    "type": "checksum160"
                 },
                 {
                     "name": "tx_id",
@@ -287,6 +287,10 @@
                 {
                     "name": "quantity",
                     "type": "asset"
+                },
+                {
+                    "name": "complete",
+                    "type": "bool"
                 }
             ]
         },
@@ -453,6 +457,24 @@
             ]
         },
         {
+            "name": "redeemswap",
+            "base": "",
+            "fields": [
+                {
+                    "name": "ethswap_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "eth_address",
+                    "type": "checksum160"
+                },
+                {
+                    "name": "address",
+                    "type": "name"
+                }
+            ]
+        },
+        {
             "name": "swap",
             "base": "",
             "fields": [
@@ -502,6 +524,11 @@
         {
             "name": "addauction",
             "type": "addauction",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "addethswap",
+            "type": "addethswap",
             "ricardian_contract": ""
         },
         {
@@ -560,11 +587,6 @@
             "ricardian_contract": ""
         },
         {
-            "name": "ethswap",
-            "type": "ethswap",
-            "ricardian_contract": ""
-        },
-        {
             "name": "loginvoice",
             "type": "loginvoice",
             "ricardian_contract": ""
@@ -577,6 +599,11 @@
         {
             "name": "payment",
             "type": "payment",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "redeemswap",
+            "type": "redeemswap",
             "ricardian_contract": ""
         },
         {

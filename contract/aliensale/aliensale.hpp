@@ -82,18 +82,26 @@ namespace alienworlds {
           const_mem_fun<swap_item, checksum256, &swap_item::by_tx_id> > > swaps_table;
 
 
+      inline static checksum256 to_checksum256(checksum160 in){
+          checksum256 out(in.get_array());
+          return out;
+      }
       /* ETH swaps, maintains a list of whitelisted addresses */
       struct [[eosio::table("ethswaps")]] ethswap_item {
-        uint64_t     swap_id;
-        vector<char> eth_address;
+        uint64_t     ethswap_id;
+        checksum160  eth_address;
         checksum256  tx_id;
         asset        quantity;
+        bool         complete;
 
-        uint64_t    primary_key() const { return swap_id; }
+        uint64_t    primary_key() const { return ethswap_id; }
         checksum256 by_tx_id() const { return tx_id; }
+        checksum256 by_eth_addr() const { return to_checksum256(eth_address); }
       };
-      typedef multi_index<"ethswaps"_n, ethswap_item, indexed_by<"bytxid"_n,
-          const_mem_fun<ethswap_item, checksum256, &ethswap_item::by_tx_id> > > ethswaps_table;
+      typedef multi_index<"ethswaps"_n, ethswap_item,
+          indexed_by<"bytxid"_n, const_mem_fun<ethswap_item, checksum256, &ethswap_item::by_tx_id> >,
+          indexed_by<"byethaddr"_n, const_mem_fun<ethswap_item, checksum256, &ethswap_item::by_eth_addr> >
+              > ethswaps_table;
 
 
         /* Records previously generated foreign addresses to send to */
@@ -176,6 +184,7 @@ namespace alienworlds {
         packs_table     _packs;
         deposits_table  _deposits;
         swaps_table     _swaps;
+        ethswaps_table  _ethswaps;
 
         // uint64_t compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain);
         std::string bytetohex(unsigned char *data, int len);
@@ -223,7 +232,10 @@ namespace alienworlds {
          [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
 
         /* Swap from ETH, account must exist in the ethswap table */
-         [[eosio::action]] void ethswap(std::vector<char> sig, string account_str);
+         [[eosio::action]] void addethswap(checksum160 eth_address, asset quantity);
+
+         /* Redeem, called by our script */
+        [[eosio::action]] void redeemswap(uint64_t ethswap_id, checksum160 eth_address, name address);
 
         /* Receive transfers for payments in native token */
         [[eosio::on_notify("eosio.token::transfer")]] void transfer(name from, name to, asset quantity, string memo);
