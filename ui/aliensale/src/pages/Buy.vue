@@ -11,15 +11,22 @@
               <div id="full-row" class="row text-center">
                 <div class="col-md-1 unbox">
                 </div>
-                <div class="col-md-3 unbox2" style="background-color: #111111; opacity: 0.9;">
+                <div class="col-md-3 unbox2">
 
                   <img  :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded" alt="Pack">
 
                 </div>
                 <div class="col-md-1 unbox"></div>
-                <div class="col-md-3 unbox2" style="background-color: #111111; opacity: 0.9;">
+                <div class="col-md-3 unbox2">
 
-                  <h2 class="short-hr-center"><span class="colored">4 Items</span></h2>
+                  <h2 class="highlight">
+                    <div class="colored">{{ auction.amount }} Packs remaining</div>
+                  </h2>
+
+                  <h2>{{ auction.pack_data.number_cards }} Items</h2>
+
+                  <p class="highlight"> Each item has a chance of the following levels of rarity:-</p>
+
                   <ul>
                     <li class="planet" style="text-align:left;">Base : 58.8%</li>
                     <li class="planet" style="text-align:left;">Rare : 31.1%</li>
@@ -28,30 +35,43 @@
                     <li class="planet" style="text-align:left;">Mythical chance : 0.1%</li>
                   </ul>
 
-                  <br>
-
-                  <span class="colored">{{ auction.amount }} Packs remaining</span><br>Current price <div class="price">{{ auction.current_price }}</div>
-                  <p>
-                    <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyQty' + auction.auction_id)">-</button>
-                    <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" max="1000">
-                    <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
-                  </p>
-                  <p><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
-
                 </div>
                 <div class="col-md-1 unbox">
                 </div>
-                <div class="col-md-3 unbox2" style="background-color: #111111; opacity: 0.9;">
-                  <h2 class="short-hr-center"><span class="colored">Price drop in <countdown :start="Date.parse(auction.start_time)" :period="auction.period_length" /></span></h2>
-                  Next price <div class="next-price">{{ auction.next_price }}</div>
-                  <p>&nbsp;</p>
+                <div class="col-md-3 unbox2">
+                  <div v-if="auction.has_started">
+                    <h2 class="highlight">
+                      <span class="colored">
+                        Current price <div class="price">{{ auction.current_price }}</div>
+                      </span>
+                    </h2>
 
-                  <h3 class="short-hr-center"><span class="colored">Twitter</span></h3>
-                  <!-- <ul>
-                    <li><span class="colored">@0.11 ETH</span> : 16</li>
-                    <li><span class="colored">@0.105 ETH</span> : 170</li>
-                    <li><span class="colored">@0.1 ETH</span> : 20</li>
-                  </ul> -->
+                    <p>
+                      <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyQty' + auction.auction_id)">-</button>
+                      <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" max="1000">
+                      <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
+                    </p>
+                    <p>
+                      <label><input type="checkbox" class="checkb" :id="'agree18' + auction.auction_id"> I am over 18</label><br>
+                      <label><input type="checkbox" class="checkb" :id="'agreeterms' + auction.auction_id"> I have read the terms and conditions</label>
+                    </p>
+                    <p><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
+
+                    <div v-if="auction.current_period < auction.period_count">
+                      <h2 class="highlight">
+                        <span>Price drop in <countdown :start="Date.parse(auction.start_time)" :period="auction.period_length" :cooldown="auction.break_length" v-on:finished="finishedPeriod()" v-on:cooldown="finishedPeriod()" /></span>
+                      </h2>
+                      Next price <div class="next-price">{{ auction.next_price }}</div>
+                    </div>
+                    <div v-else>
+                      Lowest price reached
+                    </div>
+
+                    <p>&nbsp;</p>
+                  </div>
+                  <div v-else>
+                    Sale has not started yet
+                  </div>
 
                   <div class="col-md-1 unbox">
                   </div>
@@ -132,6 +152,37 @@
     padding-bottom: 30px;
     font-size: 4rem;
   }
+  h2 {
+    font-size: 1.50rem;
+    font-weight: 500;
+  }
+  .highlight {
+    background: linear-gradient(167deg, rgba(23,22,21,0.6152836134453781) 9%, rgba(21,34,34,1) 100%, rgba(34,34,34,1) 100%);
+    Border-color: #88aadd;
+    color: #DDD;
+    font-family: nasalization;
+    display: block;
+    height: auto;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    padding: 5px 15px;
+    outline: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-radius: 15px;
+  }
+  .highlight::after {
+    border-top: 2px solid;
+    border-color: #E48632;
+    content: "";
+    display: block;
+    height: 1px;
+    width: 60px;
+    margin: 13px auto 0 auto;
+  }
   .colored {
     color: #E48632;
   }
@@ -140,6 +191,17 @@
   }
   .next-price {
     font-size: 1.4rem;
+  }
+  .unbox2 {
+    background-color: #111111;
+    opacity: 0.9;
+  }
+  label {
+    cursor: pointer;
+  }
+  .checkb {
+    display: inline-block;
+    height: 14px;
   }
   .short-hr-center::after {
     border-top: 2px solid;
@@ -253,6 +315,7 @@ export default {
       const now = parseInt((new Date().getTime() + offset) / 1000)
       const auctionStart = Date.parse(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
       const timeIntoSale = now - auctionStart
+      // console.log(`timeIntoSale ${timeIntoSale}`)
       // console.log(new Date(now * 1000), new Date(auctionStart * 1000), timeIntoSale)
 
       const cycleLength = auctionData.period_length + auctionData.break_length
@@ -268,6 +331,7 @@ export default {
       const periodNumber = this.currentPeriod(auctionData)
 
       const startPrice = parseInt(auctionData.start_price)
+      // console.log(`Start prioce ${startPrice}`)
       const stepPrice = auctionData.price_step
       const firstStepPrice = auctionData.first_step
       let priceSats = startPrice
@@ -289,6 +353,7 @@ export default {
     },
     nextPrice (auctionData) {
       const periodNumber = this.currentPeriod(auctionData) + 1
+
       if (periodNumber > auctionData.period_count) {
         return this.currentPrice(auctionData)
       }
@@ -296,9 +361,13 @@ export default {
       const startPrice = parseInt(auctionData.start_price)
       const firstStepPrice = auctionData.first_step
       const stepPrice = auctionData.price_step
-      // console.log(`first step price = ${firstStepPrice}, next period = ${periodNumber}`)
+      console.log(`first step price = ${firstStepPrice}, this period = ${periodNumber}`)
 
-      const priceSats = startPrice - firstStepPrice - (stepPrice * (periodNumber - 1))
+      let priceSats = startPrice
+      if (periodNumber >= 1) {
+        priceSats -= firstStepPrice
+        priceSats -= stepPrice * (periodNumber - 1)
+      }
       const price = priceSats / Math.pow(10, auctionData.price_symbol.precision)
 
       return `${price} ${auctionData.price_symbol.symbol}`
@@ -324,31 +393,35 @@ export default {
 
       return (timeIntoSale >= 0)
     },
-    async reloadAuctions () {
-      const res = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'auctions' })
+    async loadAuction () {
+      const auctionId = this.$route.params.auction_id
+      const res = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'auctions', lower_bound: auctionId, upper_bound: auctionId })
 
-      const auctions = res.rows.map((a) => {
-        const [amount, sym] = a.pack.quantity.split(' ')
-        a.amount = parseInt(amount)
-        a.sym = sym
-        const [pPrecision, pSym] = a.price_symbol.symbol.split(',')
-        a.price_symbol.precision = parseInt(pPrecision)
-        a.price_symbol.symbol = pSym
-        return a
-      })
-
-      for (let a = 0; a < auctions.length; a++) {
-        const pd = await this.getPack({ contract: 'pack.worlds', symbol: auctions[a].sym })
-        pd.metadata = JSON.parse(pd.metadata)
-        delete pd.pack_asset
-        auctions[a].pack_data = pd
-
-        auctions[a].current_price = this.currentPrice(auctions[a])
-        auctions[a].current_period = this.currentPeriod(auctions[a])
-        auctions[a].next_price = this.nextPrice(auctions[a])
-        auctions[a].in_rest = this.inRestPeriod(auctions[a])
-        auctions[a].has_started = this.hasStarted(auctions[a])
+      if (!res.rows.length) {
+        this.$showError('Auction not found')
+        return
       }
+
+      const auctionData = res.rows[0]
+      const [amount, sym] = auctionData.pack.quantity.split(' ')
+      auctionData.amount = parseInt(amount)
+      auctionData.sym = sym
+      const [pPrecision, pSym] = auctionData.price_symbol.symbol.split(',')
+      auctionData.price_symbol.precision = parseInt(pPrecision)
+      auctionData.price_symbol.symbol = pSym
+
+      const pd = await this.getPack({ contract: 'pack.worlds', symbol: auctionData.sym })
+      pd.metadata = JSON.parse(pd.metadata)
+      delete pd.pack_asset
+      auctionData.pack_data = pd
+
+      auctionData.current_price = this.currentPrice(auctionData)
+      auctionData.current_period = this.currentPeriod(auctionData)
+      auctionData.next_price = this.nextPrice(auctionData)
+      auctionData.in_rest = this.inRestPeriod(auctionData)
+      auctionData.has_started = this.hasStarted(auctionData)
+
+      const auctions = [auctionData]
 
       this.auctions = auctions
       // console.log('auctions', this.auctions)
@@ -479,10 +552,20 @@ export default {
       }
     },
     async startBuy (auctionData) {
+      const over18Ele = document.getElementById(`agree18${auctionData.auction_id}`)
+      const agreeTermsEle = document.getElementById(`agreeterms${auctionData.auction_id}`)
+      if (!over18Ele.checked) {
+        this.$showError('You must check the box to say you are over 18')
+        return
+      }
+      if (!agreeTermsEle.checked) {
+        this.$showError('You must agree to the terms')
+        return
+      }
       console.log(auctionData)
       const buyQtyEle = document.getElementById(`buyQty${auctionData.auction_id}`)
       if (!buyQtyEle) {
-        alert('Could not get quantity')
+        this.$showError('Could not get quantity')
       }
       let buyQty = parseInt(buyQtyEle.value)
       if (isNaN(buyQty)) {
@@ -511,7 +594,7 @@ export default {
       if (isNaN(currentVal)) {
         currentVal = 0
       }
-      if (currentVal > 0) {
+      if (currentVal > 1) {
         ele.value = currentVal - 1
       }
     },
@@ -522,11 +605,20 @@ export default {
         currentVal = 0
       }
       ele.value = currentVal + 1
+    },
+    finishedPeriod () {
+      // console.log('Finished period!!')
+      this.loadAuction()
     }
   },
   async mounted () {
     intervalId = window.setInterval(this.reloadAuctions, 5000)
-    this.reloadAuctions()
+    this.loadAuction()
+  },
+  watch: {
+    $route: function () {
+      this.loadAuction()
+    }
   },
   async beforeDestroy () {
     if (intervalId) {
