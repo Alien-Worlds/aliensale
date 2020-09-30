@@ -46,8 +46,7 @@ fastify.post('/redeem', async (request, reply) => {
     let transaction_id;
 
     try {
-        var data = 'evilmikehere';
-        var message = Buffer.from(data);
+        var message = Buffer.from(req.account);
         var msgHash = util.hashPersonalMessage(message);
         var sig_params = util.fromRpcSig(req.signature);
         var public_key = util.ecrecover(msgHash, sig_params.v, sig_params.r, sig_params.s);
