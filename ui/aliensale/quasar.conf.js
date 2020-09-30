@@ -24,6 +24,7 @@ module.exports = function (/* ctx */) {
         'bootstrap',
         'sweetalert',
         'waxapi',
+        'web3',
         'packs'
     ],
 
