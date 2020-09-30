@@ -29,6 +29,18 @@ module.exports = {
             env: {
                 'CONFIG': 'jungle'
             }
+        },
+        {
+            name: "eth-redeem",
+            script: "./eth-redeem.js",
+            node_args: ["--max-old-space-size=8192"],
+            autorestart: true,
+            kill_timeout: 3600,
+            env: {
+                'CONFIG': 'jungle',
+                'SERVER_ADDR': '0.0.0.0',
+                'SERVER_PORT': 6565
+            }
         }
     ]
 };
