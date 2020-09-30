@@ -274,6 +274,8 @@ void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
 }
 
 void aliensale::addethswap(checksum160 eth_address, asset quantity) {
+    require_auth(get_self());
+
     _ethswaps.emplace(get_self(), [&](auto &e){
         e.ethswap_id = _ethswaps.available_primary_key();
         e.eth_address = eth_address;
