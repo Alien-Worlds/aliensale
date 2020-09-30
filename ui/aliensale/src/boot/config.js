@@ -5,6 +5,7 @@ export default ({ Vue }) => {
     eosEndpoint: 'https://jungle3.eosdac.io',
     atomicEndpoint: 'https://test.wax.api.atomicassets.io',
     collectionName: 'alien.worlds',
+    saleContract: 'sale.worlds',
     redeemContractEos: 'alienpromopk',
     redeemBurnEos: 'alienworlds1'
   }
