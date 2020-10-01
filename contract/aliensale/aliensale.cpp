@@ -242,6 +242,7 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty) {
 
 
 void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
+    require_auth(get_self());
     // check that tx_id hasnt been used before
     auto swp_idx = _swaps.get_index<"bytxid"_n>();
     auto swap = swp_idx.find(tx_id);
