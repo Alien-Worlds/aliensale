@@ -9,7 +9,7 @@ const { TextDecoder, TextEncoder } = require('text-encoding');
 const Web3 = require('web3');
 const util = require('ethereumjs-util');
 
-const config = require('../config');
+const config = require(`../config.${process.env.CONFIG}`);
 const rpc = new JsonRpc(config.endpoint, {fetch});
 const signatureProvider = new JsSignatureProvider([config.private_key]);
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
@@ -96,7 +96,7 @@ fastify.post('/redeem', async (request, reply) => {
 
 (async () => {
     try {
-        await fastify.listen(process.env.SERVER_PORT, process.env.SERVER_ADDR)
+        await fastify.listen(config.redeem_server_port, config.redeem_server_host)
     } catch (err) {
         fastify.log.error(err);
         process.exit(1)

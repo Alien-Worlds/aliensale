@@ -13,7 +13,7 @@ const { Api, JsonRpc, Serialize } = require('eosjs');
 const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
 const { TextDecoder, TextEncoder } = require('text-encoding');
 
-const config = require('../config');
+const config = require(`../config.${process.env.CONFIG}`);
 
 const block_filename = `.voucherswap_eos_${config.eos.chainId}`;
 
