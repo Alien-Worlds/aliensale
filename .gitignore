@@ -2,3 +2,5 @@
 /config.dev.js
 /config.jungle.js
 /scripts/keys.txt
+/config.prod.js
+/config.test.js
