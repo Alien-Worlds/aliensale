@@ -5,10 +5,6 @@
 #include <eosio/transaction.hpp>
 #include <math.h>
 
-#define USE_KECCAK
-#include "sha3/sha3.c"
-#include "ecc/uECC.c"
-
 using namespace eosio;
 using namespace std;
 
