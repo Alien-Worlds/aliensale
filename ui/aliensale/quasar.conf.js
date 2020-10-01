@@ -10,7 +10,6 @@ const config = require('./config/index.js')
 const env = process.env.BUILD_ENV || 'test'
 
 module.exports = function (ctx) {
-  console.log('ctx', ctx)
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
