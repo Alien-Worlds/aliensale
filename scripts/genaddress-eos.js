@@ -9,7 +9,7 @@ const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
 const { TextDecoder, TextEncoder } = require('text-encoding');
 const fetch = require("node-fetch");
 
-const config = require('./config');
+const config = require(`../config.${process.env.CONFIG}`);
 
 
 const rpc = new JsonRpc(config.endpoint, {fetch});

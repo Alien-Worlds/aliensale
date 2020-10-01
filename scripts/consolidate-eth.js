@@ -10,7 +10,7 @@ const fs = require('fs');
 const HDKey = require('hdkey');
 const ethUtil = require('ethereumjs-util');
 
-const config = require('./config');
+const config = require(`../config.${process.env.CONFIG}`);
 
 const endpoint = `https://${config.eth.network}.infura.io/v3/${config.eth.project_id}`;
 const ws_endpoint = `wss://${config.eth.network}.infura.io/ws/v3/${config.eth.project_id}`;
