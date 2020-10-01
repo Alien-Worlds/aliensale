@@ -130,7 +130,7 @@ export default {
         })
         const json = await resp.json()
         if (json.success) {
-          this.$showMessage('Redemption successful, the pack will be in your WAX account soon')
+          this.$showSuccess('Redemption successful, the pack will be in your WAX account soon')
         } else {
           this.$showError(json.error)
         }
