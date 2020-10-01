@@ -1,3 +1,5 @@
+const CONFIG = 'jungle'
+
 module.exports = {
     apps: [
         {
@@ -7,7 +9,7 @@ module.exports = {
             autorestart: true,
             kill_timeout: 3600,
             env: {
-                'CONFIG': 'jungle'
+                CONFIG
             }
         },
         {
@@ -17,7 +19,7 @@ module.exports = {
             autorestart: true,
             kill_timeout: 3600,
             env: {
-                'CONFIG': 'jungle'
+                CONFIG
             }
         },
         {
@@ -27,7 +29,7 @@ module.exports = {
             autorestart: true,
             kill_timeout: 3600,
             env: {
-                'CONFIG': 'jungle'
+                CONFIG
             }
         },
         {
@@ -37,9 +39,7 @@ module.exports = {
             autorestart: true,
             kill_timeout: 3600,
             env: {
-                'CONFIG': 'jungle',
-                'SERVER_ADDR': '0.0.0.0',
-                'SERVER_PORT': 6565
+                CONFIG
             }
         }
     ]
