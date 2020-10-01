@@ -147,7 +147,7 @@ export default {
     },
     async getPackBalance (account) {
       // to prevent caching
-      const url = `${this.$config.waxEndpoint}/v1/chain/get_currency_balance`
+      const url = `${process.env.waxEndpoint}/v1/chain/get_currency_balance`
       const res = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({
@@ -289,7 +289,7 @@ export default {
       this.pollTimer = setInterval(() => { this.poll(res.transaction.processed.block_time) }, 1000)
     },
     async poll (checkDate) {
-      const url = `${this.$config.waxEndpoint}/v2/history/get_actions?account=${this.getAccountName.wax}&after=${checkDate}&filter=open.worlds:logopen`
+      const url = `${process.env.waxEndpoint}/v2/history/get_actions?account=${this.getAccountName.wax}&after=${checkDate}&filter=open.worlds:logopen`
       const res = await fetch(url)
       const json = await res.json()
       if (json.actions.length) {
@@ -297,7 +297,7 @@ export default {
         const cards = []
         const actionData = json.actions[0].act.data
         const templateIds = actionData.chosen_cards.map(c => c.template_id).filter(c => `${c}` !== '0')
-        const templateUrl = `${this.$config.atomicEndpoint}/atomicassets/v1/templates?ids=${templateIds.join(',')}`
+        const templateUrl = `${process.env.atomicEndpoint}/atomicassets/v1/templates?ids=${templateIds.join(',')}`
         const templatesRes = await fetch(templateUrl)
         const templates = await templatesRes.json()
         templateIds.forEach((tId) => {
@@ -306,7 +306,7 @@ export default {
         })
         // assets for land
         const assetIds = actionData.chosen_cards.map(c => c.asset_id).filter(c => `${c}` !== '0')
-        const assetUrl = `${this.$config.atomicEndpoint}/atomicassets/v1/assets?ids=${assetIds.join(',')}`
+        const assetUrl = `${process.env.atomicEndpoint}/atomicassets/v1/assets?ids=${assetIds.join(',')}`
         const assetsRes = await fetch(assetUrl)
         const assets = await assetsRes.json()
         assetIds.forEach((aId) => {

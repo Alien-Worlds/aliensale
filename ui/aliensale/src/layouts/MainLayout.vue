@@ -25,6 +25,7 @@
                   <div class="row" style="padding-left: 30px">
                     <div><img src="/images/wax-logo-white.png" :class="waxLogoClass" @click="login('wax')" /></div>
                     <div><img src="/images/eos-logo.png" :class="eosLogoClass" @click="login('eos')" /></div>
+                    <div><img src="/images/ethereum-logo.png" :class="ethereumLogoClass" @click="login('ethereum')" /></div>
                   </div>
                 </li>
                 <li class="nav-item" v-if="getAccountName.wax || getAccountName.eos">
@@ -65,6 +66,9 @@ export default {
     },
     eosLogoClass () {
       return (this.getAccountName.eos) ? 'login eos-login' : 'login eos-login-inactive'
+    },
+    ethereumLogoClass () {
+      return (this.getAccountName.ethereum) ? 'login ethereum-login' : 'login ethereum-login-inactive'
     }
   },
   methods: {
@@ -72,8 +76,19 @@ export default {
       // console.log('logout')
       this.$store.dispatch('ual/logout')
     },
-    login (network) {
-      this.$store.dispatch('ual/renderLoginModal', network, { root: true })
+    async login (network) {
+      if (network === 'ethereum') {
+        const { injectedWeb3, web3 } = this.$web3
+        // console.log(injectedWeb3, web3)
+
+        if (injectedWeb3) {
+          const ethAccount = await web3.eth.getAccounts()
+          // console.log(ethAccount)
+          this.$store.commit('ual/setAccountName', { network: 'ethereum', accountName: ethAccount[0] })
+        }
+      } else {
+        this.$store.dispatch('ual/renderLoginModal', network, { root: true })
+      }
     }
   },
   async mounted () {
@@ -99,5 +114,10 @@ export default {
   .eos-login {}
   .eos-login-inactive {
     opacity: 0.5;
+  }
+  .ethereum-login {}
+  .ethereum-login-inactive {
+    opacity: 0.5;
+    filter: grayscale(100%);
   }
 </style>

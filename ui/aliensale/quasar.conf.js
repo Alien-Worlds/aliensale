@@ -6,8 +6,11 @@
 // Configuration for your app
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
+const config = require('./config/index.js')
+const env = process.env.BUILD_ENV || 'test'
 
-module.exports = function (/* ctx */) {
+module.exports = function (ctx) {
+  console.log('ctx', ctx)
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
@@ -19,7 +22,6 @@ module.exports = function (/* ctx */) {
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
-        'config',
         'i18n',
         'bootstrap',
         'sweetalert',
@@ -50,6 +52,8 @@ module.exports = function (/* ctx */) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: 'history', // available values: 'hash', 'history'
+      env: ctx.dev ? config.dev : config[env],
+      // env: {test:1},
 
       // transpile: false,
 
