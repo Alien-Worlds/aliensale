@@ -48,7 +48,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { BButton, BButtonGroup, BButtonToolbar } from 'bootstrap-vue'
-import Web3 from 'web3'
 
 export default {
   name: 'PaymentRequest',
@@ -97,7 +96,7 @@ export default {
           this.$showError(e.message)
         }
       } else if (val.network === 'eth') {
-        const { injectedWeb3, web3 } = await this.getWeb3()
+        const { injectedWeb3, web3 } = this.$web3
         console.log(injectedWeb3, web3)
 
         if (injectedWeb3) {
@@ -122,22 +121,6 @@ export default {
       }
 
       // this.showDialog = false
-    },
-    async getWeb3 () {
-      // Check for injected web3 (mist/metamask)
-      var web3js = window.web3
-      if (typeof web3js !== 'undefined') {
-        var web3 = new Web3(web3js.currentProvider)
-        await window.ethereum.enable()
-        // console.log(web3)
-        return {
-          injectedWeb3: await web3.eth.net.isListening(),
-          web3
-        }
-      } else {
-        // web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545')) GANACHE FALLBACK
-        throw new Error('Unable to connect to Metamask')
-      }
     },
     closeModal () {
       this.showDialog = false
