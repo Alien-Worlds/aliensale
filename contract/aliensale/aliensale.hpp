@@ -45,6 +45,8 @@ namespace alienworlds {
             time_point_sec         invoice_time;
             bool                   completed = false;
             string                 completed_tx_id;
+            name                   referrer;
+            string                 referrer_payout;
 
             uint64_t primary_key() const { return invoice_id; }
             uint64_t by_chain() const { return invoice_currency.chain.value; }
@@ -154,28 +156,25 @@ namespace alienworlds {
         typedef multi_index<"auctions"_n, auction_item, indexed_by<"bypack"_n,
             const_mem_fun<auction_item, uint128_t, &auction_item::by_pack> > > auctions_table;
 
+        /* Sales made in local currency, to track referrer payments */
+        struct [[eosio::table("sales")]] sale_item {
+            uint64_t       sale_id;
+            uint64_t       auction_id;
+            asset          quantity;
+            name           referrer;
+            string         referrer_payout;
 
-        // External tables from delphioracle
-        typedef uint16_t asset_type;
-        //Holds the last datapoints_count datapoints from qualified oracles
-        struct datapoints {
-            uint64_t   id;
-            name       owner;
-            uint64_t   value;
-            uint64_t   median;
-            time_point timestamp;
-
-            uint64_t primary_key() const {return id;}
-            uint64_t by_timestamp() const {return timestamp.elapsed.to_seconds();}
-            uint64_t by_value() const {return value;}
+            uint64_t primary_key() const { return sale_id; }
+            uint64_t by_referrer() const { return referrer.value; }
         };
-        typedef eosio::multi_index<"datapoints"_n, datapoints,
-            indexed_by<"value"_n, const_mem_fun<datapoints, uint64_t, &datapoints::by_value>>,
-            indexed_by<"timestamp"_n, const_mem_fun<datapoints, uint64_t, &datapoints::by_timestamp>>> datapointstable;
+        typedef multi_index<"sales"_n, sale_item,
+              indexed_by<"byreferrer"_n, const_mem_fun<sale_item, uint64_t, &sale_item::by_referrer> >
+            > sales_table;
 
         // Local instances
         addresses_table _addresses;
         invoices_table  _invoices;
+        sales_table     _sales;
         auctions_table  _auctions;
         packs_table     _packs;
         deposits_table  _deposits;
@@ -210,10 +209,10 @@ namespace alienworlds {
         [[eosio::action]] void addaddress(uint64_t address_id, name foreign_chain, string address);
 
         /* Create an invoice for an auction */
-        [[eosio::action]] void newinvoice(name native_address, uint64_t auction_id, uint8_t qty);
+        [[eosio::action]] void newinvoice(name native_address, uint64_t auction_id, uint8_t qty, name referrer);
 
         /* Logs an invoice which can be read by the client in action traces */
-        [[eosio::action]] void loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency);
+        [[eosio::action]] void loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency, name referrer);
 
         /* Remove an invoice entry */
         [[eosio::action]] void delinvoice(uint64_t invoice_id);
@@ -222,7 +221,7 @@ namespace alienworlds {
         [[eosio::action]] void payment(uint64_t invoice_id, string tx_id);
 
         /* Buy using deposited funds using native token */
-        [[eosio::action]] void buy(name buyer, uint64_t auction_id, uint8_t qty);
+        [[eosio::action]] void buy(name buyer, uint64_t auction_id, uint8_t qty, name referrer);
 
         /* Swap from EOS, will be called by the watcher script */
          [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);

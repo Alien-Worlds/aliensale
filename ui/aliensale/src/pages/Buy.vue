@@ -439,7 +439,8 @@ export default {
         data: {
           native_address: account,
           auction_id: auction.auction_id,
-          qty
+          qty,
+          referrer: this.$referrer
         }
       }]
 
@@ -486,10 +487,11 @@ export default {
         data: {
           buyer: account,
           auction_id: auction.auction_id,
-          qty
+          qty,
+          referrer: this.$referrer
         }
       }]
-      // console.log(actions)
+      console.log(actions)
       let resp = null
       try {
         resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })

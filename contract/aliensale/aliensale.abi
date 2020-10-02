@@ -178,6 +178,10 @@
                 {
                     "name": "qty",
                     "type": "uint8"
+                },
+                {
+                    "name": "referrer",
+                    "type": "name"
                 }
             ]
         },
@@ -373,6 +377,14 @@
                 {
                     "name": "completed_tx_id",
                     "type": "string"
+                },
+                {
+                    "name": "referrer",
+                    "type": "name"
+                },
+                {
+                    "name": "referrer_payout",
+                    "type": "string"
                 }
             ]
         },
@@ -399,6 +411,10 @@
                 {
                     "name": "settlement_currency",
                     "type": "extended_symbol"
+                },
+                {
+                    "name": "referrer",
+                    "type": "name"
                 }
             ]
         },
@@ -417,6 +433,10 @@
                 {
                     "name": "qty",
                     "type": "uint8"
+                },
+                {
+                    "name": "referrer",
+                    "type": "name"
                 }
             ]
         },
@@ -471,6 +491,32 @@
                 {
                     "name": "address",
                     "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "sale_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "sale_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "referrer",
+                    "type": "name"
+                },
+                {
+                    "name": "referrer_payout",
+                    "type": "string"
                 }
             ]
         },
@@ -651,6 +697,13 @@
         {
             "name": "packs",
             "type": "pack_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "sales",
+            "type": "sale_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

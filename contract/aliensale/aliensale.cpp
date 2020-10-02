@@ -5,6 +5,7 @@ using namespace alienworlds;
 aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(s, code, ds),
                                                                        _addresses(get_self(), get_self().value),
                                                                        _invoices(get_self(), get_self().value),
+                                                                       _sales(get_self(), get_self().value),
                                                                        _auctions(get_self(), get_self().value),
                                                                        _packs(get_self(), get_self().value),
                                                                        _deposits(get_self(), get_self().value),
@@ -60,16 +61,16 @@ void aliensale::addauction(extended_asset pack, time_point start_time, foreign_s
 
     uint64_t auction_id = _auctions.available_primary_key();
     _auctions.emplace(get_self(), [&](auto &a){
-        a.auction_id = auction_id;
-        a.pack = pack;
-        a.start_time = start_time;
-        a.price_symbol = price_symbol;
-        a.start_price = start_price;
+        a.auction_id    = auction_id;
+        a.pack          = pack;
+        a.start_time    = start_time;
+        a.price_symbol  = price_symbol;
+        a.start_price   = start_price;
         a.period_length = period_length;
-        a.break_length = break_length;
-        a.first_step = first_step;
-        a.price_step = price_step;
-        a.period_count = period_count;
+        a.break_length  = break_length;
+        a.first_step    = first_step;
+        a.price_step    = price_step;
+        a.period_count  = period_count;
     });
 }
 
@@ -92,7 +93,7 @@ void aliensale::addaddress(uint64_t address_id, name foreign_chain, string addre
     });
 }
 
-void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty) {
+void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty, name referrer) {
     require_auth(native_address);
     check(qty > 0, "Quantity cannot be negative");
 
@@ -140,11 +141,11 @@ void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty
     action(
         permission_level{get_self(), "log"_n},
         get_self(), "loginvoice"_n,
-        make_tuple(native_address, invoice_id, foreign_price, foreign_address, settlement_currency)
+        make_tuple(native_address, invoice_id, foreign_price, foreign_address, settlement_currency, referrer)
     ).send();
 }
 
-void aliensale::loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency) {}
+void aliensale::loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency, name referrer) {}
 
 void aliensale::delinvoice(uint64_t invoice_id) {
     require_auth(get_self());
@@ -205,7 +206,7 @@ void aliensale::transfer(name from, name to, asset quantity, string memo) {
     });
 }
 
-void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty) {
+void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty, name referrer) {
     check(qty > 0, "Quantity cannot be negative");
     require_auth(buyer);
     // check they have correct deposit and send out packs
@@ -236,6 +237,14 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty) {
         auction->pack.contract, "transfer"_n,
         make_tuple(get_self(), buyer, pack_asset, memo)
     ).send();
+
+    // add sale record
+    _sales.emplace(get_self(), [&](auto &s){
+        s.sale_id    = _sales.available_primary_key();
+        s.auction_id = auction_id;
+        s.quantity   = deposit->quantity;
+        s.referrer   = referrer;
+    });
 
     _deposits.erase(deposit);
 }
