@@ -70,7 +70,7 @@
                     <p>&nbsp;</p>
                   </div>
                   <div v-else>
-                    Sale has not started yet
+                    <h2 class="colored">Sale starts in : <start-countdown :start="Date.parse(auction.start_time)" /></h2>
                   </div>
 
                   <div class="col-md-1 unbox">
@@ -253,6 +253,7 @@
 import { mapGetters } from 'vuex'
 import PaymentRequest from 'components/PaymentRequest'
 import Countdown from 'components/Countdown'
+import StartCountdown from 'components/StartCountdown'
 // import { BButton, BFormInput /* , BButtonGroup, BButtonToolbar */ } from 'bootstrap-vue'
 import { Serialize } from 'eosjs'
 let intervalId
@@ -261,7 +262,8 @@ export default {
   name: 'BuyPage',
   components: {
     'payment-request': PaymentRequest,
-    countdown: Countdown
+    countdown: Countdown,
+    'start-countdown': StartCountdown
     // 'b-button': BButton,
     // 'b-button-group': BButtonGroup,
     // 'b-button-toolbar': BButtonToolbar,

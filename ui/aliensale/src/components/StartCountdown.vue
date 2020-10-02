@@ -7,9 +7,9 @@
 <script>
 
 export default {
-  name: 'Countdown',
+  name: 'StartCountdown',
   components: {},
-  props: ['start', 'period', 'cooldown'],
+  props: ['start'],
   computed: {
 
   },
@@ -22,15 +22,7 @@ export default {
     updateRemaining: function () {
       const offset = (new Date()).getTimezoneOffset() * 60 * 1000
       const now = parseInt((new Date().getTime() + offset))
-      const period = this.period + this.cooldown
-      const diff = parseInt((now - this.start) / 1000)
-      let remainder = period - (diff % period)
-      if (remainder === this.cooldown) {
-        this.$emit('cooldown')
-      }
-      if (diff % period === 0) {
-        remainder = 0
-      }
+      let remainder = parseInt((now - this.start) / 1000) * -1
       const hours = Math.floor(remainder / (60 * 60))
       remainder = remainder % (60 * 60)
       const minutes = Math.floor(remainder / 60)

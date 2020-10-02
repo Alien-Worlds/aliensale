@@ -3,7 +3,7 @@
     <h1>Buy!</h1>
     <p>This is a temporary page and will be replaced with a hardcoded one</p>
     <div v-for="auction in auctions" :key="auction.auction_id">
-      <router-link :to="{ name: 'auction', params: { auction_id: 0 }}">Auction for {{ auction.pack.quantity }}</router-link>
+      <router-link :to="{ name: 'auction', params: { auction_id: auction.auction_id }}">Auction for {{ auction.pack.quantity }}</router-link>
     </div>
   </q-page>
 </template>
