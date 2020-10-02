@@ -51,10 +51,10 @@
                       <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" max="1000">
                       <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
                     </p>
-                    <p>
+                    <!-- <p>
                       <label><input type="checkbox" class="checkb" :id="'agree18' + auction.auction_id"> I am over 18</label><br>
                       <label><input type="checkbox" class="checkb" :id="'agreeterms' + auction.auction_id"> I have read the terms and conditions</label>
-                    </p>
+                    </p> -->
                     <p><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
 
                     <div v-if="auction.current_period < auction.period_count">
@@ -247,6 +247,13 @@
     background-position: 100px center;
     margin-bottom: 50px;
   }
+  #buy-confirm-error {
+    color: red;
+  }
+  #country {
+    width: 100%;
+    padding: 10px;
+  }
 </style>
 
 <script>
@@ -254,6 +261,8 @@ import { mapGetters } from 'vuex'
 import PaymentRequest from 'components/PaymentRequest'
 import Countdown from 'components/Countdown'
 import StartCountdown from 'components/StartCountdown'
+import countryList from 'country-list'
+import crypto from 'crypto'
 // import { BButton, BFormInput /* , BButtonGroup, BButtonToolbar */ } from 'bootstrap-vue'
 import { Serialize } from 'eosjs'
 let intervalId
@@ -428,8 +437,8 @@ export default {
       this.auctions = auctions
       // console.log('auctions', this.auctions)
     },
-    async createSale (account, qty, auction) {
-      console.log('createSale', account, qty, auction)
+    async createSale (account, qty, auction, country) {
+      console.log('createSale', account, qty, auction, country)
       // creates the sale on wax and returns the details
       const actions = [{
         account: 'sale.worlds',
@@ -450,12 +459,30 @@ export default {
 
       try {
         console.log('createsale actions', actions)
-        const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
-        // console.log(createResp)
-        if (createResp.status === 'executed' && createResp.wasBroadcast) {
-          const logData = createResp.transaction.processed.action_traces[0].inline_traces[0].act.data
+        const options = { broadcast: false }
+        const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax', options })
+        const hash = crypto.createHash('sha256')
+        hash.update(createResp.transaction.serializedTransaction)
+        const txId = hash.digest('hex')
+
+        // register the sale on our server
+        const saleRes = await fetch(`${process.env.saleServer}/sale`, {
+          method: 'POST',
+          body: JSON.stringify({ country, txId })
+        })
+        console.log(await saleRes.json())
+
+        // console.log(txId, createResp)
+        const pushResp = await this.$wax.pushSignedTransaction({
+          ...createResp.transaction
+        })
+        console.log(pushResp)
+
+        if (pushResp.processed.receipt.status === 'executed') {
+          const logData = pushResp.processed.action_traces[0].inline_traces[0].act.data
           // console.log('create data', logData)
 
+          logData.transaction_id = pushResp.transaction_id
           retVal = logData
         }
       } catch (e) {
@@ -464,8 +491,8 @@ export default {
 
       return retVal
     },
-    async buyWax (account, qty, auction) {
-      console.log('buyWax', account, qty, auction)
+    async buyWax (account, qty, auction, country) {
+      console.log('buyWax', account, qty, auction, country)
       const actions = [{
         account: 'eosio.token',
         name: 'transfer',
@@ -496,7 +523,29 @@ export default {
       console.log(actions)
       let resp = null
       try {
-        resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+        const options = { broadcast: false }
+        resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax', options })
+
+        const hash = crypto.createHash('sha256')
+        hash.update(resp.transaction.serializedTransaction)
+        const txId = hash.digest('hex')
+
+        // register the sale on our server
+        const saleRes = await fetch(`${process.env.saleServer}/sale`, {
+          method: 'POST',
+          body: JSON.stringify({ country, txId })
+        })
+        const saleResJson = await saleRes.json()
+        if (!saleResJson.success) {
+          throw new Error(`Failed to confirm sale - ${saleResJson.error}`)
+        }
+        console.log(saleResJson)
+
+        // console.log(txId, createResp)
+        const pushResp = await this.$wax.pushSignedTransaction({
+          ...resp.transaction
+        })
+        console.log(pushResp)
 
         this.$showSuccess('Your pack has been purchased successfully, please wait a few moments and it will appear in your packs page')
       } catch (e) {
@@ -506,15 +555,15 @@ export default {
       // console.log(resp)
       return resp
     },
-    async buyEos (accounts, qty, auction) {
+    async buyEos (accounts, qty, auction, country) {
       if (!this.getAccountName.eos) {
         // make sure they are logged in, they will have to click the buy button again
         this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
       }
 
       // create the sale on wax
-      const logData = await this.createSale(accounts.wax, qty, auction)
-      if (logData.foreign_address && logData.foreign_price && logData.invoice_id) {
+      const logData = await this.createSale(accounts.wax, qty, auction, country)
+      if (logData.foreign_address && logData.foreign_price && typeof logData.invoice_id !== 'undefined') {
         // log into eos if not already and send the eos payment
         console.log(auction, logData)
 
@@ -535,12 +584,12 @@ export default {
         }
       }
     },
-    async buyEth (account, qty, auction) {
+    async buyEth (account, qty, auction, country) {
       // const saleSymbol = pack.sale_symbols.filter(s => s.symbol === '18,ETH')[0]
-      const logData = await this.createSale(account, qty, auction)
-      // console.log(logData)
+      const logData = await this.createSale(account, qty, auction, country)
+      console.log('sale log data', logData)
 
-      if (logData.foreign_address && logData.foreign_price && logData.invoice_id) {
+      if (logData.foreign_address && logData.foreign_price && typeof logData.invoice_id !== 'undefined') {
         const nativeAmount = (logData.foreign_price / Math.pow(10, 18))
 
         this.paymentRequest = {
@@ -552,11 +601,123 @@ export default {
           memo: ''
         }
       } else {
-        alert('Invalid log data :/')
+        this.$showError('Invalid log data :/')
       }
     },
+    getCountryDropdownHTML () {
+      console.log(countryList.getData())
+      const countries = countryList.getData().sort((a, b) => (a.name < b.name) ? -1 : 1).map(d => {
+        d.name = d.name.replace('of Great Britain and Northern Ireland', '')
+        return d
+      })
+      const special = ['GB', 'US', 'CA', 'ES', 'CN', 'KR']
+      const specialCountries = countries.filter(c => special.includes(c.code))
+
+      const selectList = document.createElement('select')
+      selectList.id = 'country'
+
+      const optiona = document.createElement('option')
+      optiona.value = ''
+      optiona.text = 'Choose Country'
+      selectList.appendChild(optiona)
+
+      const optionb = document.createElement('option')
+      optionb.value = ''
+      optionb.text = '-----------------------------------'
+      optionb.disabled = true
+      selectList.appendChild(optionb)
+
+      for (let i = 0; i < specialCountries.length; i++) {
+        const option = document.createElement('option')
+        option.value = specialCountries[i].code
+        option.text = specialCountries[i].name
+        selectList.appendChild(option)
+      }
+
+      const option = document.createElement('option')
+      option.value = ''
+      option.text = '-----------------------------------'
+      option.disabled = true
+      selectList.appendChild(option)
+
+      for (let i = 0; i < countries.length; i++) {
+        const option = document.createElement('option')
+        option.value = countries[i].code
+        option.text = countries[i].name
+        selectList.appendChild(option)
+      }
+
+      return selectList.outerHTML
+    },
+    getConfirmHTML (auctionData) {
+      const html = '<div>' +
+              '<p>Please confirm you would like to buy the following pack</p>' +
+              `<p>${auctionData.pack_data.metadata.name}</p>` +
+              '<p>' +
+              '<label>' + this.getCountryDropdownHTML() + '</label>' +
+              '<label><input type="checkbox" id="agree18" class="checkb"> I am over 18</label>' +
+              '<br><label><input type="checkbox" id="agreeterms" class="checkb"> I have read the terms and conditions</label>' +
+              '</p>' +
+              '<div id="buy-confirm-error"></div></div>'
+      return html
+    },
+    showBuyError (msg) {
+      const err = document.getElementById('buy-confirm-error')
+      err.innerHTML = msg
+    },
     async startBuy (auctionData) {
-      const over18Ele = document.getElementById(`agree18${auctionData.auction_id}`)
+      let country = ''
+      this.$swal({
+        title: 'Please Confirm',
+        preConfirm: () => {
+          const over18Ele = document.getElementById('agree18')
+          const agreeTermsEle = document.getElementById('agreeterms')
+          const countryEle = document.getElementById('country')
+          if (!over18Ele.checked) {
+            this.showBuyError('You must check the box to say you are over 18')
+            return false
+          } else if (!agreeTermsEle.checked) {
+            this.showBuyError('You must agree to the terms')
+            return false
+          } else if (!countryEle.value) {
+            this.showBuyError('Please choose your country')
+            return false
+          }
+
+          country = countryEle.value
+
+          return true
+        },
+        html: this.getConfirmHTML(auctionData)
+      }).then(async res => {
+        console.log(res)
+
+        const buyQtyEle = document.getElementById(`buyQty${auctionData.auction_id}`)
+        if (!buyQtyEle) {
+          this.$showError('Could not get quantity')
+        }
+        let buyQty = parseInt(buyQtyEle.value)
+        if (isNaN(buyQty)) {
+          buyQty = 1
+        }
+
+        console.log(`Buying ${buyQty} of ${auctionData.pack_data.metadata.name} from account ${this.getAccountName.wax}`)
+
+        const currency = auctionData.price_symbol.symbol
+
+        switch (currency) {
+          case 'WAX':
+            await this.buyWax(this.getAccountName.wax, buyQty, auctionData, country)
+            break
+          case 'ETH':
+            await this.buyEth(this.getAccountName.wax, buyQty, auctionData, country)
+            break
+          default:
+            await this.buyEos(this.getAccountName, buyQty, auctionData, country)
+            break
+        }
+      })
+      /* const over18Ele = document.getElementById(`agree18${auctionData.auction_id}`)
       const agreeTermsEle = document.getElementById(`agreeterms${auctionData.auction_id}`)
       if (!over18Ele.checked) {
         this.$showError('You must check the box to say you are over 18')
@@ -590,7 +751,7 @@ export default {
         default:
           await this.buyEos(this.getAccountName, buyQty, auctionData)
           break
-      }
+      } */
     },
     decrementCounter (id) {
       const ele = document.getElementById(id)

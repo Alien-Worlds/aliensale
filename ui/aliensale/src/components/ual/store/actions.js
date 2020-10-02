@@ -115,7 +115,8 @@ async function attemptAutoLoginNetwork ({ state, commit, dispatch, network }) {
 }
 
 export async function transact ({ state, dispatch, commit }, payload) {
-  const { actions, network } = payload
+  const { actions, network, options } = payload
+  console.log('payload', payload)
   console.log(`Sending transaction on ${network}`, actions)
   const { accountName, authenticatorName, permission } = state.SESSION[network]
   console.log(`transact with stored state ${authenticatorName} ${accountName}@${permission}`)
@@ -136,7 +137,9 @@ export async function transact ({ state, dispatch, commit }, payload) {
   })
   let res = null
   try {
-    res = await user.signTransaction({ actions: copiedActions }, { broadcast: true })
+    const optionsCombined = Object.assign({ broadcast: true }, options)
+    console.log('options for transact', options)
+    res = await user.signTransaction({ actions: copiedActions }, optionsCombined)
     // afterTransact()
   } catch (e) {
     const [errMsg, errCode] = parseUalError(e)
