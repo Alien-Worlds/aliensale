@@ -277,6 +277,10 @@ void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
 void aliensale::addethswap(checksum160 eth_address, asset quantity) {
     require_auth(get_self());
 
+    auto swp_idx = _ethswaps.get_index<"byethaddr"_n>();
+    auto swap = swp_idx.find(to_checksum256(eth_address));
+    check(swap == swp_idx.end(), "Address already loaded");
+
     _ethswaps.emplace(get_self(), [&](auto &e){
         e.ethswap_id = _ethswaps.available_primary_key();
         e.eth_address = eth_address;
