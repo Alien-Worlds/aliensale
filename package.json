@@ -11,14 +11,15 @@
   "dependencies": {
     "@eosdacio/eosio-statereceiver": "^1.0.2",
     "bip39": "^3.0.2",
-    "eosjs": "^21.0.2",
+    "eosjs": "^21.0.3",
     "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^7.0.5",
     "fastify": "^3.5.0",
     "fastify-cors": "^4.1.0",
     "fastify-oas": "^3.0.3",
+    "fs": "^0.0.1-security",
     "hdkey": "^2.0.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "text-encoding": "^0.7.0",
     "web3": "^1.2.11"
   }
