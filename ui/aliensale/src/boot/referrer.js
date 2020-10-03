@@ -2,7 +2,7 @@
 export default ({ Vue, urlPath }) => {
   let referrerAccount = ''
   if (localStorage) {
-    referrerAccount = localStorage.getItem('referrer')
+    referrerAccount = localStorage.getItem('referrer') || ''
   }
   if (!referrerAccount) {
     const [, search] = urlPath.split('?')
