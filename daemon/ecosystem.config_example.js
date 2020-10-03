@@ -41,6 +41,16 @@ module.exports = {
             env: {
                 CONFIG
             }
+        },
+        {
+            name: "sale-log",
+            script: "./sale-log.js",
+            node_args: ["--max-old-space-size=8192"],
+            autorestart: true,
+            kill_timeout: 3600,
+            env: {
+                CONFIG
+            }
         }
     ]
 };
