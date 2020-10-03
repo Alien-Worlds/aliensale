@@ -289,9 +289,10 @@ export default {
       this.pollTimer = setInterval(() => { this.poll(res.transaction.processed.block_time) }, 1000)
     },
     async poll (checkDate) {
-      const url = `${process.env.waxEndpoint}/v2/history/get_actions?account=${this.getAccountName.wax}&after=${checkDate}&filter=open.worlds:logopen`
+      const url = `${process.env.waxEndpoint}/v2/history/get_actions?after=${checkDate}&filter=open.worlds:logopen`
       const res = await fetch(url)
       const json = await res.json()
+      json.actions = json.actions.filter(a => a.act.data.opener === this.getAccountName.wax)
       if (json.actions.length) {
         clearInterval(this.pollTimer)
         const cards = []
