@@ -115,7 +115,7 @@ export default {
       }
     },
     async redeemTokenEthereum (id) {
-      const { injectedWeb3, web3 } = this.$web3
+      const { injectedWeb3, web3 } = await this.$web3()
       if (injectedWeb3) {
         const ethAccount = await web3.eth.getAccounts()
         const signature = await web3.eth.personal.sign(this.getAccountName.wax, ethAccount[0])
@@ -140,7 +140,7 @@ export default {
       this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
     },
     async loginEthereum () {
-      const { injectedWeb3, web3 } = this.$web3
+      const { injectedWeb3, web3 } = await this.$web3()
       // console.log(injectedWeb3, web3)
 
       if (injectedWeb3) {

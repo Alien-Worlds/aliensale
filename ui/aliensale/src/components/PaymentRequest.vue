@@ -96,7 +96,7 @@ export default {
           this.$showError(e.message)
         }
       } else if (val.network === 'eth') {
-        const { injectedWeb3, web3 } = this.$web3
+        const { injectedWeb3, web3 } = await this.$web3()
         console.log(injectedWeb3, web3)
 
         if (injectedWeb3) {

@@ -23,5 +23,5 @@ export default async ({ Vue }) => {
     }
   }
 
-  Vue.prototype.$web3 = await getWeb3()
+  Vue.prototype.$web3 = getWeb3
 }
