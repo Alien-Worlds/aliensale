@@ -20,6 +20,9 @@ fastify.register(require('fastify-cors'), {
 
 fastify.post('/sale', async (request, reply) => {
     const req = JSON.parse(request.body);
+    if (!req || !req.txId || !req.country) {
+        throw new Error('You must supply txId and country as part of the post JSON');
+    }
     fs.writeFileSync(`receipts/${req.txId}.txt`, req.country);
     return { success: true };
 });
