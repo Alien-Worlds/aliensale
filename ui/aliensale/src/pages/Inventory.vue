@@ -24,6 +24,9 @@
               <option value="land.worlds">Land</option>
             </select>
           </div>
+          <div>
+            <input type="number" v-model="page" @change="updateFilter" min="1" />
+          </div>
         </div>
         <div v-for="card in cards" :key="card.asset_id" class="p-4 w-25">
           <div class="d-flex justify-content-center">
