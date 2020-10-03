@@ -7,5 +7,5 @@ module.exports = {
     redeemContractEos: 'alienpromopk',
     redeemBurnEos: 'alienworlds1',
     redeemServer: 'http://127.0.0.1:6565',
-    saleServer: 'http://127.0.0.1:6564'
+    saleServer: 'http://127.0.0.1:6767'
 }
