@@ -55,7 +55,8 @@ export default {
       cards: [],
       dataQuery: {},
       page: 1,
-      filterRarity: ''
+      filterRarity: '',
+      filterSchema: ''
     }
   },
   computed: {
