@@ -37,7 +37,7 @@ export default {
   methods: {
     async reloadCards () {
       if (this.getAccountName.wax) {
-        const url = `${process.env.atomicEndpoint}/atomicassets/v1/assets?owner=${this.getAccountName.wax}&collection_name=${this.$config.collectionName}&page=${this.page}`
+        const url = `${process.env.atomicEndpoint}/atomicassets/v1/assets?owner=${this.getAccountName.wax}&collection_name=${process.env.collectionName}&page=${this.page}`
 
         const res = await fetch(url)
         const json = await res.json()
