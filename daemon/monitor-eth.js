@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+process.title = `monitor-eth-${process.env.CONFIG}`;
+
 const fs = require('fs');
 const Web3 = require('web3');
 const { Api, JsonRpc, Serialize } = require('eosjs');

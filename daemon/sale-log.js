@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-process.title = 'sale-log';
+process.title = `sale-log-${process.env.CONFIG}`;
 
 const fetch = require('node-fetch');
 const fs = require('fs');

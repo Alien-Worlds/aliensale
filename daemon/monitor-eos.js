@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+process.title = `monitor-eos-${process.env.CONFIG}`;
+
 const fs = require('fs');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 const fetch = require('node-fetch');

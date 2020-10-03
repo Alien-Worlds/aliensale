@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-process.title = 'eth-redeem';
+process.title = `eth-redeem-${process.env.CONFIG}`;
 
 const fetch = require('node-fetch');
 const { Api, JsonRpc, Serialize } = require('eosjs');

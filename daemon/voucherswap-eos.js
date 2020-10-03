@@ -6,6 +6,8 @@ Monitors a foreign chain for transfers to the burn address and then issues a pac
 User should send the voucher to voucher_burn_address with the receiving address as the memo
  */
 
+process.title = `voucherswap-eos-${process.env.CONFIG}`;
+
 const fs = require('fs');
 const StateReceiver = require('@eosdacio/eosio-statereceiver');
 const fetch = require('node-fetch');
