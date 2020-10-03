@@ -144,6 +144,7 @@ export default {
     returnHome () {
       this.inOpening = false
       this.packReveal = false
+      this.waitingPack = false
     },
     async getPackBalance (account) {
       // to prevent caching
