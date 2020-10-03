@@ -12,7 +12,8 @@ export default {
   UAL: {},
   accountName: {
     wax: null,
-    eos: null
+    eos: null,
+    eth: null
   },
   SESSION: {
     wax: {
@@ -21,6 +22,11 @@ export default {
       timestamp: null
     },
     eos: {
+      accountName: null,
+      authenticatorName: null,
+      timestamp: null
+    },
+    eth: {
       accountName: null,
       authenticatorName: null,
       timestamp: null
