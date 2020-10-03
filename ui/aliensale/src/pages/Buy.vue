@@ -691,6 +691,10 @@ export default {
         html: this.getConfirmHTML(auctionData)
       }).then(async res => {
         console.log(res)
+        if (!res.isConfirmed) {
+          console.log('Dialog not confirmed')
+          return
+        }
 
         const buyQtyEle = document.getElementById(`buyQty${auctionData.auction_id}`)
         if (!buyQtyEle) {
