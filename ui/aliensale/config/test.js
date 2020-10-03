@@ -6,6 +6,6 @@ module.exports = {
     saleContract: 'sale.worlds',
     redeemContractEos: 'alienpromopk',
     redeemBurnEos: 'alienworlds1',
-    redeemServer: 'http://redeem.alienworlds.io:6565',
-    saleServer: 'http://sale.alienworlds.io:6564'
+    redeemServer: 'https://redeem-test.alienworlds.io',
+    saleServer: 'https://sale-test.alienworlds.io'
 }
