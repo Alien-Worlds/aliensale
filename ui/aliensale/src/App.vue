@@ -40,8 +40,8 @@ export default {
   },
   data () {
     const appName = 'Alien Worlds'
-    const endpointsWax = ['https://testnet.waxsweden.org']
-    const endpointsEos = ['https://jungle3.eosdac.io']
+    const endpointsWax = [process.env.waxEndpoint]
+    const endpointsEos = [process.env.eosEndpoint]
     // const network = 'wax'
 
     const chainsWax = [{
@@ -54,12 +54,12 @@ export default {
     }]
 
     const authenticatorsWax = [
+      new Wax(chainsWax, { appName }),
       new Scatter(chainsWax, { appName }),
       // new Ledger(chains),
       // new Lynx(chains, { appName: appName }),
       // new TokenPocket(chains),
       // new SimplEOS(chains),
-      new Wax(chainsWax, { appName }),
       new Anchor(chainsWax, { appName })
     ]
     const authenticatorsEos = [
