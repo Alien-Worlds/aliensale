@@ -3,7 +3,6 @@
 
       <div class="row justify-center">
         <div class="w-75">
-          <div v-for="auction in auctions" :key="auction.auction_id">
             <div class="row justify-center text-h1 main-title">
               {{ auction.pack_data.metadata.name }}
             </div>
@@ -48,7 +47,7 @@
 
                     <p>
                       <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyQty' + auction.auction_id)">-</button>
-                      <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" max="1000">
+                      <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" :max="auction.amount">
                       <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
                     </p>
                     <p><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
@@ -84,10 +83,6 @@
               <div class="col-6">{{ auction.pack_data.metadata.name }}</div>
               <div class="col-4">Sold out!</div>
             </div>
-          </div>
-        </div>
-        <div v-if="!auctions.length">
-          No packs are available for sale at the moment
         </div>
       </div>
 
@@ -227,7 +222,7 @@ export default {
   data () {
     return {
       packs: this.$packs,
-      auctions: [],
+      auction: [],
       balances: {},
       buyPack: '',
       buyQty: [],
@@ -379,9 +374,7 @@ export default {
       auctionData.in_rest = this.inRestPeriod(auctionData)
       auctionData.has_started = this.hasStarted(auctionData)
 
-      const auctions = [auctionData]
-
-      this.auctions = auctions
+      this.auction = auctionData
       // console.log('auctions', this.auctions)
     },
     async createSale (account, qty, auction, country) {
@@ -720,7 +713,9 @@ export default {
       if (isNaN(currentVal)) {
         currentVal = 0
       }
-      ele.value = currentVal + 1
+      if (currentVal < this.auction.amount) {
+        ele.value = currentVal + 1
+      }
     },
     finishedPeriod () {
       // console.log('Finished period!!')
