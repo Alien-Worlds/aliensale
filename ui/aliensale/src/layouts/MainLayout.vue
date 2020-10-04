@@ -58,6 +58,25 @@
         <router-view />
       </div>
 
+      <footer id="main-footer">
+        <div id="footer">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12"><a target="_blank" href="https://dacoco.io">Copyright Dacoco GmbH 2020</a> :
+                <a href="/terms">USER AGREEMENT / TERMS &amp; CONDITIONS</a> : <a target="_blank" href="https://drive.google.com/file/d/1nlY6SSujin8rmOEqoRDrBq7NK09EKvzh/view?usp=drivesdk">Presentation</a>
+
+                <ul class="social-links">
+                  <li><a href="https://www.twitter.com/alienworlds"><font-awesome-icon :icon="{ prefix: 'fab', iconName: 'twitter' }"/></a></li>
+                  <li><a href="https://t.me/AlienWorldsOffical"><font-awesome-icon :icon="{ prefix: 'fab', iconName: 'telegram' }"/></a></li>
+                  <li><a href="https://medium.com/@alienworlds"><font-awesome-icon :icon="{ prefix: 'fab', iconName: 'medium' }"/></a></li>
+                  <li><a href="https://discord.io/AlienWorlds"><font-awesome-icon :icon="{ prefix: 'fab', iconName: 'discord' }"/></a></li>
+                </ul>
+              </div>
+            </div>
+          </div><!-- Container End -->
+        </div>
+      </footer>
+
     </q-page-container>
   </q-layout>
 </template>
@@ -65,12 +84,14 @@
 <script>
 import { mapGetters } from 'vuex'
 import { BDropdown, BDropdownItem } from 'bootstrap-vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 export default {
   name: 'MainLayout',
   components: {
     'b-dropdown': BDropdown,
-    'b-dropdown-item': BDropdownItem
+    'b-dropdown-item': BDropdownItem,
+    'font-awesome-icon': FontAwesomeIcon
   },
   data () {
     return {
@@ -121,7 +142,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   .login {
     height: 25px;
     cursor: pointer;
@@ -139,5 +160,29 @@ export default {
   .ethereum-login-inactive {
     opacity: 0.5;
     filter: grayscale(100%);
+  }
+  #footer {
+    width: 100%;
+    min-height: 70px;
+    height: auto;
+    background: #070707;
+    border-top: 2px solid #E48632;
+    padding: 20px 0 0 0;
+
+    a {
+      color: #fff;
+
+      :hover {
+        color: #e48632
+      }
+    }
+
+    .social-links {
+      float: right;
+      li {
+        display: inline;
+        margin-left: 15px;
+      }
+    }
   }
 </style>
