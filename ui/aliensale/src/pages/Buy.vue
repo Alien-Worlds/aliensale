@@ -543,7 +543,7 @@ export default {
         const nativeAmount = (logData.foreign_price / Math.pow(10, 18))
 
         this.paymentRequest = {
-          network: 'eth',
+          network: 'ethereum',
           amount: nativeAmount,
           symbol: 'ETH',
           precision: 18,
