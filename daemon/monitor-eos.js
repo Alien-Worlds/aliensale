@@ -269,7 +269,16 @@ const start = async (start_block) => {
 }
 
 const run = async () => {
-    const start_block = await get_start_block();
+    let start_block = 0;
+    if (process.argv[2]){
+        const block_num = parseInt(process.argv[2]);
+        if (!isNaN(block_num)){
+            start_block = block_num;
+        }
+    }
+    if (start_block == 0){
+        start_block = await get_start_block();
+    }
 
     console.log(`Starting at block ${start_block}`);
 
