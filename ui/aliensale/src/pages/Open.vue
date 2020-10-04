@@ -241,6 +241,7 @@ export default {
         this.confirmOpenPackShow = false
         this.$nextTick(() => { window.scrollTo(0, 0) })
 
+        document.getElementsByTagName('main')[0].classList.remove('planet-bg-page')
         document.getElementById('video-container').style.display = 'block'
         document.getElementById('pack-open-video').style.opacity = 1
         document.getElementById('pack-open-video').play()
@@ -249,6 +250,7 @@ export default {
           this.videoEnded = true
           window.scrollTo(0, 0)
           document.getElementById('video-container').style.display = 'none'
+          document.getElementsByTagName('main')[0].classList.add('planet-bg-page')
         })
         document.getElementById('pack-open-video').addEventListener('ended', () => {
           console.log('Video end')
