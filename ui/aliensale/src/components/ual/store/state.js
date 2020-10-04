@@ -13,7 +13,7 @@ export default {
   accountName: {
     wax: null,
     eos: null,
-    eth: null
+    ethereum: null
   },
   SESSION: {
     wax: {
@@ -26,7 +26,7 @@ export default {
       authenticatorName: null,
       timestamp: null
     },
-    eth: {
+    ethereum: {
       accountName: null,
       authenticatorName: null,
       timestamp: null
