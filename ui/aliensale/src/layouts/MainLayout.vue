@@ -23,13 +23,30 @@
                 </li>
                 <li>
                   <div class="row" style="padding-left: 30px">
-                    <div><img src="/images/wax-logo-white.png" :class="waxLogoClass" @click="login('wax')" /></div>
-                    <div><img src="/images/eos-logo.png" :class="eosLogoClass" @click="login('eos')" /></div>
-                    <div><img src="/images/ethereum-logo.png" :class="ethereumLogoClass" @click="login('ethereum')" /></div>
+                    <b-dropdown style="margin-right:20px">
+                      <template v-slot:button-content>
+                        <img src="/images/wax-logo-white.png" :class="waxLogoClass" />
+                      </template>
+                      <b-dropdown-item href="#" disabled v-if="getAccountName.wax">{{getAccountName.wax}}</b-dropdown-item>
+                      <b-dropdown-item href="#" @click="login('wax')" v-if="!getAccountName.wax">Login</b-dropdown-item>
+                      <b-dropdown-item href="#" @click="logout('wax')" v-if="getAccountName.wax">Logout</b-dropdown-item>
+                    </b-dropdown>
+                    <b-dropdown style="margin-right:20px">
+                      <template v-slot:button-content>
+                        <img src="/images/eos-logo.png" :class="eosLogoClass" />
+                      </template>
+                      <b-dropdown-item href="#" disabled v-if="getAccountName.eos">{{getAccountName.eos}}</b-dropdown-item>
+                      <b-dropdown-item href="#" @click="login('eos')" v-if="!getAccountName.eos">Login</b-dropdown-item>
+                      <b-dropdown-item href="#" @click="logout('eos')" v-if="getAccountName.eos">Logout</b-dropdown-item>
+                    </b-dropdown>
+                    <b-dropdown>
+                      <template v-slot:button-content>
+                        <img src="/images/ethereum-logo.png" :class="ethereumLogoClass" />
+                      </template>
+                      <b-dropdown-item href="#" disabled v-if="getAccountName.ethereum">{{getAccountName.ethereum}}</b-dropdown-item>
+                      <b-dropdown-item href="#" @click="login('ethereum')" v-if="!getAccountName.ethereum">Login</b-dropdown-item>
+                    </b-dropdown>
                   </div>
-                </li>
-                <li class="nav-item" v-if="getAccountName.wax || getAccountName.eos">
-                  <div @click="logout()" style="padding-left: 30px">Logout</div>
                 </li>
               </ul>
             </div>
@@ -47,10 +64,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { BDropdown, BDropdownItem } from 'bootstrap-vue'
 
 export default {
   name: 'MainLayout',
   components: {
+    'b-dropdown': BDropdown,
+    'b-dropdown-item': BDropdownItem
   },
   data () {
     return {
@@ -72,9 +92,9 @@ export default {
     }
   },
   methods: {
-    async logout () {
-      // console.log('logout')
-      this.$store.dispatch('ual/logout')
+    async logout (network) {
+      console.log('logout of network ', network)
+      this.$store.dispatch('ual/logout', network)
     },
     async login (network) {
       if (network === 'ethereum') {
