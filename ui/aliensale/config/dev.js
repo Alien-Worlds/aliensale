@@ -7,5 +7,6 @@ module.exports = {
     redeemContractEos: 'alienpromopk',
     redeemBurnEos: 'alienworlds1',
     redeemServer: 'http://127.0.0.1:6565',
-    saleServer: 'http://127.0.0.1:6767'
+    saleServer: 'http://127.0.0.1:6767',
+    ipfsRoot: 'https://ipfs.io/ipfs/'
 }
