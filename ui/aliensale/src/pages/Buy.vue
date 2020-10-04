@@ -1,8 +1,8 @@
 <template>
-  <q-page class="">
+  <q-page class="planet-bg-page">
 
       <div class="row justify-center">
-        <div class="w-75 planet-bg">
+        <div class="w-75">
           <div v-for="auction in auctions" :key="auction.auction_id">
             <div class="row justify-center text-h1 main-title">
               {{ auction.pack_data.metadata.name }}
@@ -116,12 +116,14 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 0px;
-    margin-bottom: 20px;
-    padding: 5px 15px;
+    margin-bottom: 40px;
+    padding: 25px 5px 15px 5px;
     outline: none;
     transition: all 0.2s ease;
     cursor: pointer;
     border-radius: 15px;
+    width: 100%;
+    text-align: center;
   }
   .highlight::after {
     border-top: 2px solid;
@@ -190,11 +192,6 @@
     transition: all 0.2s ease;
     cursor: pointer;
     border-radius: 10px;
-  }
-  .planet-bg {
-    background-image: url(/images/planetopen.png);
-    background-position: 100px center;
-    margin-bottom: 50px;
   }
   #buy-confirm-error {
     color: red;
@@ -529,7 +526,7 @@ export default {
           symbol,
           precision,
           from: accounts.eos,
-          to: 'alienworlds1',
+          to: process.env.redeemBurnEos,
           memo: logData.foreign_address
         }
       }

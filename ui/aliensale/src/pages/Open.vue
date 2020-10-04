@@ -1,5 +1,5 @@
 <template>
-  <q-page class="">
+  <q-page class="planet-bg-page">
 
     <q-dialog v-model="confirmOpenPackShow" persistent transition-show="flip-down" transition-hide="flip-up">
       <q-card v-if="confirmOpenPack">
@@ -90,14 +90,8 @@
           </div>
         </div>
         <div v-else>
-          <div v-if="!account.wax">
-            Please log in to view cards
-          </div>
-          <div v-else-if="!packsLoaded">
-            Loading...
-          </div>
+          <login-wax />
         </div>
-
       </div>
     </div>
   </q-page>
@@ -109,11 +103,13 @@ import { mapGetters } from 'vuex'
 // import io from 'socket.io-client'
 import { BButton } from 'bootstrap-vue'
 import fetch from 'node-fetch'
+import LoginWax from 'components/LoginWax'
 // let cards = {}
 
 export default {
   name: 'OpenPage',
   components: {
+    'login-wax': LoginWax,
     'b-button': BButton
   },
   data () {

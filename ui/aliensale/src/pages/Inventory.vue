@@ -1,6 +1,6 @@
 <template>
-  <q-page class="full-width column wrap justify-start content-center">
-    <div class="w-75 planet-bg-inv">
+  <q-page class="full-width column wrap justify-start content-center planet-bg-page">
+    <div class="w-75">
       <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
         <div class="full-width flex">
           <div class="w-25">
@@ -83,6 +83,7 @@ export default {
       cards: [],
       dataQuery: {},
       page: 1,
+      pageSize: 50,
       filterRarity: '',
       filterSchema: '',
       ipfsRoot: process.env.ipfsRoot
@@ -115,7 +116,7 @@ export default {
         if (filter.rarity === '') {
           delete filter.rarity
         }
-        const assets = await atomic.getAssets(options, this.page, 100, filter)
+        const assets = await atomic.getAssets(options, this.page, this.pageSize, filter)
         this.cards = assets
 
         this.cardsLoaded = true
@@ -157,7 +158,7 @@ export default {
       }
     },
     increasePage () {
-      if (this.cards.length === 100) {
+      if (this.cards.length === this.pageSize) {
         this.page++
       }
     },
@@ -197,11 +198,5 @@ export default {
   }
   .card-item {
     cursor: pointer
-  }
-  .planet-bg-inv {
-    background-image: url(/images/planetopen.png);
-    background-position: bottom center;
-    margin-bottom: 50px;
-    background-repeat: no-repeat;
   }
 </style>

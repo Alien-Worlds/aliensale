@@ -1,5 +1,5 @@
 <template>
-  <q-page class="full-width column wrap justify-start content-center">
+  <q-page class="full-width column wrap justify-start content-center planet-bg-page">
     <div class="text-h1">Redeem Vouchers</div>
     <div class="d-flex flex-row flex-wrap">
 
