@@ -1,15 +1,12 @@
 <template>
   <q-page class="full-width column wrap justify-start content-center">
-    <div>
-      <div class="text-h1">Redeem Vouchers</div>
+    <div class="text-h1">Redeem Vouchers</div>
+    <div class="d-flex flex-row flex-wrap">
 
-      <div>
-        EOS
+      <div class="p-4 w-50">
+        <h2>EOS</h2>
         <div v-if="!getAccountName.eos">
-          <b-button @click="loginEos">Log into EOS</b-button>
-        </div>
-        <div v-if="!getAccountName.ethereum">
-          <b-button @click="loginEthereum">Log into Metamask</b-button>
+          <b-button @click="loginEos">Login to EOS</b-button>
         </div>
 
         <div v-if="getAccountName.eos && redeemableEos.length">
@@ -23,9 +20,13 @@
         </div>
       </div>
 
-      <div>
-        ETH
-        {{getAccountName}}
+      <div class="p-4 w-50">
+        <h2>ETH</h2>
+
+        <div v-if="!getAccountName.ethereum">
+          <b-button @click="loginEthereum">Login to Metamask</b-button>
+        </div>
+
         <div v-if="getAccountName.ethereum && redeemableEthereum.length">
           You have redeemable tokens!
           <div v-for="row in redeemableEthereum" :key="row.ethswap_id">
