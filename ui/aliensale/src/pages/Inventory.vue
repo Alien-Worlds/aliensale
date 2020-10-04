@@ -3,33 +3,53 @@
     <div class="w-75 planet-bg">
       <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
         <div class="full-width flex">
-          <div class="w-20">Filter</div>
-          <div>
-            <select id="filter-rarity" @change="updateFilter" v-model="filterRarity">
-              <option value="">All</option>
-              <option value="Common">Common</option>
-              <option value="Rare">Rare</option>
-              <option value="Epic">Epic</option>
-              <option value="Legendary">Legendary</option>
-              <option value="Mythical">Mythical</option>
-            </select>
+          <div class="w-25">
+            <label>
+              Rarity
+              <b-form-select id="filter-rarity" @change="updateFilter" v-model="filterRarity">
+                <option value="">All</option>
+                <option value="Common">Common</option>
+                <option value="Rare">Rare</option>
+                <option value="Epic">Epic</option>
+                <option value="Legendary">Legendary</option>
+                <option value="Mythical">Mythical</option>
+              </b-form-select>
+            </label>
           </div>
-          <div>
-            <select id="filter-rarity" @change="updateFilter" v-model="filterSchema">
-              <option value="">All</option>
-              <option value="faces.worlds">Avatars</option>
-              <option value="crew.worlds">Minions</option>
-              <option value="arms.worlds">Weapons</option>
-              <option value="tool.worlds">Tools</option>
-              <option value="land.worlds">Land</option>
-            </select>
+          <div class="w-25">
+            <label>
+              Type
+              <b-form-select id="filter-schema" @change="updateFilter" v-model="filterSchema">
+                <option value="">All</option>
+                <option value="faces.worlds">Avatars</option>
+                <option value="crew.worlds">Minions</option>
+                <option value="arms.worlds">Weapons</option>
+                <option value="tool.worlds">Tools</option>
+                <option value="land.worlds">Land</option>
+              </b-form-select>
+            </label>
           </div>
-          <div>
-            <input type="number" v-model="page" @change="updateFilter" min="1" />
+          <div class="w-25">
+            <label>
+              Page
+              <b-button-toolbar key-nav aria-label="Toolbar with button groups">
+                <b-button-group class="mx-1">
+                  <b-button @click="decreasePage" :disabled="page === 1">&lsaquo;</b-button>
+                  <input type="text" v-model="page" @change="updateFilter" min="1" style="width:2em;text-align:center" readonly />
+                  <b-button @click="increasePage" :disabled="cards.length !== 100">&rsaquo;</b-button>
+                </b-button-group>
+              </b-button-toolbar>
+            </label>
+          </div>
+          <div class="w-25" v-if="dataQuery.name">
+            <label>
+              Card
+            </label>
+            <p><b-button @click="removeCard">&#x274C;</b-button> {{dataQuery.name}}</p>
           </div>
         </div>
         <div v-for="card in cards" :key="card.asset_id" class="p-4 w-25">
-          <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center card-item" @click="filterCard(card.template.template_id, card.data.name)">
             <div class="d-flex flex-column flex-wrap">
               <img :src="'https://ipfs.io/ipfs/' + card.data.img" class="mw-100" />
             </div>
@@ -47,11 +67,16 @@
 import LoginWax from 'components/LoginWax'
 import { mapGetters } from 'vuex'
 import { ExplorerApi } from 'atomicassets'
+import { BFormSelect, BButton, BButtonGroup, BButtonToolbar } from 'bootstrap-vue'
 
 export default {
   name: 'InventoryPage',
   components: {
-    'login-wax': LoginWax
+    'login-wax': LoginWax,
+    'b-form-select': BFormSelect,
+    'b-button': BButton,
+    'b-button-group': BButtonGroup,
+    'b-button-toolbar': BButtonToolbar
   },
   data () {
     return {
@@ -72,6 +97,7 @@ export default {
       if (this.getAccountName.wax) {
         const atomic = new ExplorerApi(process.env.atomicEndpoint, 'atomicassets', { fetch, rateLimit: 4 })
         const filter = JSON.parse(JSON.stringify(this.dataQuery))
+        console.log(filter)
         const options = {
           owner: this.getAccountName.wax,
           collection_name: process.env.collectionName
@@ -79,7 +105,12 @@ export default {
         if (filter.schema) {
           options.schema_name = filter.schema
         }
+        if (filter.template) {
+          options.template_id = filter.template
+        }
         delete filter.schema
+        delete filter.name
+        delete filter.template
         if (filter.rarity === '') {
           delete filter.rarity
         }
@@ -90,14 +121,43 @@ export default {
       }
     },
     updateFilter () {
-      const filter = {}
+      const filter = JSON.parse(JSON.stringify(this.dataQuery))
 
       filter.rarity = this.filterRarity
       filter.schema = this.filterSchema
+      delete filter.template
+      delete filter.name
+      this.page = 1
 
       this.dataQuery = filter
 
       this.reloadCards()
+    },
+    filterCard (templateId, name) {
+      const filter = JSON.parse(JSON.stringify(this.dataQuery))
+      filter.template = templateId
+      filter.name = name
+      this.dataQuery = filter
+
+      this.reloadCards()
+    },
+    removeCard () {
+      const filter = JSON.parse(JSON.stringify(this.dataQuery))
+      delete filter.template
+      delete filter.name
+      this.dataQuery = filter
+
+      this.reloadCards()
+    },
+    increasePage () {
+      if (this.cards.length === 100) {
+        this.page++
+      }
+    },
+    decreasePage () {
+      if (this.page > 1) {
+        this.page--
+      }
     }
   },
   watch: {
@@ -106,6 +166,12 @@ export default {
         // load the packs
         this.reloadCards()
       }
+    },
+    page () {
+      this.reloadCards()
+    },
+    dataQuery () {
+      console.log('dataQuery changed')
     }
   },
   async mounted () {
@@ -124,5 +190,8 @@ export default {
     .w-25 {
       width: 50% !important;
     }
+  }
+  .card-item {
+    cursor: pointer
   }
 </style>
