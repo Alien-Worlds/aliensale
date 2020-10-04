@@ -139,16 +139,14 @@ export default {
       filter.template = templateId
       filter.name = name
       this.dataQuery = filter
-
-      this.reloadCards()
+      this.page = 1
     },
     removeCard () {
       const filter = JSON.parse(JSON.stringify(this.dataQuery))
       delete filter.template
       delete filter.name
       this.dataQuery = filter
-
-      this.reloadCards()
+      this.page = 1
     },
     increasePage () {
       if (this.cards.length === 100) {
