@@ -36,7 +36,7 @@
                 <b-button-group class="mx-1">
                   <b-button @click="decreasePage" :disabled="page === 1">&lsaquo;</b-button>
                   <input type="text" v-model="page" @change="updateFilter" min="1" style="width:2em;text-align:center" readonly />
-                  <b-button @click="increasePage" :disabled="cards.length !== 100">&rsaquo;</b-button>
+                  <b-button @click="increasePage" :disabled="cards.length !== pageSize">&rsaquo;</b-button>
                 </b-button-group>
               </b-button-toolbar>
             </label>
