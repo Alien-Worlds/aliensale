@@ -218,6 +218,7 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty, name referrer)
 
     check(auction->price_symbol.symbol == symbol{symbol_code{"WAX"}, 8}, "Please use createsale for non-native sales");
     check(deposit->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Incorrect deposit symbol");
+    check(qty <= auction->pack.quantity.amount, "Attempt to buy more than is available");
 
     auto pack_price = auction_price(auction_id, qty);
     print("\npack price ", pack_price);
