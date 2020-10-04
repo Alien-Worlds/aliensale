@@ -188,6 +188,6 @@
 
 <script>
 export default {
-  name: 'HomePage'
+  name: 'TermsPage'
 }
 </script>
