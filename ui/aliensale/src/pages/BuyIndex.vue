@@ -7,7 +7,7 @@
           <div v-for="(auctionData, packSymbol) in auctions" :key="packSymbol" class="p-4 w-50">
             <div class="d-flex flex-row">
               <div class="p-4 w-50">
-                <img :src="ipfsRoot + auctionData.img" style="width:75%" class="pack-img" />
+                <img :src="ipfsRoot + auctionData.img" class="pack-img" />
               </div>
 
               <div class="row justify-center">
@@ -43,9 +43,12 @@
     100% { transform: translate(1px, -2px) rotate(-1deg); }
   }
 
-  .pack-img:hover {
-    animation: shake 0.5s;
-    animation-iteration-count: infinite;
+  .pack-img {
+    width: 100%;
+    &:hover {
+      animation: shake 0.5s;
+      animation-iteration-count: infinite;
+    }
   }
 
   .highlight {
