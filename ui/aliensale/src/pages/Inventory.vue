@@ -139,14 +139,22 @@ export default {
       filter.template = templateId
       filter.name = name
       this.dataQuery = filter
-      this.page = 1
+      if (this.page !== 1) {
+        this.page = 1
+      } else {
+        this.reloadCards()
+      }
     },
     removeCard () {
       const filter = JSON.parse(JSON.stringify(this.dataQuery))
       delete filter.template
       delete filter.name
       this.dataQuery = filter
-      this.page = 1
+      if (this.page !== 1) {
+        this.page = 1
+      } else {
+        this.reloadCards()
+      }
     },
     increasePage () {
       if (this.cards.length === 100) {
@@ -168,9 +176,6 @@ export default {
     },
     page () {
       this.reloadCards()
-    },
-    dataQuery () {
-      console.log('dataQuery changed')
     }
   },
   async mounted () {
