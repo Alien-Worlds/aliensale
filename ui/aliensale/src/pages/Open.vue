@@ -32,10 +32,10 @@
           <div v-for="(card, cardnum) in receivedCards" :key="cardnum" class="flip-card" @click="raiseCard(cardnum)">
             <div class="flip-card-inner" :class="'rarity-' + card.rarity.toLowerCase()">
               <div class="flip-card-front">
-                <img :src="'https://ipfs.io/ipfs/' + card.img" style="width:300px;" />
+                <img :src="ipfsRoot + card.img" style="width:300px;" />
               </div>
               <div class="flip-card-back">
-                <img :src="'https://ipfs.io/ipfs/' + card.backimg" style="width:300px;">
+                <img :src="ipfsRoot + card.backimg" style="width:300px;">
               </div>
             </div>
           </div>
@@ -43,13 +43,13 @@
           <div v-if="receivedTrilium > 0" class="flip-card" @click="raiseCard('trilium')">
             <div class="flip-card-inner rarity-trilium">
               <div class="flip-card-front">
-                <img src="https://ipfs.io/ipfs/QmXnU2R7FG931FgP5ayT1EVTdCoi7NCC5noUktmVLXNUxz" style="width:300px;" />
+                <img :src="ipfsRoot + 'QmXnU2R7FG931FgP5ayT1EVTdCoi7NCC5noUktmVLXNUxz'" style="width:300px;" />
                 <div class="flip-card-tlm">
                   {{receivedTrilium}} TLM
                 </div>
               </div>
               <div class="flip-card-back">
-                <img src="https://ipfs.io/ipfs/QmW4Uzxj54kouPUM9q4r3FZz5mDqnJ86McJ39pGFLwpByM" style="width:300px;">
+                <img :src="ipfsRoot + 'QmW4Uzxj54kouPUM9q4r3FZz5mDqnJ86McJ39pGFLwpByM'" style="width:300px;">
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
           <div v-for="pack in packs" :key="pack.symbol" class="p-4 w-25">
             <div v-if="pack.qty" class="d-flex justify-content-center">
               <div class="d-flex flex-column flex-wrap pack" @click="showOpenDialog(pack)">
-                <img :src="'https://ipfs.io/ipfs/' + pack.metadata.img" class="mw-100" />
+                <img :src="ipfsRoot + pack.metadata.img" class="mw-100" />
                 <div>
                   <div>{{ pack.qty }} packs</div>
                   {{ pack.metadata.name }}
@@ -130,7 +130,8 @@ export default {
       confirmOpenPack: null,
       confirmOpenPackShow: false,
       receivedTrilium: 0,
-      manualFlip: false
+      manualFlip: false,
+      ipfsRoot: process.env.ipfsRoot
     }
   },
   computed: {

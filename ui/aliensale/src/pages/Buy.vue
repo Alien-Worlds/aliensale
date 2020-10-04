@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-md-3 unbox2">
 
-                  <img  :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded" alt="Pack">
+                  <img  :src="ipfsRoot + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded" alt="Pack">
 
                 </div>
                 <div class="col-md-1 unbox"></div>
@@ -51,10 +51,6 @@
                       <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" max="1000">
                       <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
                     </p>
-                    <!-- <p>
-                      <label><input type="checkbox" class="checkb" :id="'agree18' + auction.auction_id"> I am over 18</label><br>
-                      <label><input type="checkbox" class="checkb" :id="'agreeterms' + auction.auction_id"> I have read the terms and conditions</label>
-                    </p> -->
                     <p><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
 
                     <div v-if="auction.current_period < auction.period_count">
@@ -80,33 +76,10 @@
 
               </div>
 
-              <!-- <div class="col-2">
-                <img :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" style="max-width:100px" />
-              </div>
-              <div class="col-6">
-                <p>{{ auction.pack_data.metadata.name }}</p>
-              </div>
-
-              <div class="col-4" v-if="!auction.in_rest && auction.has_started">
-                <p>Current Price : {{ auction.current_price }}</p>
-                <p>Next Price : {{ auction.next_price }}</p>
-                <p>Period : {{ auction.current_period }}</p>
-
-                <div class="row">
-                  <div class="col-4">Quantity</div>
-                  <div class="col-4"><b-form-input value="1" type="number" :id="'buyQty' + auction.auction_id" step="1" min="1" :max="auction.amount"></b-form-input></div>
-                  <div class="col-4"><b-button label="Buy" @click="startBuy(auction)">Buy</b-button> </div>
-                </div>
-                <p>({{ auction.amount }} left)</p>
-              </div>
-              <div class="col-4" v-if="auction.in_rest && auction.has_started">Auction is resting, next price will be {{ auction.next_price }}</div>
-              <div class="col-4" v-if="!auction.has_started">Auction has not started yet</div> -->
-
-              <!-- <div class="col-4">{{ pack.quote_price.quantity }}</div>-->
             </div>
             <div class="row text-red" v-else style="text-decoration: line-through">
               <div class="col-2">
-                <img :src="'https://ipfs.io/ipfs/' + auction.pack_data.metadata.img" style="max-width:100px" />
+                <img :src="ipfsRoot + auction.pack_data.metadata.img" style="max-width:100px" />
               </div>
               <div class="col-6">{{ auction.pack_data.metadata.name }}</div>
               <div class="col-4">Sold out!</div>
@@ -117,30 +90,6 @@
           No packs are available for sale at the moment
         </div>
       </div>
-
-    <!-- <div v-if="showBuyForm" class="q-pa-md">
-      <div class="row justify-center mb-4">
-        <div class="row justify-center">
-          Quantity
-          <b-form-input  type="number" v-model="buyQty" step="1" min="1" :max="maxBuy"></b-form-input>
-        </div>
-      </div>
-
-      <div class="row justify-center">
-
-        <b-button-toolbar key-nav>
-          <b-button-group class="mx-1">
-            <b-button @click="hideBuyForm()" label="back">Back</b-button>
-          </b-button-group>
-          <b-button-group class="mx-1">
-            <div v-for="(sale_symbol, index) in buyPack.sale_symbols" :key="sale_symbol.symbol.split(',')[1]">
-              <b-button @click="startBuy(index)">Buy with {{sale_symbol.symbol.split(',')[1]}}</b-button>
-            </div>
-          </b-button-group>
-        </b-button-toolbar>
-
-      </div>
-    </div> -->
 
     <payment-request v-model="paymentRequest"></payment-request>
 
@@ -285,7 +234,8 @@ export default {
       balances: {},
       buyPack: '',
       buyQty: [],
-      paymentRequest: null
+      paymentRequest: null,
+      ipfsRoot: process.env.ipfsRoot
     }
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
   <q-page class="full-width column wrap justify-start content-center">
-    <div class="w-75 planet-bg">
+    <div class="w-75 planet-bg-inv">
       <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
         <div class="full-width flex">
           <div class="w-25">
@@ -51,7 +51,7 @@
         <div v-for="card in cards" :key="card.asset_id" class="p-4 w-25">
           <div class="d-flex justify-content-center card-item" @click="filterCard(card.template.template_id, card.data.name)">
             <div class="d-flex flex-column flex-wrap">
-              <img :src="'https://ipfs.io/ipfs/' + card.data.img" class="mw-100" />
+              <img :src="ipfsRoot + card.data.img" class="mw-100" :alt="card.name" />
             </div>
           </div>
         </div>
@@ -84,7 +84,8 @@ export default {
       dataQuery: {},
       page: 1,
       filterRarity: '',
-      filterSchema: ''
+      filterSchema: '',
+      ipfsRoot: process.env.ipfsRoot
     }
   },
   computed: {
@@ -193,5 +194,11 @@ export default {
   }
   .card-item {
     cursor: pointer
+  }
+  .planet-bg-inv {
+    background-image: url(/images/planetopen.png);
+    background-position: bottom center;
+    margin-bottom: 50px;
+    background-repeat: no-repeat;
   }
 </style>
