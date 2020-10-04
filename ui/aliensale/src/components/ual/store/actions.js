@@ -5,18 +5,21 @@ export async function renderLoginModal ({ commit }, network) {
   commit('bar_msg', `Log into ${network} network`)
 }
 
-export async function logout ({ state, commit }) {
-  for (const network in state.SESSION) {
+export async function logout ({ state, commit }, network) {
+  if (network) {
     logoutNetwork({ state, commit, network })
+  } else {
+    for (const network in state.SESSION) {
+      logoutNetwork({ state, commit, network })
+    }
   }
 }
 async function logoutNetwork ({ state, commit, network }) {
-  // console.log('logout')
   const { authenticatorName } = state.SESSION[network]
   const activeAuth = state.UAL[network].authenticators.find(a => a.getStyle().text === authenticatorName)
   // const activeAuth = state.activeAuthenticator
   if (activeAuth) {
-    console.log(activeAuth)
+    // console.log(activeAuth)
 
     activeAuth
       .logout()
