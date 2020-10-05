@@ -27,14 +27,14 @@
           </div>
         </q-card-section>
         <q-card-section>
-          <b-button @click="sendPayment" class="bg-primary text-white" v-if="!paymentTransactionId">Pay</b-button>
+          <b-button @click="sendPayment" v-if="!paymentTransactionId">Pay</b-button>
 
           <b-button-toolbar key-nav aria-label="Toolbar with button groups">
             <b-button-group class="mx-1">
-              <b-button @click="closeModal" class="bg-primary text-white" v-if="paymentTransactionId">Close</b-button>
+              <b-button @click="closeModal" v-if="paymentTransactionId">Close</b-button>
             </b-button-group>
             <b-button-group class="mx-1">
-              <b-button @click="closeModal" to="/open" class="bg-primary text-white" v-if="paymentTransactionId">Open Packs</b-button>
+              <b-button @click="closeModal" to="/inventory/packs" v-if="paymentTransactionId">Open Packs</b-button>
             </b-button-group>
           </b-button-toolbar>
 
