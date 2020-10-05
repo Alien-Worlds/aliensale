@@ -5,7 +5,7 @@
         <nav class="navbar fixed-top navbar-expand-lg navbar-dark">
           <div class="container">
             <!-- Site Logo -->
-            <a id="logo" class="navbar-brand" href="#"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
+            <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
             <!-- Navigation Links -->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto">
@@ -13,7 +13,7 @@
                   <router-link to="/inventory" class="nav-link">Inventory</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link to="/buy" class="nav-link">Buy Packs</router-link>
+                  <router-link to="/" class="nav-link">Buy Packs</router-link>
                 </li>
                 <li class="nav-item">
                   <router-link to="/redeem" class="nav-link">Redeem Voucher</router-link>
