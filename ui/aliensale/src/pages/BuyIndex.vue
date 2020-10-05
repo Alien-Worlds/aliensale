@@ -10,13 +10,13 @@
                 <img :src="ipfsRoot + auctionData.img" class="pack-img" />
               </div>
 
-              <div class="row justify-center">
+              <div class="row justify-center w-50">
                 <h2 class="highlight">{{auctionData.name}}</h2>
                 <div style="margin-bottom:100px">
                   <div v-for="sale in auctionData.sales" :key="sale.sale_symbol">
                     <router-link :to="{ name: 'auction', params: { auction_id: sale.auction_id }}" class="btn btn-secondary">{{ sale.sale_symbol }} Sale</router-link>
-                    <p v-if="sale.remaining > 0">{{sale.remaining}} left</p>
-                    <p v-if="sale.remaining == 0">SOLD OUT!</p>
+                    <p class="remaining" v-if="sale.remaining > 0">{{sale.remaining}} left</p>
+                    <p class="remaining sold-out" v-if="sale.remaining == 0">SOLD OUT!</p>
                   </div>
                 </div>
               </div>
@@ -53,20 +53,18 @@
 
   .highlight {
     background: linear-gradient(167deg, rgba(23,22,21,0.6152836134453781) 9%, rgba(21,34,34,1) 100%, rgba(34,34,34,1) 100%);
-    border-color: #88aadd;
     color: #DDD;
-    display: block;
-    height: auto;
-    width: auto;
+    display: inline-block;
+    width: 100%;
+    max-height: 110px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 0px;
     margin-bottom: 20px;
-    padding: 5px 15px;
-    outline: none;
-    transition: all 0.2s ease;
+    padding: 15px 15px 0 15px;
     cursor: pointer;
     border-radius: 15px;
+    line-height: 1.8rem;
 
     &:after {
       border-top: 2px solid;
@@ -83,6 +81,16 @@
     background-position: bottom center;
     margin-bottom: 50px;
     background-repeat: no-repeat;
+  }
+
+  .remaining {
+    display: block;
+    margin-top: 8px;
+    text-shadow: 2px 2px 2px black, -2px -2px 2px black, -2px 2px 2px black, 2px -2px 2px black;
+    &.sold-out {
+      color: red;
+      font-size: 1.2rem;
+    }
   }
 
 </style>
