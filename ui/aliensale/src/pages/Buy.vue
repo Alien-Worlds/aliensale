@@ -10,7 +10,7 @@
               <div id="full-row" class="row text-center">
                 <div class="col-md-1 unbox">
                 </div>
-                <div class="col-md-3 unbox2">
+                <div class="col-md-3">
 
                   <img  :src="ipfsRoot + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded" alt="Pack">
 
@@ -24,15 +24,9 @@
 
                   <h2>{{ auction.pack_data.number_cards }} Items</h2>
 
-                  <p class="highlight"> Each item has a chance of the following levels of rarity:-</p>
+                  <p class="highlight small">Each card drawn from a pack has the below probabilities of being of rarity class listed. Each card is drawn independently, so your pack could contain four cards of the same rarity type.:-</p>
 
-                  <ul>
-                    <li class="planet" style="text-align:left;">Base : 58.8%</li>
-                    <li class="planet" style="text-align:left;">Rare : 31.1%</li>
-                    <li class="planet" style="text-align:left;">Epic : 8%</li>
-                    <li class="planet" style="text-align:left;">Legendary : 1%</li>
-                    <li class="planet" style="text-align:left;">Mythical chance : 0.1%</li>
-                  </ul>
+                  <div id="description" v-html="auction.pack_data.metadata.description"></div>
 
                 </div>
                 <div class="col-md-1 unbox">
@@ -129,6 +123,9 @@
     width: 60px;
     margin: 13px auto 0 auto;
   }
+  .small {
+    font-size: 0.8rem;
+  }
   .colored {
     color: #E48632;
   }
@@ -162,7 +159,8 @@
     list-style-type: none;
     padding: 0;
   }
-  li.planet {
+  li.planet, #description li {
+    text-align: left;
     background: url(/images/planet_icon.png) no-repeat left top;
     padding-left: 34px;
     padding-bottom: 2px;
