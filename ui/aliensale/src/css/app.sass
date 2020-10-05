@@ -8,6 +8,8 @@ $dropdown-color: #fff;
 $dropdown-link-color: #fff;
 $dropdown-link-disabled-color: #111;
 $secondary: $alien-orange;
+$nav-tabs-link-active-bg: $alien-orange;
+//$nav-tabs-border-color: transparent;
 
 @import 'node_modules/bootstrap/scss/bootstrap';
 @import 'node_modules/bootstrap-vue/src/index.scss';
@@ -28,6 +30,12 @@ body, .q-card
     .nav-link
       color: #fff
 
+.nav-link
+  color: #fff
+  &:hover
+    color: #ccc
+    border: 0
+
 .q-card
   padding: 20px
 
@@ -46,7 +54,7 @@ body, .q-card
     max-height: auto
 
 #main-content
-  padding-top: 78px
+  padding-top: 115px
 
 h1, .text-h1
   color: #E48632

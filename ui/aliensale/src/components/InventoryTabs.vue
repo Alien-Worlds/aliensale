@@ -1,6 +1,6 @@
 <template>
   <div v-if="getAccountName.wax">
-    <ul class="nav nav-pills">
+    <ul class="nav nav-tabs">
       <li class="nav-item">
         <router-link to="/inventory" class="nav-link" :class="activeClass('cards')">Cards</router-link>
       </li>
