@@ -43,11 +43,11 @@ const submit_addresses = async (addresses) => {
 }
 
 
-const start = async () => {
-    let x = 0;
+const run = async (num, start) => {
+    let x = start;
     let populate_data = [];
 
-    while (x < 500) {
+    while (x < num) {
         const address = (Math.random() + 1).toString(36).replace(/[^a-z0-9]+/g, '').substr(1, 10);
 
         populate_data.push(
@@ -76,4 +76,16 @@ const start = async () => {
 
 }
 
-start();
+let num = 500, start = 0;
+if (process.argv.length >= 3){
+    const num_check = parseInt(process.argv[2]);
+    if (!isNaN(num_check)){
+        num = num_check;
+    }
+    const start_check = parseInt(process.argv[3]);
+    if (!isNaN(start_check)){
+        start = start_check;
+    }
+}
+
+run(num, start);
