@@ -1,8 +1,11 @@
 <template>
   <q-page class="planet-bg-page">
-
       <div class="row justify-center">
         <div class="w-75">
+          <div v-if="showLoginModal && !getAccountName.wax">
+            <login-wax />
+          </div>
+          <div v-else>
             <div class="row justify-center text-h1 main-title">
               {{ auction.pack_data.metadata.name }}
             </div>
@@ -77,6 +80,8 @@
               <div class="col-6">{{ auction.pack_data.metadata.name }}</div>
               <div class="col-4">Sold out!</div>
             </div>
+
+          </div>
         </div>
       </div>
 
@@ -197,6 +202,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import LoginWax from 'components/LoginWax'
 import PaymentRequest from 'components/PaymentRequest'
 import Countdown from 'components/Countdown'
 import StartCountdown from 'components/StartCountdown'
@@ -209,6 +215,7 @@ let intervalId
 export default {
   name: 'BuyPage',
   components: {
+    'login-wax': LoginWax,
     'payment-request': PaymentRequest,
     countdown: Countdown,
     'start-countdown': StartCountdown
@@ -225,7 +232,8 @@ export default {
       buyPack: '',
       buyQty: [],
       paymentRequest: null,
-      ipfsRoot: process.env.ipfsRoot
+      ipfsRoot: process.env.ipfsRoot,
+      showLoginModal: false
     }
   },
   computed: {
@@ -604,6 +612,11 @@ export default {
       err.innerHTML = msg
     },
     async startBuy (auctionData) {
+      if (!this.getAccountName.wax) {
+        this.showLoginModal = true
+        return
+      }
+
       let country = ''
       this.$swal({
         title: 'Please Confirm',

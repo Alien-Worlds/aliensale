@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="getAccountName.wax">
     <ul class="nav nav-pills">
       <li class="nav-item">
         <router-link to="/inventory" class="nav-link" :class="activeClass('cards')">Cards</router-link>
@@ -12,8 +12,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'InventoryTabs',
+  computed: {
+    ...mapGetters({
+      getAccountName: 'ual/getAccountName'
+    })
+  },
   methods: {
     activeClass: function (...names) {
       for (const name of names) {
