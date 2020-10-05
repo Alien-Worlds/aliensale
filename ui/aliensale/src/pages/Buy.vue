@@ -106,6 +106,7 @@
     font-family: nasalization;
     display: block;
     height: auto;
+    max-height: 1000px;
     width: auto;
     margin-left: auto;
     margin-right: auto;
