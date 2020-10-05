@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-Generates 500 addresses from the key data in keys.txt, then sends them to the contract
+Generates provided number of addresses from the key data in keys.txt, then sends them to the contract
  */
 
 const fs = require('fs');
@@ -61,17 +61,17 @@ const readfilePromise = async (filename) => {
 }
 
 
-const start = async () => {
+const run = async (num, start = 0) => {
     const data = await readfilePromise('keys.txt');
 
     const [mnemonic, seed] = data.toString().split(`\n`);
 
     const hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
 
-    let x = 0;
+    let x = start;
     let populate_data = [];
 
-    while (x < 500) {
+    while (x < num) {
         const addrNode = hdkey.derive(`m/44'/60'/0'/0/${x}`);
         const pubKey = ethUtil.privateToPublic(addrNode.privateKey);
         const addr = ethUtil.publicToAddress(pubKey).toString('hex');
@@ -106,9 +106,24 @@ const start = async () => {
 
 
     if (populate_data.length){
+        console.log('final push')
         await submit_addresses(populate_data);
     }
 
 }
 
-start();
+let num = 500, start = 0;
+if (process.argv.length >= 3){
+    const num_check = parseInt(process.argv[2]);
+    if (!isNaN(num_check)){
+        num = num_check;
+    }
+    const start_check = parseInt(process.argv[3]);
+    if (!isNaN(start_check)){
+        start = start_check;
+    }
+}
+
+console.log(`Generating and uploading ${num} keys starting from ${start}`);
+
+run(num, start);
