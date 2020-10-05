@@ -88,7 +88,7 @@ export default {
       cards: [],
       dataQuery: {},
       page: 1,
-      pageSize: 50,
+      pageSize: 48,
       filterRarity: '',
       filterSchema: '',
       ipfsRoot: process.env.ipfsRoot
