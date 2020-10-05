@@ -1,6 +1,9 @@
 <template>
   <q-page class="full-width column wrap justify-start content-center planet-bg-page">
     <div class="w-75">
+
+      <inventory-tabs />
+
       <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
         <div class="full-width flex">
           <div class="w-25">
@@ -65,6 +68,7 @@
 
 <script>
 import LoginWax from 'components/LoginWax'
+import InventoryTabs from 'components/InventoryTabs'
 import { mapGetters } from 'vuex'
 import { ExplorerApi } from 'atomicassets'
 import { BFormSelect, BButton, BButtonGroup, BButtonToolbar } from 'bootstrap-vue'
@@ -73,6 +77,7 @@ export default {
   name: 'InventoryPage',
   components: {
     'login-wax': LoginWax,
+    'inventory-tabs': InventoryTabs,
     'b-form-select': BFormSelect,
     'b-button': BButton,
     'b-button-group': BButtonGroup,

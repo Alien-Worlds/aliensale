@@ -63,12 +63,8 @@
     </div>
 
     <div id="open-packs-list-container" v-if="!inOpening" class="row justify-center">
-
-      <div class="row justify-center text-h1">
-        Open Packs
-      </div>
-
       <div class="w-75">
+        <inventory-tabs />
         <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
           <div v-for="pack in packs" :key="pack.symbol" class="p-4 w-25">
             <div v-if="pack.qty" class="d-flex justify-content-center">
@@ -104,12 +100,14 @@ import { mapGetters } from 'vuex'
 import { BButton } from 'bootstrap-vue'
 import fetch from 'node-fetch'
 import LoginWax from 'components/LoginWax'
+import InventoryTabs from 'components/InventoryTabs'
 // let cards = {}
 
 export default {
   name: 'OpenPage',
   components: {
     'login-wax': LoginWax,
+    'inventory-tabs': InventoryTabs,
     'b-button': BButton
   },
   data () {

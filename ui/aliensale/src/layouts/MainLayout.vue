@@ -16,9 +16,6 @@
                   <router-link to="/buy" class="nav-link">Buy Packs</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link to="/open" class="nav-link">Open Packs</router-link>
-                </li>
-                <li class="nav-item">
                   <router-link to="/redeem" class="nav-link">Redeem Voucher</router-link>
                 </li>
                 <li>

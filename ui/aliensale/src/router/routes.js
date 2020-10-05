@@ -16,13 +16,6 @@ const routes = [
     ]
   },
   {
-    path: '/open',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Open.vue') }
-    ]
-  },
-  {
     path: '/redeem',
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -33,7 +26,8 @@ const routes = [
     path: '/inventory',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Inventory.vue') }
+      { name: 'cards', path: '/inventory', component: () => import('pages/Inventory.vue') },
+      { name: 'packs', path: '/inventory/packs', component: () => import('pages/Open.vue') }
     ]
   },
   {
