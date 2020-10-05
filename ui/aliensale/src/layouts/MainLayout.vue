@@ -131,9 +131,9 @@ export default {
   },
   async mounted () {
     await this.$store.dispatch('ual/attemptAutoLogin')
-    if (!this.getAccountName.wax) {
-      await this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
-    }
+    // if (!this.getAccountName.wax) {
+    //   await this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
+    // }
     // this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
   }
 }
