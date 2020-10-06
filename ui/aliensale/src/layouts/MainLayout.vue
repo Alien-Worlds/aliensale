@@ -1,55 +1,31 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
+      <b class="screen-overlay" @click="toggleMobileNav"></b>
+
       <header id="main-header">
-        <nav class="navbar fixed-top navbar-expand-lg navbar-dark">
-          <div class="container">
-            <!-- Site Logo -->
+        <div class="container">
+
+          <div id="mobile_logo_header">
+            <button data-trigger="#navbar_mobile" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav">  Show navbar </button>
             <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
-            <!-- Navigation Links -->
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                  <router-link to="/inventory" class="nav-link">Inventory</router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link to="/" class="nav-link">Buy Packs</router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link to="/redeem" class="nav-link">Redeem Voucher</router-link>
-                </li>
-                <li>
-                  <div class="row" style="padding-left: 30px">
-                    <b-dropdown style="margin-right:20px">
-                      <template v-slot:button-content>
-                        <img src="/images/wax-logo-white.png" :class="waxLogoClass" />
-                      </template>
-                      <b-dropdown-item href="#" disabled v-if="getAccountName.wax">{{getAccountName.wax}}</b-dropdown-item>
-                      <b-dropdown-item href="#" @click="login('wax')" v-if="!getAccountName.wax">Login</b-dropdown-item>
-                      <b-dropdown-item href="#" @click="logout('wax')" v-if="getAccountName.wax">Logout</b-dropdown-item>
-                    </b-dropdown>
-                    <!-- <b-dropdown style="margin-right:20px">
-                      <template v-slot:button-content>
-                        <img src="/images/eos-logo.png" :class="eosLogoClass" />
-                      </template>
-                      <b-dropdown-item href="#" disabled v-if="getAccountName.eos">{{getAccountName.eos}}</b-dropdown-item>
-                      <b-dropdown-item href="#" @click="login('eos')" v-if="!getAccountName.eos">Login</b-dropdown-item>
-                      <b-dropdown-item href="#" @click="logout('eos')" v-if="getAccountName.eos">Logout</b-dropdown-item>
-                    </b-dropdown> -->
-                    <b-dropdown>
-                      <template v-slot:button-content>
-                        <img src="/images/ethereum-logo.png" :class="ethereumLogoClass" />
-                      </template>
-                      <b-dropdown-item href="#" disabled v-if="getAccountName.ethereum">{{getAccountName.ethereum}}</b-dropdown-item>
-                      <b-dropdown-item href="#" @click="getReferralLink('ethereum')" v-if="getAccountName.ethereum">Get Referral Link</b-dropdown-item>
-                      <b-dropdown-item href="#" @click="login('ethereum')" v-if="!getAccountName.ethereum">Login</b-dropdown-item>
-                    </b-dropdown>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </div>
-        </nav>
+
+          <nav id="navbar_mobile" class="mobile-offcanvas navbar navbar-dark">
+            <div class="offcanvas-header">
+              <button class="btn btn-danger btn-close float-right" @click="toggleMobileNav"> &times; </button>
+            </div>
+            <main-menu />
+          </nav>
+
+          <nav id="navbar_lg" class="navbar fixed-top navbar-expand-lg navbar-dark">
+            <button data-trigger="#navbar_main" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav">  Show navbar </button>
+            <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <main-menu />
+              </div>
+          </nav>
+        </div>
       </header>
 
       <div id="main-content">
@@ -80,64 +56,37 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { BDropdown, BDropdownItem } from 'bootstrap-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import MainMenu from 'components/MainMenu'
 
 export default {
   name: 'MainLayout',
   components: {
-    'b-dropdown': BDropdown,
-    'b-dropdown-item': BDropdownItem,
-    'font-awesome-icon': FontAwesomeIcon
+    'font-awesome-icon': FontAwesomeIcon,
+    'main-menu': MainMenu
   },
   data () {
     return {
       accountName: this.getAccountName
     }
   },
-  computed: {
-    ...mapGetters({
-      getAccountName: 'ual/getAccountName'
-    }),
-    waxLogoClass () {
-      return (this.getAccountName.wax) ? 'login wax-login' : 'login wax-login-inactive'
-    },
-    eosLogoClass () {
-      return (this.getAccountName.eos) ? 'login eos-login' : 'login eos-login-inactive'
-    },
-    ethereumLogoClass () {
-      return (this.getAccountName.ethereum) ? 'login ethereum-login' : 'login ethereum-login-inactive'
-    }
-  },
   methods: {
-    async logout (network) {
-      console.log('logout of network ', network)
-      this.$store.dispatch('ual/logout', network)
+    toggleMobileNav (e) {
+      e.preventDefault()
+      e.stopPropagation()
+      const navBar = document.getElementById('navbar_mobile')
+      this.toggleClass(navBar, 'show')
+      this.toggleClass(document.body, 'offcanvas-active')
+      const soEles = Array.from(document.getElementsByClassName('screen-overlay'))
+      soEles.forEach(e => {
+        this.toggleClass(e, 'show')
+      })
     },
-    async login (network) {
-      if (network === 'ethereum') {
-        const { injectedWeb3, web3 } = await this.$web3()
-        // console.log(injectedWeb3, web3)
-
-        if (injectedWeb3) {
-          const ethAccount = await web3.eth.getAccounts()
-          // console.log(ethAccount)
-          this.$store.commit('ual/setAccountName', { network: 'ethereum', accountName: ethAccount[0] })
-        }
+    toggleClass (ele, className) {
+      if (ele.classList.contains(className)) {
+        ele.classList.remove(className)
       } else {
-        this.$store.dispatch('ual/renderLoginModal', network, { root: true })
-      }
-    },
-    getReferralLink (network) {
-      if (this.getAccountName[network]) {
-        const u = new URL(document.location.href)
-        const refLink = `${u.origin}/?r=${this.getAccountName[network]}`
-        this.$swal({
-          title: 'Referral Link',
-          html: 'Use the following link to refer other users.  You will receve commission for every purchase made using this link' +
-                  '<p><a href="' + refLink + '">' + refLink + '</a></p>'
-        })
+        ele.classList.add(className)
       }
     }
   },
@@ -152,24 +101,6 @@ export default {
 </script>
 
 <style lang="scss">
-  .login {
-    height: 25px;
-    cursor: pointer;
-  }
-  .wax-login {}
-  .wax-login-inactive {
-    opacity: 0.5;
-    filter: grayscale(100%);
-  }
-  .eos-login {}
-  .eos-login-inactive {
-    opacity: 0.5;
-  }
-  .ethereum-login {}
-  .ethereum-login-inactive {
-    opacity: 0.5;
-    filter: grayscale(100%);
-  }
   #footer {
     width: 100%;
     min-height: 70px;
@@ -192,6 +123,63 @@ export default {
         display: inline;
         margin-left: 15px;
       }
+    }
+  }
+
+  .offcanvas-header{ display:none; }
+  .screen-overlay {
+    height: 100%;
+    z-index: 30;
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity:0;
+    visibility:hidden;
+    background-color: rgba(34, 34, 34, 0.6);
+    transition:opacity .2s linear, visibility .1s, width 1s ease-in;
+  }
+  .screen-overlay.show {
+    transition:opacity .5s ease, width 0s;
+    opacity:1;
+    width:100%;
+    visibility:visible;
+  }
+
+  #navbar_mobile, #mobile_logo_header {
+    display: none;
+  }
+  #navbar_mobile {
+    overflow: hidden;
+  }
+
+  @media all and (max-width:992px) {
+
+    #navbar_mobile, #mobile_logo_header, .offcanvas-header {
+      display: block;
+    }
+
+    .navbar-expand-lg {
+      display: none;
+    }
+
+    .mobile-offcanvas{
+      visibility: hidden;
+      transform:translateX(-100%);
+      border-radius:0;
+      display:block;
+      position: fixed;
+      top: 0; left:0;
+      height: 100%;
+      z-index: 1200;
+      width:80%;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      transition: visibility .2s ease-in-out, transform .2s ease-in-out;
+    }
+
+    .mobile-offcanvas.show{
+      visibility: visible;
+      transform: translateX(0);
     }
   }
 </style>
