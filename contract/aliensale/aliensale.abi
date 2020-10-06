@@ -206,6 +206,11 @@
             "fields": []
         },
         {
+            "name": "clearsales",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "clearswaps",
             "base": "",
             "fields": []
@@ -605,6 +610,11 @@
         {
             "name": "clearpacks",
             "type": "clearpacks",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "clearsales",
+            "type": "clearsales",
             "ricardian_contract": ""
         },
         {

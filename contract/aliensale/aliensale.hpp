@@ -241,6 +241,7 @@ namespace alienworlds {
         [[eosio::action]] void clearauction();
         [[eosio::action]] void clearswaps();
         [[eosio::action]] void clearaddress();
+        [[eosio::action]] void clearsales();
     };
 }
 

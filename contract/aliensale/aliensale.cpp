@@ -381,6 +381,15 @@ void aliensale::clearaddress() {
     }
 }
 
+void aliensale::clearsales() {
+    require_auth(get_self());
+
+    auto sale = _sales.begin();
+    while (sale != _sales.end()){
+      sale = _sales.erase(sale);
+    }
+}
+
 
 // Private
 std::string aliensale::bytetohex(unsigned char *data, int len) {
