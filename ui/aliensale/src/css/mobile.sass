@@ -1,0 +1,28 @@
+// app global css in Sass form
+/* eslint-disable */
+
+
+@media all and (max-width:992px)
+  #navbar_mobile, #mobile_logo_header, .offcanvas-header
+    display: block
+
+  .navbar-expand-lg
+    display: none
+
+  .mobile-offcanvas
+    visibility: hidden
+    transform: translateX(-100%)
+    border-radius: 0
+    display: block
+    position: fixed
+    top: 0; left:0
+    height: 100%
+    z-index: 1200
+    width: 80%
+    overflow-y: scroll
+    overflow-x: hidden
+    transition: visibility .2s ease-in-out, transform .2s ease-in-out
+
+  .mobile-offcanvas.show
+    visibility: visible
+    transform: translateX(0)
