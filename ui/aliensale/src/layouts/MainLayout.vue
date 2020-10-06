@@ -41,6 +41,7 @@
                         <img src="/images/ethereum-logo.png" :class="ethereumLogoClass" />
                       </template>
                       <b-dropdown-item href="#" disabled v-if="getAccountName.ethereum">{{getAccountName.ethereum}}</b-dropdown-item>
+                      <b-dropdown-item href="#" @click="getReferralLink('ethereum')" v-if="getAccountName.ethereum">Get Referral Link</b-dropdown-item>
                       <b-dropdown-item href="#" @click="login('ethereum')" v-if="!getAccountName.ethereum">Login</b-dropdown-item>
                     </b-dropdown>
                   </div>
@@ -126,6 +127,17 @@ export default {
         }
       } else {
         this.$store.dispatch('ual/renderLoginModal', network, { root: true })
+      }
+    },
+    getReferralLink (network) {
+      if (this.getAccountName[network]) {
+        const u = new URL(document.location.href)
+        const refLink = `${u.origin}/?r=${this.getAccountName[network]}`
+        this.$swal({
+          title: 'Referral Link',
+          html: 'Use the following link to refer other users.  You will receve commission for every purchase made using this link' +
+                  '<p><a href="' + refLink + '">' + refLink + '</a></p>'
+        })
       }
     }
   },
