@@ -93,7 +93,7 @@ void aliensale::addaddress(uint64_t address_id, name foreign_chain, string addre
     });
 }
 
-void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty, name referrer) {
+void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty, string referrer) {
     require_auth(native_address);
     check(qty > 0, "Quantity cannot be negative");
 
@@ -145,7 +145,7 @@ void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty
     ).send();
 }
 
-void aliensale::loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency, name referrer) {}
+void aliensale::loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency, string referrer) {}
 
 void aliensale::delinvoice(uint64_t invoice_id) {
     require_auth(get_self());
@@ -206,7 +206,7 @@ void aliensale::transfer(name from, name to, asset quantity, string memo) {
     });
 }
 
-void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty, name referrer) {
+void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty, string referrer) {
     check(qty > 0, "Quantity cannot be negative");
     require_auth(buyer);
     // check they have correct deposit and send out packs

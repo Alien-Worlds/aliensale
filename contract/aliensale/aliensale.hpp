@@ -45,7 +45,7 @@ namespace alienworlds {
             time_point_sec         invoice_time;
             bool                   completed = false;
             string                 completed_tx_id;
-            name                   referrer;
+            string                 referrer;
             string                 referrer_payout;
 
             uint64_t primary_key() const { return invoice_id; }
@@ -66,40 +66,40 @@ namespace alienworlds {
         typedef multi_index<"deposits"_n, deposit_item> deposits_table;
 
 
-      /* Swaps a voucher from foreign chain, record tx_id to prevent replays */
-      struct [[eosio::table("swaps")]] swap_item {
-        uint64_t    swap_id;
-        name        account;
-        checksum256 tx_id;
-        asset       quantity;
+        /* Swaps a voucher from foreign chain, record tx_id to prevent replays */
+        struct [[eosio::table("swaps")]] swap_item {
+          uint64_t    swap_id;
+          name        account;
+          checksum256 tx_id;
+          asset       quantity;
 
-        uint64_t    primary_key() const { return swap_id; }
-        checksum256 by_tx_id() const { return tx_id; }
-      };
-      typedef multi_index<"swaps"_n, swap_item, indexed_by<"bytxid"_n,
-          const_mem_fun<swap_item, checksum256, &swap_item::by_tx_id> > > swaps_table;
+          uint64_t    primary_key() const { return swap_id; }
+          checksum256 by_tx_id() const { return tx_id; }
+        };
+        typedef multi_index<"swaps"_n, swap_item, indexed_by<"bytxid"_n,
+            const_mem_fun<swap_item, checksum256, &swap_item::by_tx_id> > > swaps_table;
 
 
-      inline static checksum256 to_checksum256(checksum160 in){
-          checksum256 out(in.get_array());
-          return out;
-      }
-      /* ETH swaps, maintains a list of whitelisted addresses */
-      struct [[eosio::table("ethswaps")]] ethswap_item {
-        uint64_t     ethswap_id;
-        checksum160  eth_address;
-        checksum256  tx_id;
-        asset        quantity;
-        bool         complete;
+        inline static checksum256 to_checksum256(checksum160 in){
+            checksum256 out(in.get_array());
+            return out;
+        }
+        /* ETH swaps, maintains a list of whitelisted addresses */
+        struct [[eosio::table("ethswaps")]] ethswap_item {
+          uint64_t     ethswap_id;
+          checksum160  eth_address;
+          checksum256  tx_id;
+          asset        quantity;
+          bool         complete;
 
-        uint64_t    primary_key() const { return ethswap_id; }
-        checksum256 by_tx_id() const { return tx_id; }
-        checksum256 by_eth_addr() const { return to_checksum256(eth_address); }
-      };
-      typedef multi_index<"ethswaps"_n, ethswap_item,
-          indexed_by<"bytxid"_n, const_mem_fun<ethswap_item, checksum256, &ethswap_item::by_tx_id> >,
-          indexed_by<"byethaddr"_n, const_mem_fun<ethswap_item, checksum256, &ethswap_item::by_eth_addr> >
-              > ethswaps_table;
+          uint64_t    primary_key() const { return ethswap_id; }
+          checksum256 by_tx_id() const { return tx_id; }
+          checksum256 by_eth_addr() const { return to_checksum256(eth_address); }
+        };
+        typedef multi_index<"ethswaps"_n, ethswap_item,
+            indexed_by<"bytxid"_n, const_mem_fun<ethswap_item, checksum256, &ethswap_item::by_tx_id> >,
+            indexed_by<"byethaddr"_n, const_mem_fun<ethswap_item, checksum256, &ethswap_item::by_eth_addr> >
+                > ethswaps_table;
 
 
         /* Records previously generated foreign addresses to send to */
@@ -161,15 +161,12 @@ namespace alienworlds {
             uint64_t       sale_id;
             uint64_t       auction_id;
             asset          quantity;
-            name           referrer;
+            string         referrer;
             string         referrer_payout;
 
             uint64_t primary_key() const { return sale_id; }
-            uint64_t by_referrer() const { return referrer.value; }
         };
-        typedef multi_index<"sales"_n, sale_item,
-              indexed_by<"byreferrer"_n, const_mem_fun<sale_item, uint64_t, &sale_item::by_referrer> >
-            > sales_table;
+        typedef multi_index<"sales"_n, sale_item> sales_table;
 
         // Local instances
         addresses_table _addresses;
@@ -209,10 +206,10 @@ namespace alienworlds {
         [[eosio::action]] void addaddress(uint64_t address_id, name foreign_chain, string address);
 
         /* Create an invoice for an auction */
-        [[eosio::action]] void newinvoice(name native_address, uint64_t auction_id, uint8_t qty, name referrer);
+        [[eosio::action]] void newinvoice(name native_address, uint64_t auction_id, uint8_t qty, string referrer);
 
         /* Logs an invoice which can be read by the client in action traces */
-        [[eosio::action]] void loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency, name referrer);
+        [[eosio::action]] void loginvoice(name native_address, uint64_t invoice_id, uint64_t foreign_price, string foreign_address, extended_symbol settlement_currency, string referrer);
 
         /* Remove an invoice entry */
         [[eosio::action]] void delinvoice(uint64_t invoice_id);
@@ -221,7 +218,7 @@ namespace alienworlds {
         [[eosio::action]] void payment(uint64_t invoice_id, string tx_id);
 
         /* Buy using deposited funds using native token */
-        [[eosio::action]] void buy(name buyer, uint64_t auction_id, uint8_t qty, name referrer);
+        [[eosio::action]] void buy(name buyer, uint64_t auction_id, uint8_t qty, string referrer);
 
         /* Swap from EOS, will be called by the watcher script */
          [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
