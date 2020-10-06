@@ -4,28 +4,28 @@
       <b class="screen-overlay" @click="toggleMobileNav"></b>
 
       <header id="main-header">
-        <div class="container">
 
           <div id="mobile_logo_header">
-            <button data-trigger="#navbar_mobile" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav">  Show navbar </button>
+            <button data-trigger="#navbar_mobile" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav">  <font-awesome-icon icon="bars" /> </button>
             <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
           </div>
 
           <nav id="navbar_mobile" class="mobile-offcanvas navbar navbar-dark">
             <div class="offcanvas-header">
-              <button class="btn btn-danger btn-close float-right" @click="toggleMobileNav"> &times; </button>
+              <button class="btn btn-danger btn-close float-right" @click="toggleMobileNav"> <font-awesome-icon icon="times" /> </button>
             </div>
             <main-menu />
           </nav>
 
           <nav id="navbar_lg" class="navbar fixed-top navbar-expand-lg navbar-dark">
-            <button data-trigger="#navbar_main" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav">  Show navbar </button>
+            <div class="container">
+<!--            <button data-trigger="#navbar_main" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav"> <font-awesome-icon icon="bars" /> </button>-->
             <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <main-menu />
               </div>
+            </div>
           </nav>
-        </div>
       </header>
 
       <div id="main-content">
@@ -124,32 +124,6 @@ export default {
         margin-left: 15px;
       }
     }
-  }
-
-  .offcanvas-header{ display:none; }
-  .screen-overlay {
-    height: 100%;
-    z-index: 30;
-    position: fixed;
-    top: 0;
-    left: 0;
-    opacity:0;
-    visibility:hidden;
-    background-color: rgba(34, 34, 34, 0.6);
-    transition:opacity .2s linear, visibility .1s, width 1s ease-in;
-  }
-  .screen-overlay.show {
-    transition:opacity .5s ease, width 0s;
-    opacity:1;
-    width:100%;
-    visibility:visible;
-  }
-
-  #navbar_mobile, #mobile_logo_header {
-    display: none;
-  }
-  #navbar_mobile {
-    overflow: hidden;
   }
 
 </style>

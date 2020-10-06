@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="showDialog" persistent transition-show="flip-down" transition-hide="flip-up">
-      <div class="d-flex p-2 justify-content-center" style="border: 1px solid white;border-radius: 20px">
+      <div class="d-flex p-2 justify-content-center wax-login" style="border: 1px solid white;border-radius: 20px">
         <div class="p-5 w-50">
           <p>If you already have a WAX account, click below to login using either WAX Cloud Wallet or your local wallet</p>
           <b-button @click="loginWax">Login</b-button>
@@ -9,7 +9,7 @@
         <div class="p-5 w-50">
           <p>If you do not have an existing WAX account, click below to create one</p>
           <p>When you have created the account, come back and log in to proceed</p>
-          <p><a href="#" @click="showVideo">Link to video here</a></p>
+          <p><a href="#" @click="showVideo">View a video on how to set up a WAX account</a></p>
 
           <b-button @click="newWax">Create account</b-button>
         </div>

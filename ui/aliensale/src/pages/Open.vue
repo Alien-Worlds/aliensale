@@ -63,7 +63,7 @@
     </div>
 
     <div id="open-packs-list-container" v-if="!inOpening" class="row justify-center">
-      <div class="w-75">
+      <div class="w-75 sizer">
         <inventory-tabs />
         <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
           <div v-for="pack in packs" :key="pack.symbol" class="p-4 w-25">

@@ -1,6 +1,6 @@
 <template>
   <q-page class="full-width column wrap justify-start content-center planet-bg-page">
-    <div class="w-75">
+    <div class="w-75 sizer">
 
       <inventory-tabs />
 

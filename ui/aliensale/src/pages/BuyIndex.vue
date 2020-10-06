@@ -2,8 +2,8 @@
   <q-page class="planet-bg-page">
 
     <div class="row justify-center">
-      <div class="w-75">
-        <div class="d-flex flex-row flex-wrap">
+      <div class="w-75 sizer">
+        <div class="d-flex flex-row flex-wrap buyindex-pack-row">
           <div v-for="(auctionData, packSymbol) in auctions" :key="packSymbol" class="p-4 w-50">
             <div class="d-flex flex-row">
               <div class="p-4 w-50">

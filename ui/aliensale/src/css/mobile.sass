@@ -3,8 +3,29 @@
 
 
 @media all and (max-width:992px)
+  .text-h1, .main-title
+    font-size: 2.5rem !important
+
   #navbar_mobile, #mobile_logo_header, .offcanvas-header
-    display: block
+    display: block !important
+
+  #navbar_mobile
+    .navbar-nav
+      margin-top: 60px
+      font-size: 2rem
+
+  #mobile_logo_header
+    padding-top: 25px
+    padding-left: 25px
+    & > button
+      margin-right: 20px
+      margin-top: 6px
+
+  #main-content
+    padding-top: 25px;
+
+  .sizer
+    width: 98% !important
 
   .navbar-expand-lg
     display: none
@@ -26,3 +47,59 @@
   .mobile-offcanvas.show
     visibility: visible
     transform: translateX(0)
+
+  .offcanvas-header
+    display:none
+
+  .screen-overlay
+    height: 100%
+    z-index: 30
+    position: fixed
+    top: 0
+    left: 0
+    opacity: 0
+    visibility: hidden
+    background-color: rgba(34, 34, 34, 0.6)
+    transition:opacity .2s linear, visibility .1s, width 1s ease-in
+
+  .screen-overlay.show
+    transition: opacity .5s ease, width 0s
+    opacity: 1
+    width: 100%
+    visibility: visible
+
+  #navbar_mobile
+    overflow: hidden
+
+  .buyindex-pack-row
+    & > .w-50
+      width: 100% !important
+
+  .buy-page
+    .pack-img
+      width: 50%
+      margin-bottom: 40px
+    #description
+      ul
+        margin: 10px 120px
+    .qty-control
+      input
+        border-radius: 20px
+        text-align: center
+        margin: 0 20px
+      button, input
+        font-size: 4rem
+        line-height: 3rem
+    .buy-control
+      button
+        font-size: 4rem
+        line-height: 3rem
+        padding: 25px 15px;
+
+  #login-buttons
+    margin-top: 3rem
+
+  .wax-login
+    display: block !important
+    .w-50
+      width: 100% !important

@@ -1,7 +1,7 @@
 <template>
-  <q-page class="planet-bg-page">
+  <q-page class="planet-bg-page buy-page">
       <div class="row justify-center">
-        <div class="w-75">
+        <div class="w-75 sizer">
           <div v-if="showLoginModal && !getAccountName.wax">
             <login-wax />
           </div>
@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-md-3">
 
-                  <img  :src="ipfsRoot + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded" alt="Pack">
+                  <img  :src="ipfsRoot + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded pack-img" alt="Pack">
 
                 </div>
                 <div class="col-md-1 unbox"></div>
@@ -42,12 +42,12 @@
                       </span>
                     </h2>
 
-                    <p>
+                    <p class="qty-control">
                       <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyQty' + auction.auction_id)">-</button>
                       <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" :max="auction.amount">
                       <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
                     </p>
-                    <p><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
+                    <p class="buy-control"><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
 
                     <div v-if="auction.current_period < auction.period_count">
                       <h2 class="highlight">

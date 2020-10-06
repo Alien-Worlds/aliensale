@@ -1,15 +1,15 @@
 <template>
   <ul class="navbar-nav">
     <li class="nav-item">
-      <router-link to="/inventory" class="nav-link">Inventory</router-link>
+      <router-link to="/inventory" class="nav-link"><span @click="toggleMobileNav">Inventory</span></router-link>
     </li>
     <li class="nav-item">
-      <router-link to="/" class="nav-link">Buy Packs</router-link>
+      <router-link to="/" class="nav-link"><span @click="toggleMobileNav">Buy Packs</span></router-link>
     </li>
     <li class="nav-item">
-      <router-link to="/redeem" class="nav-link">Redeem Voucher</router-link>
+      <router-link to="/redeem" class="nav-link"><span @click="toggleMobileNav">Redeem Voucher</span></router-link>
     </li>
-    <li>
+    <li id="login-buttons">
       <div class="row" style="padding-left: 30px">
         <b-dropdown style="margin-right:20px">
           <template v-slot:button-content>
@@ -103,6 +103,7 @@ export default {
     },
     getReferralLink (network) {
       if (this.getAccountName[network]) {
+        this.toggleMobileNav()
         const u = new URL(document.location.href)
         const refLink = `${u.origin}/?r=${this.getAccountName[network]}`
         this.$swal({
@@ -110,6 +111,22 @@ export default {
           html: 'Use the following link to refer other users.  You will receve commission for every purchase made using this link' +
                   '<p><a href="' + refLink + '">' + refLink + '</a></p>'
         })
+      }
+    },
+    toggleMobileNav (e) {
+      const navBar = document.getElementById('navbar_mobile')
+      this.toggleClass(navBar, 'show')
+      this.toggleClass(document.body, 'offcanvas-active')
+      const soEles = Array.from(document.getElementsByClassName('screen-overlay'))
+      soEles.forEach(e => {
+        this.toggleClass(e, 'show')
+      })
+    },
+    toggleClass (ele, className) {
+      if (ele.classList.contains(className)) {
+        ele.classList.remove(className)
+      } else {
+        ele.classList.add(className)
       }
     }
   }
