@@ -4,6 +4,7 @@ module.exports = {
     atomicEndpoint: 'https://test.wax.api.atomicassets.io',
     collectionName: 'alien.worlds',
     saleContract: 'sale.worlds',
+    openContract: 'open.worlds',
     redeemContractEos: 'alienpromopk',
     redeemBurnEos: 'alienworlds1',
     redeemServer: 'https://redeem-test.alienworlds.io',

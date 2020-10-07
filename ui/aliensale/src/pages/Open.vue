@@ -209,12 +209,12 @@ export default {
         }],
         data: {
           from: this.getAccountName.wax,
-          to: 'open.worlds',
+          to: process.env.openContract,
           quantity: `1 ${sym}`,
           memo: 'Pack opening'
         }
       }, {
-        account: 'open.worlds',
+        account: process.env.openContract,
         name: 'open',
         authorization: [{
           actor: this.getAccountName.wax,
@@ -260,7 +260,7 @@ export default {
         if (e.message.indexOf('Packs are already deposited') > -1) {
           console.log('open in progress')
           const actions = [{
-            account: 'open.worlds',
+            account: process.env.openContract,
             name: 'open',
             authorization: [{
               actor: this.getAccountName.wax,
@@ -285,7 +285,7 @@ export default {
       this.pollTimer = setInterval(() => { this.poll(res.transaction.processed.block_time) }, 1000)
     },
     async poll (checkDate) {
-      const url = `${process.env.waxEndpoint}/v2/history/get_actions?after=${checkDate}&filter=open.worlds:logopen`
+      const url = `${process.env.waxEndpoint}/v2/history/get_actions?after=${checkDate}&filter=${process.env.openContract}:logopen`
       const res = await fetch(url)
       const json = await res.json()
       json.actions = json.actions.filter(a => a.act.data.opener === this.getAccountName.wax)
