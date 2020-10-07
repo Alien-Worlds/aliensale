@@ -182,6 +182,10 @@ const check = async () => {
 
         if (json.result.length) {
             const tx = json.result[0];
+            if (!tx.to){
+                console.error(`Transaction didnt contain "to"`, json);
+                continue;
+            }
             const invoice = invoices[tx.to.toLowerCase()];
             // console.log(tx)
 
