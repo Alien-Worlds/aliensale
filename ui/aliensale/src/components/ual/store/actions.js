@@ -140,7 +140,7 @@ export async function transact ({ state, dispatch, commit }, payload) {
   })
   let res = null
   try {
-    const optionsCombined = Object.assign({ broadcast: true }, options)
+    const optionsCombined = Object.assign({ blocksBehind: 3, expireSeconds: 30, broadcast: true }, options)
     console.log('options for transact', options)
     res = await user.signTransaction({ actions: copiedActions }, optionsCombined)
     // afterTransact()
