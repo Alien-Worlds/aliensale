@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="showDialog" persistent transition-show="flip-down" transition-hide="flip-up">
-      <div class="d-flex p-2 justify-content-center wax-login" style="border: 1px solid white;border-radius: 20px">
+      <div class="wax-login d-flex p-2 justify-content-center" style="border: 1px solid white;border-radius: 20px">
         <div class="p-5 w-50">
           <p>If you already have a WAX account, click below to login using either WAX Cloud Wallet or your local wallet</p>
           <b-button @click="loginWax">Login</b-button>
