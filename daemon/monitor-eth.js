@@ -169,10 +169,14 @@ const check = async () => {
         }
     }); */
 
-    for (let a=0; a < my_accounts.length; a++) {
-        const acnt = my_accounts[a];
-        console.log(`Checking ${acnt} at block ${block_num}`);
-        const url = `${config.eth.etherscan_endpoint}?module=account&action=txlist&address=${acnt}&startblock=${block_num - 50}&endblock=${block_num}&sort=asc&apikey=${config.eth.etherscan_api_key}`;
+    const m = 20;
+    while (my_accounts.length) {
+        const acnts = my_accounts.slice(0, m);
+        my_accounts = my_accounts.slice(m);
+
+        const acnts_str = acnts.join(',');
+        console.log(`Checking ${acnts_str} at block ${block_num}`);
+        const url = `${config.eth.etherscan_endpoint}?module=account&action=txlist&address=${acnts_str}&startblock=${block_num - 50}&endblock=${block_num}&sort=asc&apikey=${config.eth.etherscan_api_key}`;
 
         // console.log(url)
         const res = await fetch(url);
@@ -181,32 +185,34 @@ const check = async () => {
         // console.log(json);
 
         if (json.result.length) {
-            const tx = json.result[0];
-            if (!tx.to){
-                console.error(`Transaction didnt contain "to"`, json);
-                continue;
-            }
-            const invoice = invoices[tx.to.toLowerCase()];
-            // console.log(tx)
-
-            if (typeof invoice !== 'undefined'){
-                if (typeof validations[tx.blockNumber] === 'undefined'){
-                    validations[tx.blockNumber] = [];
+            for (let r = 0; r < json.result.length; r++){
+                const tx = json.result[r];
+                if (!tx.to){
+                    console.error(`Transaction didnt contain "to"`, json);
+                    continue;
                 }
+                const invoice = invoices[tx.to.toLowerCase()];
+                // console.log(tx)
 
-                const existing = validations[tx.blockNumber].find(_tx => _tx.hash === tx.hash);
+                if (typeof invoice !== 'undefined'){
+                    if (typeof validations[tx.blockNumber] === 'undefined'){
+                        validations[tx.blockNumber] = [];
+                    }
 
-                if (!existing){
-                    console.log(`Queing transaction ${tx.hash} for validation`);
-                    validations[tx.blockNumber].push(tx);
-                }
-                else {
-                    console.log(`${tx.hash} already queued for validation`)
+                    const existing = validations[tx.blockNumber].find(_tx => _tx.hash === tx.hash);
+
+                    if (!existing){
+                        console.log(`Queing transaction ${tx.hash} for validation`);
+                        validations[tx.blockNumber].push(tx);
+                    }
+                    else {
+                        console.log(`${tx.hash} already queued for validation`)
+                    }
                 }
             }
         }
 
-        await sleep(50);
+        await sleep(120);
     }
 
 
