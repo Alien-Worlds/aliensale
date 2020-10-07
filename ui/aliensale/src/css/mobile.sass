@@ -20,8 +20,10 @@
     visibility: hidden
     transform: translateX(-100%)
     border-radius: 0
-    display: none
-    top: 0; left:0
+    display: flex !important
+    position: fixed
+    top: 0
+    left: 0
     height: 100%
     z-index: 1200
     width: 80%
@@ -31,9 +33,8 @@
 
   .mobile-offcanvas.show
     visibility: visible
-    display: flex !important
+    //display: flex !important
     transform: translateX(0)
-    position: fixed
 
   #mobile_logo_header
     padding-top: 25px
