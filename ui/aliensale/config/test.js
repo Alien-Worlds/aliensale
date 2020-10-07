@@ -5,6 +5,7 @@ module.exports = {
     collectionName: 'alien.worlds',
     saleContract: 'sale.worlds',
     openContract: 'open.worlds',
+    packContract: 'pack.worlds',
     redeemContractEos: 'alienpromopk',
     redeemBurnEos: 'alienworlds1',
     redeemServer: 'https://redeem-test.alienworlds.io',

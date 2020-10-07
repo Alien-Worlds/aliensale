@@ -146,7 +146,7 @@ export default {
         method: 'POST',
         body: JSON.stringify({
           account,
-          code: 'pack.worlds',
+          code: process.env.packContract,
           symbol: null,
           _: Date.now()
         })
@@ -159,7 +159,11 @@ export default {
       console.log('RELOAD PACKS', this.getAccountName.wax)
       if (this.getAccountName.wax) {
         const ownedTokens = await this.getPackBalance(this.getAccountName.wax)
-        const availableTokensRes = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'packs' })
+        const availableTokensRes = await this.$wax.rpc.get_table_rows({
+          code: process.env.saleContract,
+          scope: process.env.saleContract,
+          table: 'packs'
+        })
         const availableTokens = availableTokensRes.rows.map((p) => {
           p.metadata = JSON.parse(p.metadata)
           const [, sym] = p.pack_asset.quantity.split(' ')
@@ -201,7 +205,7 @@ export default {
       this.revealComplete = false
 
       const actions = [{
-        account: 'pack.worlds',
+        account: process.env.packContract,
         name: 'transfer',
         authorization: [{
           actor: this.getAccountName.wax,

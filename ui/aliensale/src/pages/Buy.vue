@@ -263,7 +263,15 @@ export default {
       const hexIndex = Buffer.from(reversedArray).toString('hex')
       const key = '0x' + hexIndex
 
-      const res = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'packs', key_type: 'i128', index_position: 2, lower_bound: key, upper_bound: key })
+      const res = await this.$wax.rpc.get_table_rows({
+        code: process.env.saleContract,
+        scope: process.env.saleContract,
+        table: 'packs',
+        key_type: 'i128',
+        index_position: 2,
+        lower_bound: key,
+        upper_bound: key
+      })
       if (res.rows.length) {
         return res.rows[0]
       }
@@ -355,7 +363,13 @@ export default {
     },
     async loadAuction () {
       const auctionId = this.$route.params.auction_id
-      const res = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'auctions', lower_bound: auctionId, upper_bound: auctionId })
+      const res = await this.$wax.rpc.get_table_rows({
+        code: process.env.saleContract,
+        scope: process.env.saleContract,
+        table: 'auctions',
+        lower_bound: auctionId,
+        upper_bound: auctionId
+      })
 
       if (!res.rows.length) {
         this.$showError('Auction not found')
@@ -370,7 +384,7 @@ export default {
       auctionData.price_symbol.precision = parseInt(pPrecision)
       auctionData.price_symbol.symbol = pSym
 
-      const pd = await this.getPack({ contract: 'pack.worlds', symbol: auctionData.sym })
+      const pd = await this.getPack({ contract: process.env.packContract, symbol: auctionData.sym })
       pd.metadata = JSON.parse(pd.metadata)
       delete pd.pack_asset
       auctionData.pack_data = pd
@@ -388,7 +402,7 @@ export default {
       console.log('createSale', account, qty, auction, country)
       // creates the sale on wax and returns the details
       const actions = [{
-        account: 'sale.worlds',
+        account: process.env.saleContract,
         name: 'newinvoice',
         authorization: [{
           actor: account,
@@ -449,12 +463,12 @@ export default {
         }],
         data: {
           from: account,
-          to: 'sale.worlds',
+          to: process.env.saleContract,
           quantity: this.currentPriceStrict(auction, qty),
           memo: ''
         }
       }, {
-        account: 'sale.worlds',
+        account: process.env.saleContract,
         name: 'buy',
         authorization: [{
           actor: account,

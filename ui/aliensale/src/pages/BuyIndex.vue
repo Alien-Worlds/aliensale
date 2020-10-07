@@ -106,7 +106,11 @@ export default {
   },
   methods: {
     async loadAuctions () {
-      const availablePacksRes = await this.$wax.rpc.get_table_rows({ code: 'sale.worlds', scope: 'sale.worlds', table: 'packs' })
+      const availablePacksRes = await this.$wax.rpc.get_table_rows({
+        code: process.env.saleContract,
+        scope: process.env.saleContract,
+        table: 'packs'
+      })
       const availablePacks = availablePacksRes.rows.map((p) => {
         p.metadata = JSON.parse(p.metadata)
         const [, sym] = p.pack_asset.quantity.split(' ')
@@ -116,8 +120,8 @@ export default {
       // console.log(availablePacks)
 
       const res = await this.$wax.rpc.get_table_rows({
-        code: 'sale.worlds',
-        scope: 'sale.worlds',
+        code: process.env.saleContract,
+        scope: process.env.saleContract,
         table: 'auctions'
       })
 
