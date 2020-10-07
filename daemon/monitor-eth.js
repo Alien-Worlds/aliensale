@@ -67,8 +67,9 @@ const validate_transaction = async (block_num, tx) => {
         const bal_url = `${config.eth.etherscan_endpoint}?module=account&action=balance&address=${tx.to}&tag=latest&apikey=${config.eth.etherscan_api_key}`;
         const bal_res = await fetch(bal_url);
         const bal_json = await bal_res.json();
-        console.log(bal_json);
+        // console.log(bal_json);
         balance = parseInt(bal_json.result);
+        // balance = tx.balance;
         console.log(`balance is ${balance}`);
         const invoice = invoices[tx.to.toLowerCase()];
         console.log(`invoice price ${invoice.price}`);
@@ -85,16 +86,24 @@ const validate_transaction = async (block_num, tx) => {
 
 const update_accounts = async () => {
     my_accounts = [];
-    const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'invoices', limit: 1000});
-    res.rows.forEach((row) => {
-        if (row.invoice_currency.chain === 'ethereum' && !row.completed){
-            const addr = row.foreign_address.toLowerCase();
+    let first_run = true;
+    console.log(`Update accounts`);
+    let res = {rows:[]};
+    let lower_bound = 0;
+    while (res.rows.length || first_run){
+        res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'invoices', limit: 100, lower_bound});
 
-            my_accounts.push(addr);
-            invoices[addr] = row;
-        }
-    });
-    // console.log('Monitoring accounts', invoices)
+        res.rows.forEach((row) => {
+            if (row.invoice_currency.chain === 'ethereum' && !row.completed){
+                const addr = row.foreign_address.toLowerCase();
+                my_accounts.push(addr);
+                invoices[addr] = row;
+            }
+            lower_bound = row.invoice_id + 1;
+        });
+
+        first_run = false;
+    }
 };
 
 const send_action = async (invoice, tx_id) => {
@@ -149,34 +158,15 @@ const check = async () => {
     console.log(`Checking block ${block_num}`);
     // console.log(block_json);
 
-    /* const block = await web3.eth.getBlock(block_num);
-    if (!block || !block.transactions){
-        throw "Could not find block"
-    }
-    block.transactions.forEach(async (tx_id) => {
-        const tx = await web3.eth.getTransaction(tx_id);
-        // console.log(tx);
-        if (tx.to && my_accounts.includes(tx.to.toLowerCase())){
-            console.log(`Found in block ${block_num}`, tx);
-            const sale = sales[tx.to.toLowerCase()];
-
-            if (typeof sale !== 'undefined'){
-                if (typeof validations[block_num] === 'undefined'){
-                    validations[block_num] = [];
-                }
-                validations[block_num].push(tx_id);
-            }
-        }
-    }); */
-
-    const m = 20;
-    while (my_accounts.length) {
-        const acnts = my_accounts.slice(0, m);
-        my_accounts = my_accounts.slice(m);
+    const m = 5;
+    let my_accounts_copy = my_accounts;
+    while (my_accounts_copy.length) {
+        const acnts = my_accounts_copy.slice(0, m);
+        my_accounts_copy = my_accounts_copy.slice(m);
 
         const acnts_str = acnts.join(',');
         console.log(`Checking ${acnts_str} at block ${block_num}`);
-        const url = `${config.eth.etherscan_endpoint}?module=account&action=txlist&address=${acnts_str}&startblock=${block_num - 50}&endblock=${block_num}&sort=asc&apikey=${config.eth.etherscan_api_key}`;
+        const url = `${config.eth.etherscan_endpoint}?module=account&action=balancemulti&address=${acnts_str}&tag=latest&apikey=${config.eth.etherscan_api_key}`;
 
         // console.log(url)
         const res = await fetch(url);
@@ -185,8 +175,23 @@ const check = async () => {
         // console.log(json);
 
         if (json.result.length) {
-            for (let r = 0; r < json.result.length; r++){
-                const tx = json.result[r];
+            const with_balance = json.result.filter(r => r.balance !== '0');
+            // console.log(with_balance);
+            // return;
+
+            for (let r = 0; r < with_balance.length; r++){
+                const {account, balance} = with_balance[r];
+                const url = `${config.eth.etherscan_endpoint}?module=account&action=txlist&address=${account.toLowerCase()}&startblock=${block_num - 1000}&endblock=${block_num}&sort=asc&apikey=${config.eth.etherscan_api_key}`;
+                const res = await fetch(url);
+                const json = await res.json();
+
+                // console.log(json);
+                if (json.message === 'NOTOK'){
+                    console.error(`Failed to get transactions for ${account}`, json);
+                    continue;
+                }
+                const tx = json.result[0];
+
                 if (!tx.to){
                     console.error(`Transaction didnt contain "to"`, json);
                     continue;
@@ -195,6 +200,8 @@ const check = async () => {
                 // console.log(tx)
 
                 if (typeof invoice !== 'undefined'){
+                    tx.balance = balance;
+
                     if (typeof validations[tx.blockNumber] === 'undefined'){
                         validations[tx.blockNumber] = [];
                     }
@@ -223,6 +230,7 @@ const check = async () => {
 
             const txs = validations[bn];
             delete validations[bn];
+            // console.log(txs);
 
             txs.forEach((tx) => {
                 validate_transaction(bn, tx);
@@ -245,7 +253,7 @@ const run = async () => {
             await sleep(4000);
         }
 
-        await sleep(12000);
+        await sleep(60000);
 
     }
 }
