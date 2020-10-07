@@ -7,9 +7,12 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
 const config = require('./config/index.js')
-const env = process.env.BUILD_ENV || 'test'
+let env = process.env.BUILD_ENV || 'test'
 
 module.exports = function (ctx) {
+  if (ctx.dev && !process.env.BUILD_ENV){
+    env = 'dev'
+  }
   if (!ctx.dev) {
     console.log(`Building environment ${env}`)
   }
@@ -57,7 +60,7 @@ module.exports = function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       vueRouterMode: 'history', // available values: 'hash', 'history'
-      env: ctx.dev ? config.dev : config[env],
+      env: config[env],
       // env: {test:1},
 
       // transpile: false,
