@@ -1,6 +1,6 @@
 <template>
   <q-page class="full-width column wrap justify-start content-center planet-bg-page">
-    <div class="text-h1">Redeem Vouchers</div>
+    <div class="text-h1">Claim Airdrop</div>
     <div class="d-flex flex-row flex-wrap">
 
       <div class="p-4 w-50">
@@ -10,13 +10,13 @@
         </div>
 
         <div v-if="getAccountName.eos && redeemableEos.length">
-          You have redeemable tokens!
+          You have an airdrop to claim!
           <div v-for="token in redeemableEos" :key="token">
             {{token}} <b-button @click="redeemTokenEos(token)">Redeem</b-button>
           </div>
         </div>
         <div v-if="getAccountName.eos && !redeemableEos.length">
-          No redeemable EOS tokens
+          No airdropped EOS tokens
         </div>
       </div>
 
@@ -28,13 +28,13 @@
         </div>
 
         <div v-if="getAccountName.ethereum && redeemableEthereum.length">
-          You have redeemable tokens!
+          You have an airdrop to claim!
           <div v-for="row in redeemableEthereum" :key="row.ethswap_id">
             {{row.quantity}} <b-button @click="redeemTokenEthereum(row.ethswap_id)">Redeem</b-button>
           </div>
         </div>
         <div v-if="getAccountName.ethereum && !redeemableEthereum.length">
-          No redeemable ETH tokens
+          No airdropped ETH tokens
         </div>
       </div>
     </div>

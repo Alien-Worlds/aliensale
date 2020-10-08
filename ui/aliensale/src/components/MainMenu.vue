@@ -7,7 +7,7 @@
       <router-link to="/" class="nav-link"><span @click="toggleMobileNav">Buy Packs</span></router-link>
     </li>
     <li class="nav-item">
-      <router-link to="/redeem" class="nav-link"><span @click="toggleMobileNav">Redeem Voucher</span></router-link>
+      <router-link to="/redeem" class="nav-link"><span @click="toggleMobileNav">Claim Airdrop</span></router-link>
     </li>
     <li id="login-buttons">
       <div class="row" style="padding-left: 30px">
