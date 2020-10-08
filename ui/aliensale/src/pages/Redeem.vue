@@ -12,7 +12,7 @@
         <div v-if="getAccountName.eos && redeemableEos.length">
           You have an airdrop to claim!
           <div v-for="token in redeemableEos" :key="token">
-            {{token}} <b-button @click="redeemTokenEos(token)">Redeem</b-button>
+            {{token}} <b-button @click="redeemTokenEos(token)">Claim</b-button>
           </div>
         </div>
         <div v-if="getAccountName.eos && !redeemableEos.length">
@@ -30,7 +30,7 @@
         <div v-if="getAccountName.ethereum && redeemableEthereum.length">
           You have an airdrop to claim!
           <div v-for="row in redeemableEthereum" :key="row.ethswap_id">
-            {{row.quantity}} <b-button @click="redeemTokenEthereum(row.ethswap_id)">Redeem</b-button>
+            {{row.quantity}} <b-button @click="redeemTokenEthereum(row.ethswap_id)">Claim</b-button>
           </div>
         </div>
         <div v-if="getAccountName.ethereum && !redeemableEthereum.length">
