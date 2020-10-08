@@ -27,8 +27,6 @@
 
                   <h2>{{ auction.pack_data.number_cards }} Items</h2>
 
-                  <p class="highlight small">Each card drawn from a pack has the below probabilities of being of rarity class listed. Each card is drawn independently, so your pack could contain four cards of the same rarity type.:-</p>
-
                   <div id="description" v-html="auction.pack_data.metadata.description"></div>
 
                 </div>
