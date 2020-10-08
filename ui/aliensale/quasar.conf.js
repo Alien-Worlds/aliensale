@@ -13,9 +13,7 @@ module.exports = function (ctx) {
   if (ctx.dev && !process.env.BUILD_ENV){
     env = 'dev'
   }
-  if (!ctx.dev) {
-    console.log(`Building environment ${env}`)
-  }
+  console.log(`Building environment ${env}`)
 
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
