@@ -127,6 +127,9 @@
     width: 60px;
     margin: 13px auto 0 auto;
   }
+  #description .highlight {
+    margin-bottom: 0;
+  }
   .small {
     font-size: 0.8rem;
   }
