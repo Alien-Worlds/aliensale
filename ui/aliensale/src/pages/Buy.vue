@@ -208,7 +208,7 @@ import PaymentRequest from 'components/PaymentRequest'
 import Countdown from 'components/Countdown'
 import StartCountdown from 'components/StartCountdown'
 import countryList from 'country-list'
-import crypto from 'crypto'
+// import crypto from 'crypto'
 // import { BButton, BFormInput /* , BButtonGroup, BButtonToolbar */ } from 'bootstrap-vue'
 import { Serialize } from 'eosjs'
 let intervalId
@@ -420,30 +420,31 @@ export default {
 
       try {
         console.log('createsale actions', actions)
-        const options = { broadcast: false }
-        const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax', options })
-        const hash = crypto.createHash('sha256')
-        hash.update(createResp.transaction.serializedTransaction)
-        const txId = hash.digest('hex')
+        const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+        // const hash = crypto.createHash('sha256')
+        // hash.update(createResp.transaction.serializedTransaction)
+        // const txId = hash.digest('hex')
 
-        // register the sale on our server
-        const saleRes = await fetch(`${process.env.saleServer}/sale`, {
-          method: 'POST',
-          body: JSON.stringify({ country, txId })
-        })
-        console.log(await saleRes.json())
+        // const saleRes = await fetch(`${process.env.saleServer}/sale`, {
+        //   method: 'POST',
+        //   body: JSON.stringify({ country, txId })
+        // })
+        // console.log(await saleRes.json())
 
         // console.log(txId, createResp)
-        const pushResp = await this.$wax.pushSignedTransaction({
-          ...createResp.transaction
-        })
-        console.log(pushResp)
+        // const pushResp = await this.$wax.pushSignedTransaction({
+        //   ...createResp.transaction
+        // })
+        // console.log(createResp)
 
-        if (pushResp.processed.receipt.status === 'executed') {
-          const logData = pushResp.processed.action_traces[0].inline_traces[0].act.data
+        if (createResp.status === 'executed') {
+          const txId = createResp.transactionId || createResp.transaction_id
+          const logData = createResp.transaction.processed.action_traces[0].inline_traces[0].act.data
           // console.log('create data', logData)
 
-          logData.transaction_id = pushResp.transaction_id
+          logData.transaction_id = txId
+          // register the sale on our server
+          this.logSale(country, txId)
           retVal = logData
         }
       } catch (e) {
@@ -451,6 +452,23 @@ export default {
       }
 
       return retVal
+    },
+    async logSale (country, txId) {
+      try {
+        const saleRes = await fetch(`${process.env.saleServer}/sale`, {
+          method: 'POST',
+          body: JSON.stringify({ country, txId })
+        })
+        const saleResJson = await saleRes.json()
+        if (!saleResJson.success) {
+          throw new Error(`Failed to confirm sale - ${saleResJson.error}`)
+        }
+        console.log(saleResJson)
+      } catch (e) {
+        setTimeout(() => {
+          this.logSale(country, txId)
+        }, 2000)
+      }
     },
     async buyWax (account, qty, auction, country) {
       console.log('buyWax', account, qty, auction, country)
@@ -484,31 +502,25 @@ export default {
       console.log(actions)
       let resp = null
       try {
-        const options = { broadcast: false }
-        resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax', options })
+        // const options = { broadcast: false }
+        resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+        console.log(resp)
 
-        const hash = crypto.createHash('sha256')
-        hash.update(resp.transaction.serializedTransaction)
-        const txId = hash.digest('hex')
+        // const hash = crypto.createHash('sha256')
+        // hash.update(resp.transaction.serializedTransaction)
+        // const txId = hash.digest('hex')
+        const txId = resp.transactionId || resp.transaction_id
 
         // register the sale on our server
-        const saleRes = await fetch(`${process.env.saleServer}/sale`, {
-          method: 'POST',
-          body: JSON.stringify({ country, txId })
-        })
-        const saleResJson = await saleRes.json()
-        if (!saleResJson.success) {
-          throw new Error(`Failed to confirm sale - ${saleResJson.error}`)
-        }
-        console.log(saleResJson)
+        this.logSale(country, txId)
 
         // console.log(txId, createResp)
-        const pushResp = await this.$wax.pushSignedTransaction({
-          ...resp.transaction
-        })
-        console.log(pushResp)
+        // const pushResp = await this.$wax.pushSignedTransaction({
+        //   ...resp.transaction
+        // })
+        // console.log(pushResp)
 
-        this.$showSuccess('Your pack has been purchased successfully, please wait a few moments and it will appear in your packs page')
+        this.$showSuccess('Your pack has been purchased successfully, please wait a few moments and it will appear in your inventory')
       } catch (e) {
         this.$showError(e.message)
       }
