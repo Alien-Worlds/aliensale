@@ -130,6 +130,9 @@
   #description .highlight {
     margin-bottom: 0;
   }
+  #description ul {
+    margin-top: 2.4rem;
+  }
   .small {
     font-size: 0.8rem;
   }
