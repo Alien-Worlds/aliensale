@@ -54,7 +54,10 @@
         <div v-for="card in cards" :key="card.asset_id" class="p-4 w-25">
           <div class="d-flex justify-content-center card-item" @click="filterCard(card.template.template_id, card.data.name)">
             <div class="d-flex flex-column flex-wrap">
-              <img :src="ipfsRoot + card.data.img" class="mw-100" :alt="card.name" />
+              <div style="position:relative">
+                <div class="mint-number">#{{card.template_mint}}</div>
+                <img :src="ipfsRoot + card.data.img" class="mw-100" :alt="card.name" />
+              </div>
             </div>
           </div>
         </div>
@@ -203,5 +206,16 @@ export default {
   }
   .card-item {
     cursor: pointer
+  }
+  .mint-number {
+    position:absolute;
+    top:-15px;
+    right:-15px;
+    background-color:rgba(0,0,0,0.7);
+    color:#fff;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+    border: 1px solid #bbb;
   }
 </style>
