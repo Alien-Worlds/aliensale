@@ -158,7 +158,7 @@ const check = async () => {
     console.log(`Checking block ${block_num}`);
     // console.log(block_json);
 
-    const m = 5;
+    const m = 20;
     let my_accounts_copy = my_accounts;
     while (my_accounts_copy.length) {
         const acnts = my_accounts_copy.slice(0, m);
