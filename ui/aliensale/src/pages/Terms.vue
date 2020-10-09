@@ -6,166 +6,337 @@
           <h1 class="animation-element slide-down in-view" style="text-align: center;margin: 25px;">TERMS AND <span class="colored">CONDITIONS</span></h1>
         </div>
       </div>
-      <p>Last updated July 27, 2020</p>
 
-      <h2 class="short-hr-left">AGREEMENT TO TERMS</h2>
+      <p><span class="colored">TERMS OF USE<span></span></span></p>
+      <p><span class="colored">Version 1.0 – September 2020</span></p>
+      <p>
+        WELCOME TO DACOCO GMBH'S ALIEN WORLDS ONLINE GAME. BY USING OR ACCESSING ALIEN WORLDS (AS DEFINED BELOW), BY CALLING AN ACTION ON AN ALIEN WORLDS SMART CONTRACT AND/OR BY CLICKING ON "I ACCEPT" ON THE SCREEN WHERE THIS AGREEMENT IS DISPLAYED, YOU ARE DEEMED TO AGREE TO BE BOUND BY AND ACCEPT THE TERMS OF THIS AGREEMENT, AS SET OUT BELOW (THE "ACCEPTANCE"). IF YOU DO NOT AGREE TO THESE TERMS, YOU ARE NOT AUTHORIZED TO USE, ACCESS, CONNECT TO OR REGISTER TO ACCESS ALIEN WORLDS AND YOU MUST IMMEDIATELY CEASE DOING SO. IF YOU ARE ACCEPTING THIS AGREEMENT ON BEHALF OF A COMPANY OR OTHER LEGAL ENTITY, YOU REPRESENT AND WARRANT THAT YOU HAVE FULL AUTHORITY TO BIND THE COMPANY OR LEGAL ENTITY (AND ITS EMPLOYEES) TO THIS AGREEMENT.
+        THIS AGREEMENT IS ENTERED INTO BY AND BETWEEN DACOCO LLC, ZUG, SWITZERLAND (CHE-273.567.048) ("DACOCO" OR "WE") AND YOU AND ANY OTHER PERSON, COMPANY OR OTHER LEGAL ENTITY ON WHOSE BEHALF YOU ARE ACCEPTING THIS AGREEMENT ("END USER" OR "YOU").
+        THESE TERMS OF USE INCORPORATE AND MUST BE READ IN CONJUNCTION WITH OUR PRIVACY NOTICE AND COOKIES NOTICE.</p>
+      <hr>
+      <h2 class="short-hr-left"><span class="colored">1. Definitions</span></h2>
+      <p>Unless otherwise defined in these Terms of Use, capitalized terms shall have the meanings set out in this Section&nbsp;1.</p>
+      <p>Acceptance shall have the meaning ascribed in the header of this Agreement.</p>
+      <p>Agreement or Terms of Use shall mean these terms of use for Alien Worlds.</p>
+      <p>Alien Worlds shall mean any and all of (i) any alien worlds smart contract, meaning a smart contract installed on any of the following accounts on the WAX blockchain: federation or any account in the format x.federation where “x” is any letter, or the account world, worlds or any account with the format x.world or x.worlds, where “x” is any letter; or a smart contract installed on a Permissioned Planet account, as well as (ii) the Website and (iii) any user interface, documents, materials and/or services  made available through the Website (if any; collectively the "Services"), in each case as updated or amended from time to time.</p>
+      <p>DAC Member Client shall mean the web front end which facilitates calling actions on Alien Worlds and/or a Planetary DAC’s smart contracts.
+        Dacoco or we shall have the meaning ascribed in the header of this Agreement.
+      </p><p>End User or you shall have the meaning ascribed in the header of this Agreement.</p>
+      <p>Party or Parties shall mean, as required by the relevant context, either you or us, or - respectively - you and us collectively.</p>
+      <p>Permissioned Planet shall mean an account initially created by Dacoco GmbH and released to the users of Alien Worlds that receives a daily allocation of Trilium from federation.</p>
+      <p>Permitted Use shall have the meaning ascribed in Section&nbsp;3.4 of this Agreement.</p>
+      <p>Planetary DAC shall mean the account and smart contracts of your Permissioned Planet and its decentralized autonomous community.
+        Atomic Assets Smart Contract means the smart contract installed in the Atomic Assets account on the WAX blockchain (viewable for example at https://wax.bloks.io/account/atomicassets) or any successor digital item standard in the database of  which Alien Worlds NFTs exist as a row.
+        Reverse Engineer shall mean the examination or analysis of Alien Worlds to determine its source code, sequence, structure, organization, internal design, algorithms or encryption devices.</p>
+      <p>Section shall mean any section of this Agreement.</p>
+      <p>The Website is the website at "alienworlds.io" (or such other URL as the website may subsequently be hosted at; the Website).</p>
 
-      <p>These Terms of Use constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and Dacoco GbmH ("Company", “we”, “us”, or “our”), concerning your access to and use of the alienworlds.io website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the “Site”). You agree that by accessing the Site, you have read, understood, and agreed to be bound by all of these Terms of Use. IF YOU DO NOT AGREE WITH ALL OF THESE TERMS OF USE, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST DISCONTINUE USE IMMEDIATELY.</p>
+      <h2 class="short-hr-left"><span class="colored">2. Form of Agreement and Interpretation</span></h2>
 
-      <p>Supplemental terms and conditions or documents that may be posted on the Site from time to time are hereby expressly incorporated herein by reference. We reserve the right, in our sole discretion, to make changes or modifications to these Terms of Use at any time and for any reason. We will alert you about any changes by updating the “Last updated” date of these Terms of Use, and you waive any right to receive specific notice of each such change. It is your responsibility to periodically review these Terms of Use to stay informed of updates. You will be subject to, and will be deemed to have been made aware of and to have accepted, the changes in any revised Terms of Use by your continued use of the Site after the date such revised Terms of Use are posted.</p>
+      <p>This Agreement shall apply and be binding on the End User following its Acceptance by the End User. It shall form an integral part of the agreement between the parties, and govern their rights and obligations, with regard to its subject matter.</p>
+      <p>No specific conditions and no other terms and conditions of the End User or any of its affiliates or any third party shall prevail over this Agreement, unless formally accepted in writing by Dacoco.</p>
+      <p>This Agreement shall not be construed against any party on the grounds that such party prepared or drafted this Agreement.
+        In this Agreement, unless the context otherwise requires, (i) words in the singular include the plural and vice versa and words in one gender include any other gender, (ii) a reference to a statute or statutory provision includes any subordinate legislation made under it and any statute or statutory provision which modifies, consolidates, re-enacts or supersedes it whether such statute or statutory provision comes into force before or after the date of this Agreement. </p>
 
-      <p>The information provided on the Site is not intended for distribution to or use by any person or entity in any jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to any registration requirement within such jurisdiction or country. Accordingly, those persons who choose to access the Site from other locations do so on their own initiative and are solely responsible for compliance with local laws, if and to the extent local laws are applicable.</p>
+      <h2 class="short-hr-left"><span class="colored">3. License</span> </h2>
 
-      <p>The Site is not tailored to comply with industry-specific regulations (Health Insurance Portability and Accountability Act (HIPAA), Federal Information Security Management Act (FISMA), etc.), so if your interactions would be subjected to such laws, you may not use this Site. You may not use the Site in a way that would violate the Gramm-Leach-Bliley Act (GLBA).</p>
+      <h3>3.1 Rights</h3>
+      <p>Unless otherwise stated in this Agreement, Dacoco is the owner or licensee of all rights including all copyrights, trademarks and other intellectual property rights relating to or included within Alien Worlds, the Website, Materials and Services ("Rights"). For the avoidance of doubt, and to the greatest extent permitted at law, the Rights include without limitation all Rights in respect of all graphics, logos, text elements, images and all other elements included in and deriving from the gameplay and virtual world featured in Alien Worlds, including without limitation in-game names, characters, locations and any virtual assets or items ("Virtual Items") and their associated benefits or properties acquired or provided for use within Alien Worlds.</p>
+      <h3>Grant of License</h3>
 
-      <p>The Site is intended for users who are at least 13 years of age. All users who are minors in the jurisdiction in which they reside (generally under the age of 18) must have the permission of, and be directly supervised by, their parent or guardian to use the Site. If you are a minor, you must have your parent or guardian read and agree to these Terms of Use prior to you using the Site.</p>
+      <p>Alien Worlds is licensed, not sold, to you with the scope set out below. </p>
+      <h3>3.2 Scope<p></p>
+        <p>The license is worldwide, non-commercial, non-exclusive, non-transferable, non-sublicensable and subject to the boundaries of the Permitted Use ("Scope"). The terms of this Agreement, including, without limitation, the Scope, will apply to Alien Worlds and its use, including upgrades, unless an upgrade is accompanied by a new version of this Agreement or a separate Agreement. </p>
+      </h3><h3>3.3 Permitted Use</h3>
+      <p>Your use of Alien Worlds and any results generated through and/or in connection with Alien Worlds must adhere to the Scope and rules set forth in this Section ("Permitted Use"):</p>
+      <h3>3.4 Observation of applicable laws, gambling regulations: </h3>
 
-      <h2 class="short-hr-left">INTELLECTUAL PROPERTY RIGHTS</h2>
+      <p>You may use Alien Worlds only as and to the extent permitted by applicable laws, in particular, only to the extent you fully comply with any applicable financial market regulations and similar provisions in using Alien Worlds. You may not use Alien Worlds in any jurisdiction in which its distribution, marketing, licensing or use would require a gambling license, registration or similar accreditation under applicable laws.</p>
+      <h3>3.3 Age restrictions:</h3>
 
-      <p>Unless otherwise indicated, the Site is our proprietary property and all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics on the Site (collectively, the “Content”) and the trademarks, service marks, and logos contained therein (the “Marks”) are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws and various other intellectual property rights and unfair competition laws of the United States, international copyright laws, and international conventions. The Content and the Marks are provided on the Site “AS IS” for your information and personal use only. Except as expressly provided in these Terms of Use, no part of the Site and no Content or Marks may be copied, reproduced, aggregated, republished, uploaded, posted, publicly displayed, encoded, translated, transmitted, distributed, sold, licensed, or otherwise exploited for any commercial purpose whatsoever, without our express prior written permission.</p>
+      <p>You must not use Alien Worlds, the Website, Materials and Services if you are under 18 years of age.</p>
 
-      <p>Provided that you are eligible to use the Site, you are granted a limited license to access and use the Site and to download or print a copy of any portion of the Content to which you have properly gained access solely for your personal, non-commercial use. We reserve all rights not expressly granted to you in and to the Site, the Content and the Marks.</p>
+      <h3>Commercial use, streaming, video sharing:</h3>
+      <p>The license is for personal and non-commercial use, it does not comprise the right to commercialize Alien Worlds or elements thereof. You may not perform in-game services during your use of Alien Worlds, the Website, Materials or Services for any form of compensation outside of Alien Worlds. Notwithstanding the above, you have the right to capture and stream or otherwise distribute on live streaming platforms and/or video sharing platforms, subject to your adherence, at all times, with the terms and conditions of – and the additional obligations imposed by – such platforms, video content of your personal gameplay, provided that such video content shall (a) be compliant with the Posting and Image Policies, (b) be accessible to the general public free of charge and (c) shall contain a disclaimer whereas any views and opinions expressed in such video content are exclusively your own and do not represent views or opinions of Dacoco or any other person or entity associated with Alien Worlds. Dacoco reserves the right to revoke such right with regard to existing or potential future content, if it deems any such video content, within its sole discretion, to be, or to potentially be, inappropriate or otherwise detrimental to the operation or commercialization of Alien Worlds. In such event, you hereby agree to immediately remove from public access or alter, as instructed by Dacoco, upon first request of Dacoco, any such content and that you will not pursue Dacoco for any actual or potential loss you may incur in connection with such removal or alteration. </p>
 
-      <h2 class="short-hr-left">USER REPRESENTATIONS</h2>
+      <h3>Comments and other forms of communication:</h3>
+      <p>You may use Alien World's commenting functions or other forms of communication within Alien Worlds only in accordance with and in observation of (a) the posting policy pursuant to section 8 hereof (the "Posting Policy") and (b) the image policy pursuant to section 9 hereof (the "Image Policy").</p>
 
-      <p>By using the Site, you represent and warrant that:  (1) you have the legal capacity and you agree to comply with these Terms of Use; (2) you are not under the age of 13; (3) you are not a minor in the jurisdiction in which you reside, or if a minor, you have received parental permission to use the Site; (4) you will not access the Site through automated or non-human means, whether through a bot, script, or otherwise; (5) you will not use the Site for any illegal or unauthorized purpose; and (6) your use of the Site will not violate any applicable law or regulation.</p>
+      <h3>Planetary DAC affiliation, Planetary DAC tokens:</h3>
 
-      <p>If you provide any information that is untrue, inaccurate, not current, or incomplete, we have the right to suspend or terminate your account and refuse any and all current or future use of the Site (or any portion thereof).</p>
+      <p>You may use your DAC Member Client or direct on chain commands to join a planetary community (including, without limitation, by staking Trilium to the underlying planet). Joining a planetary community will create an affiliation between yourself and the relevant Planetary DAC. Planetary DACs may be independent from Dacoco and administered by third parties (in particular, unless expressly agreed otherwise, Dacoco shall not be deemed to be an officer, or otherwise a body, or a member, or otherwise an associate or a representative of any Planetary DAC). You acknowledge and agree that any affiliation between yourself and a Planetary DAC does not create or otherwise be deemed to constitute the basis of an association between Dacoco and yourself and/or such Planetary DAC. You acknowledge and agree that you join any Planetary DAC within your sole responsibility and on your own risk. In particular, acknowledge and agree that you may become liable for actions and/or omissions of any Planetary DAC you become a member of or otherwise become affiliated with. Dacoco shall not be liable for any damage you incur though and/or in connection with your affiliation with any Planetary DAC. By joining a Planetary DAC, you may receive tokens of such Planetary DAC. You unconditionally and irrevocably undertake not to use such tokens for other purposes than to participate in the organization of the relevant Planetary DAC. In particular, you will not use any tokens of a Planetary DAC in any way which requires a license or registration or otherwise a notification to or an authorization of a governmental authority under applicable laws, whether with regard to yourself or to the tokens. </p>
 
-      <h2 class="short-hr-left">PROHIBITED ACTIVITIES</h2>
+      <h3>No modifications, tampering or circumvention:</h3>
+      <p>You may neither modify, decompile, disassemble nor otherwise tamper with or circumvent all or any portion of Alien Worlds, in particular, but not limited to, the underlying rules and mechanics of the game and/or the code of Alien Worlds, its user interface and/or its operating principles.
+        No reverse engineering: You may not Reverse Engineer Alien Worlds or otherwise attempt in any way to derive or otherwise determine the source code for the operation of Alien Worlds.</p>
 
-      <p>You may not access or use the Site for any purpose other than that for which we make the Site available. The Site may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.</p>
+      <h3>No copies, no derivative works:</h3> <p>You may not adapt, reproduce, store, distribute, print, display, publish or create copies or derivative works from any part of Alien Worlds, the Website, Materials or Services other than in accordance with the License.</p>
 
-      <p>As a user of the Site, you agree not to:</p>
+      <h3>No use of bots:</h3>
+      <p>You may not utilise any automated software or "bots" in relation to your access or use of Alien Worlds, the Website, Materials or Services.
+        No server overload: You may not knowingly perform any actions that may cause the computers used to support the Website, Materials and Services (the "Servers") to become overloaded or crash.</p>
+
+      <h3>No unauthorized server access:</h3>
+
+      <p>You may not connect to the Servers through any software other than the authorised game client software.</p>
+
+      <h3>No data gathering and extraction:</h3>
+
+      <p>You may not use any data gathering and extraction tools or software to extract information from the Website or utilize framing techniques to enclose any of the contents of the Website.</p>
+
+      <h3>No unauthorized use of trademarks, logos, proprietary names and graphics:</h3>
+
+      <p>Without Dacoco's written approval, you may not use any of Dacoco's or Alien Worlds' logos, trademarks or other proprietary names or graphics. For the avoidance of doubt, this restriction also applies if such uses are made in association with links to Alien Worlds.</p>
+
+      <h3>No unauthorized use of meta tags:</h3>
+
+      <p>Without Dacoco's written approval, you may not use any meta tags or other hidden text which incorporate Dacoco's name or any of its intellectual property including trademarks.</p>
+
+      <p>The foregoing restrictions shall not apply if, and only to the extent that, any such restriction is prohibited by the applicable laws or license terms applicable to the use of open source components included in the Game. If you require certain interface information for compatibility, interoperability, maintenance or development purposes, you may request Dacoco to make such interface information available as required by applicable law.</p>
+      <p>Any use of Alien Worlds other than a Permitted Use is a material breach of this Agreement. We may, but have no obligation to, monitor your use of Alien Worlds to ensure that you are adhering to the Permitted Use rules.</p>
+
+      <h2 class="short-hr-left"><span class="colored">4. Account Registration, Username</span></h2>
+
+      <p>To acquire or make full use of Alien Worlds and any of the Website, Materials and Services you will need to register for an Alien Wolds user account ("User Account"). By registering for a User Account, you warrant that all information and personal details you provide to Dacoco are correct. In addition, you acknowledge that you are aware that the Game can have an 18 years+ classification in certain jurisdictions and warrant that you are over 18 years of age. You may not transfer your registration or any rights you may have in your User Account to any other person or entity. For the avoidance of doubt, you acknowledge that you will have no ownership rights in your User Account.</p>
+      <p>You will be required to set a username for your User Account and as the case may be, other identifiers in relation to your access or use of Alien Worlds, the Website, Materials and Services (any such usernames or identifiers "Usernames"). Usernames may be viewable by other users of any of Alien Worlds, the Website, Materials and Services as applicable. You warrant that any Username you set or otherwise use shall comply with the Posting Policy.</p>
+      <p>
+        Dacoco reserves the right without notice, explanation or liability to: </p>
+      <ul><li>
+        - restrict or remove your ability to freely set a Username;</li>
+        <li>- disallow any specific Username;</li>
+        <li>- edit any specific Username; and/or</li>
+        <li>- fully remove any Usernames from Alien Worlds, the Website or anywhere else related to the Materials and Services (including as part of the Alien Worlds' gameplay) where they appear or are stored.</li></ul>
+      <p>
+        Dacoco reserves the right, acting at its sole discretion, to refuse to accept your registration request for a User Account. To the greatest extent permitted by law, Dacoco also reserves the right, acting at its sole discretion, at any time to cancel your registration and access to your User Account or to restrict, limit or otherwise change your existing rights of access to your User Account, or any specific feature or benefit afforded to you in relation to your User Account, including without limitation in respect of any Virtual Items (any such action a "Ban"), if it believes, at its sole discretion, that you have breached these Terms of Use or any other agreements between the Parties or for any other reason whatsoever. In such event you agree that Dacoco will not be required to provide you with prior notice or explanation in respect of such action. Unless notified otherwise by Dacoco within 10 calendar days of such Ban, any Ban by which your access to your User Account is fully cancelled shall be deemed as an immediate termination of this Agreement pursuant to Section 19. In an event of Ban, you agree that you will remain fully bound under the terms of this Agreement until its termination or expiry.</p>
+      <p>Dacoco may also, where it believes such action is necessary, without notice, block IP addresses of any users who Dacoco believes, at its sole discretion, have breached these Terms of Use.</p>
+
+      <h2 class="short-hr-left"><span class="colored">5. Passwords, Access</span></h2>
+      <p>You must keep all password and login information associated with your User Account confidential and not disclose such information to any third-party or allow a third-party access to your User Account without first obtaining Dacoco's written consent. You will be solely responsible for all activities undertaken and/or costs incurred under the use of your password and login. You must notify Dacoco immediately if you know or suspect that your User Account has been accessed by a third-party or your login or password details have been, or may have been, obtained by a third-party.
+      </p><p>You are solely responsible of ensuring that any process, devices and/or services you employ to access or use Alien Worlds or any of the Website, Materials and Services (in particular, without limitation, to acquire, hold, manage and sell NFTs) do not expose you to the risk of viruses, malicious computer code or other forms of interference which may damage your own computer system and/or any data contained therein. To the greatest extent permitted by law and without limiting the generality of Section 14, Dacoco excludes any liability for any interference or damage to your devices, computer system and/or any data contained therein in connection with your access or use of Alien Worlds or any of the Website, Materials and Services.</p>
+      <h2 class="short-hr-left"><span class="colored">6. Virtual Items, Trilium, NFTs</span></h2>
+
+      <h3>6.1 General rule</h3>
+
+      <p>Subject to the following specific rules for Virtual Items issued as NFTs or Trilium, you will have no ownership rights in any Virtual Items in Alien Worlds. Such Virtual Items may be modified, replaced, altered or removed by Dacoco at any time under Section 10 of this Agreement, whether or not they were purchased for consideration or obtained as part of the gameplay. </p>
+
+      <h3>6.2 Trilium</h3>
+
+      <p>Dacoco may from time to time offer "Trilium" for purchase or as an award for certain achievements within Alien Worlds' gameplay in accordance with the procedures and further terms specified within Dacoco's sole discretion. Units of Trilium may be issued as tokens issued on the WAX Blockchain or otherwise as Blockchain based tokens and may used to pay for certain other Virtual Items, advantages and services within or in connection with Alien Worlds, as may be offered from time to time. Trilium may be purchased within the Services using a credit card (or other payment means accepted by us, such as a debit card, prepaid payment card, or a promotional code or gift card) or other cryptocurrency. All sales of Trilium are final and non-refundable to the extent permissible under applicable laws. Trilium does not constitute personal property, has no cash value, and has no value outside of Alien Worlds and/or the Services. Other than within the gameplay of Alien Worlds, Trilium may not be transferred or sold to any other person.</p>
+
+      <h3>6.3 NFTs</h3>
+
+      <p>Notwithstanding the above, Alien Worlds' gameplay allows its users to own certain specific virtual assets, as Dacoco may design and release, within its sole discretion, from time to time, in form of non-fungible tokens issued on the WAX Blockchain or otherwise as Blockchain based tokens, as well as the underlying smart contracts ("NFTs"). NFTs may, but do not have to, be designed as digital collectibles and/or items with a function within Alien Worlds' gameplay. Such NFTs are subject to the following policy: </p>
+
+      <h3>Distribution of NFTs:</h3>
+
+      <p>NFTs can be earned within Alien Worlds in accordance with the smart contracts’ functionality, as may be determined at the sole discretion of Dacoco, from time to time. In addition, Dacoco may at any time, but has no obligation to, offer NFTs for sale or otherwise distribute NFTs in such process and pursuant to such terms as Dacoco may determine within its sole discretion. This includes, without limitation, the right to provide NFTs at no charge to any individual user of group of users of Alien Worlds, the Website, Materials and/or Services or to third parties. Unless otherwise agreed with Dacoco in writing, users of Alien Words, including the End User, have no preferential subscription rights or similar rights in connection with any issuance and/or distribution of NFTs by Dacoco.</p>
+
+      <h3>Purchase of NFTs:</h3>
+
+      <p>To purchase NFTs, you must have (i) an active User Account and (ii) an active WAX compatible digital wallet (a WAX-Account). Dacoco reserves the right, at its sole discretion, not to offer or to cease to offer NFTs for your purchase or to restrict your NFT purchases. NFTs may only be purchased at such purchase price and any NFTs available for purchase may only be purchased by such means and in accordance with such further terms and conditions as Dacoco may specify at its sole discretion from time to time.</p>
+
+      <h3>Transfer of NFTs:</h3>
+      <p>NFTs are not designed to be transferred other than within and as required by the gameplay of Alien Worlds. Dacoco reserves the right to subject the transfer of NFTs to a dedicated transfer policy, as drafted up at Dacoco's sole discretion (an "NFT Transfer Policy"). Any applicable NFT Transfer Policy, as in force from time to time, shall be made available on the Website. </p>
+
+      <p>You acknowledge and understand that your transactions on the WAX platform are public and that your WAX address will be associated with these transactions. You further acknowledge and accept that you will be solely liable for any fees, costs, deductions or expenses associated with your transactions on the WAX platform. After an NFT is initially sold or otherwise released or put into circulation by us, we have no control over subsequent transactions. Accordingly, we will have no liability to you (or anyone else) as a result of any transactions that you engage in with respect to NFTs.</p>
+
+      <h3>Risks related to the nature of the NFTs:</h3>
+
+      <p>NFTs are subject to certain inherent risks, in particular because NFTs may be based or enabled by the Atomic Assets Smart Contract on the WAX Blockchain (or any successor digital item standard). These risks include, inter alia, the following, which you acknowledge and accept to solely bear when acquiring, holding, managing, using, selling and/or otherwise alienating NFTs:</p>
 
       <ul>
-        <li>1. Systematically retrieve data or other content from the Site to create or compile, directly or indirectly, a collection, compilation, database, or directory without written permission from us.</li>
-        <li>2. Trick, defraud, or mislead us and other users, especially in any attempt to learn sensitive account information such as user passwords.</li>
-        <li>3. Circumvent, disable, or otherwise interfere with security-related features of the Site, including features that prevent or restrict the use or copying of any Content or enforce limitations on the use of the Site and/or the Content contained therein.</li>
-        <li>4. Disparage, tarnish, or otherwise harm, in our opinion, us and/or the Site.</li>
-        <li>5. Use any information obtained from the Site in order to harass, abuse, or harm another person.</li>
-        <li>6. Upload or transmit (or attempt to upload or to transmit) viruses, Trojan horses, or other material, including excessive use of capital letters and spamming (continuous posting of repetitive text), that interferes with any party’s uninterrupted use and enjoyment of the Site or modifies, impairs, disrupts, alters, or interferes with the use, features, functions, operation, or maintenance of the Site.</li>
-        <li>7. Engage in any automated use of the system, such as using scripts to send comments or messages, or using any data mining, robots, or similar data gathering and extraction tools.</li>
-        <li>8. Delete the copyright or other proprietary rights notice from any Content.</li>
-        <li>9. Attempt to bypass any measures of the Site designed to prevent or restrict access to the Site, or any portion of the Site.</li><li>
-      </li><li>10. Use the Site as part of any effort to compete with us or otherwise use the Site and/or the Content for any revenue-generating endeavor or commercial enterprise.</li></ul>
 
-      <h2 class="short-hr-left">USER GENERATED CONTRIBUTIONS </h2>
+        <li>i) There may not be a market with a sufficient number of potential buyers and sellers of NFTs. NFTs may therefore not be liquid and you may not be able to effectively resell NFTs you have acquired. We make no representations or warranties that NFTs can effectively be resold.</li>
 
-      <p>The Site does not offer users to submit or post content. We may provide you with the opportunity to create, submit, post, display, transmit, perform, publish, distribute, or broadcast content and materials to us or on the Site, including but not limited to text, writings, video, audio, photographs, graphics, comments, suggestions, or personal information or other material (collectively, "Contributions"). Contributions may be viewable by other users of the Site and through third-party websites. As such, any Contributions you transmit may be treated in accordance with the Site Privacy Policy. When you create or make available any Contributions, you thereby represent and warrant that:</p>
+        <li>ii) NFTs may not have a use other than within Alien Worlds, if at all.</li>
 
-      <li>1.  The creation, distribution, transmission, public display, or performance, and the accessing, downloading, or copying of your Contributions do not and will not infringe the proprietary rights, including but not limited to the copyright, patent, trademark, trade secret, or moral rights of any third party.</li>
-      <li>2.  You are the creator and owner of or have the necessary licenses, rights, consents, releases, and permissions to use and to authorize us, the Site, and other users of the Site to use your Contributions in any manner contemplated by the Site and these Terms of Use.</li>
-      <li>3.  You have the written consent, release, and/or permission of each and every identifiable individual person in your Contributions to use the name or likeness of each and every such identifiable individual person to enable inclusion and use of your Contributions in any manner contemplated by the Site and these Terms of Use.</li>
-      <li>4.  Your Contributions are not false, inaccurate, or misleading.</li>
-      <li>5.  Your Contributions are not unsolicited or unauthorized advertising, promotional materials, pyramid schemes, chain letters, spam, mass mailings, or other forms of solicitation.</li>
-      <li>6.  Your Contributions are not obscene, lewd, lascivious, filthy, violent, harassing, libelous, slanderous, or otherwise objectionable (as determined by us).</li>
-      <li>7.  Your Contributions do not ridicule, mock, disparage, intimidate, or abuse anyone.</li>
-      <li>8.  Your Contributions do not advocate the violent overthrow of any government or incite, encourage, or threaten physical harm against another.</li>
-      <li>9.  Your Contributions do not violate any applicable law, regulation, or rule.</li>
-      <li>10.  Your Contributions do not violate the privacy or publicity rights of any third party.</li>
-      <li>11.  Your Contributions do not contain any material that solicits personal information from anyone under the age of 18 or exploits people under the age of 18 in a sexual or violent manner.</li>
-      <li>12.  Your Contributions do not violate any applicable law concerning child pornography, or otherwise intended to protect the health or well-being of minors;</li>
-      <li>13.  Your Contributions do not include any offensive comments that are connected to race, national origin, gender, sexual preference, or physical handicap.</li>
-      <li>14.  Your Contributions do not otherwise violate, or link to material that violates, any provision of these Terms of Use, or any applicable law or regulation.</li>
+        <li>iii) The value of an NFT may be volatile. Virtual currencies and assets can be very volatile and impact the value of NFTs. We make no representations or warranties that any NFTs will retain increase their value. You might lose money.</li>
 
-      <p>Any use of the Site in violation of the foregoing violates these Terms of Use and may result in, among other things, termination or suspension of your rights to use the Site.</p>
+        <li>iv) The WAX platform may subject your ability to purchase, hold, manage, use sell, and/or otherwise alienate NFTs to costs, fees, deductions or expenses, which you hereby agree to fully and solely bear.</li>
 
-      <h2 class="short-hr-left">CONTRIBUTION LICENSE</h2>
+        <li>v) The WAX platform may not function properly and may be subject to hacking, malicious software, interruptions and failures. These events may cause delays or failures in your ability to purchase, hold, manage, use sell, or otherwise alienate NFTs.</li>
 
-      <p>You and the Site agree that we may access, store, process, and use any information and personal data that you provide following the terms of the Privacy Policy and your choices (including settings).</p>
+        <li>vi) Atomic Assets accounts may not function properly and may be subject to hacking, malicious software, interruptions and failures. These events may cause delays or failures in your ability to purchase, hold, manage, use sell, or otherwise alienate NFTs.</li>
 
-      <p>By submitting suggestions or other feedback regarding the Site, you agree that we can use and share such feedback for any purpose without compensation to you. </p>
+        <li>vii) Laws may apply in certain jurisdictions and new regulations could be enacted that might limit or require changes to the functionality enabled by the WAX platform, which could impact and/or impede on your ability to purchase, hold, manage, use sell, or otherwise alienate NFTs.</li>
 
-      <p>We do not assert any ownership over your Contributions. You retain full ownership of all of your Contributions and any intellectual property rights or other proprietary rights associated with your Contributions. We are not liable for any statements or representations in your Contributions provided by you in any area on the Site. You are solely responsible for your Contributions to the Site and you expressly agree to exonerate us from any and all responsibility and to refrain from any legal action against us regarding your Contributions.</p>
+        <li>viii) Other changes to the WAX platform could impact and/or impede on your ability to purchase, hold, manage, use sell, or otherwise alienate NFTs.</li></ul>
 
-      <h2 class="short-hr-left">SUBMISSIONS</h2>
+      <h3>6.4 Withdrawal right</h3>
 
-      <p>You acknowledge and agree that any questions, comments, suggestions, ideas, feedback, or other information regarding the Site ("Submissions") provided by you to us are non-confidential and shall become our sole property. We shall own exclusive rights, including all intellectual property rights, and shall be entitled to the unrestricted use and dissemination of these Submissions for any lawful purpose, commercial or otherwise, without acknowledgment or compensation to you. You hereby waive all moral rights to any such Submissions, and you hereby warrant that any such Submissions are original with you or that you have the right to submit such Submissions. You agree there shall be no recourse against us for any alleged or actual infringement or misappropriation of any proprietary right in your Submissions.</p>
+      <p>In the event of a Ban resulting in the termination of this Agreement or if this Agreement is otherwise terminated following a breach by the End User, Dacoco shall have the right, without notice, explanation or liability, to withdraw or otherwise request the transfer to Dacoco or such third party as Dacoco may determine within its sole discretion (call option), of (i) all or individual NFTs and/or (ii) all or individual units of Trilium from the End User and to retransfer such NFTs, against such consideration (if any) as Dacoco may deem appropriate within its sole discretion, to itself or third parties.</p>
 
-      <h2 class="short-hr-left">THIRD-PARTY WEBSITE AND CONTENT</h2>
+      <h3>6.5 Loss of access</h3>
 
-      <p>The Site may contain (or you may be sent via the Site) links to other websites ("Third-Party Websites") as well as articles, photographs, text, graphics, pictures, designs, music, sound, video, information, applications, software, and other content or items belonging to or originating from third parties ("Third-Party Content"). Such Third-Party Websites and Third-Party Content are not investigated, monitored, or checked for accuracy, appropriateness, or completeness by us, and we are not responsible for any Third-Party Websites accessed through the Site or any Third-Party Content posted on, available through, or installed from the Site, including the content, accuracy, offensiveness, opinions, reliability, privacy practices, or other policies of or contained in the Third-Party Websites or the Third-Party Content. Inclusion of, linking to, or permitting the use or installation of any Third-Party Websites or any Third-Party Content does not imply approval or endorsement thereof by us. If you decide to leave the Site and access the Third-Party Websites or to use or install any Third-Party Content, you do so at your own risk, and you should be aware these Terms of Use no longer govern. You should review the applicable terms and policies, including privacy and data gathering practices, of any website to which you navigate from the Site or relating to any applications you use or install from the Site. Any purchases you make through Third-Party Websites will be through other websites and from other companies, and we take no responsibility whatsoever in relation to such purchases which are exclusively between you and the applicable third party. You agree and acknowledge that we do not endorse the products or services offered on Third-Party Websites and you shall hold us harmless from any harm caused by your purchase of such products or services. Additionally, you shall hold us harmless from any losses sustained by you or harm caused to you relating to or resulting in any way from any Third-Party Content or any contact with Third-Party Websites.</p>
+      <p>If Dacoco's withdrawal right is not exercised in connection with a Termination of this agreement, the End User shall retain ownership of their NFTs and their units of Trilium. The End User acknowledges and accepts that they may not be able to access, use, benefit from, transfer and/or otherwise dispose of such NFTs and/or units of Trilium following a termination of this Agreement. To the greatest extent permitted by law and without limiting the generality of Section 14, Dacoco shall neither have any liability for any damage resulting from such loss of access, nor any obligation to refund the purchase price paid for the relevant NFTs and/or units of Trilium to the End User.</p>
 
-      <h2 class="short-hr-left">SITE MANAGEMENT</h2>
+      <h2 class="short-hr-left"><span class="colored">7. Compliance</span></h2>
 
-      <p>We reserve the right, but not the obligation, to: (1) monitor the Site for violations of these Terms of Use; (2) take appropriate legal action against anyone who, in our sole discretion, violates the law or these Terms of Use, including without limitation, reporting such user to law enforcement authorities; (3) in our sole discretion and without limitation, refuse, restrict access to, limit the availability of, or disable (to the extent technologically feasible) any of your Contributions or any portion thereof; (4) in our sole discretion and without limitation, notice, or liability, to remove from the Site or otherwise disable all files and content that are excessive in size or are in any way burdensome to our systems; and (5) otherwise manage the Site in a manner designed to protect our rights and property and to facilitate the proper functioning of the Site.</p>
+      <p>You acknowledge that certain operations in respect of the NFTs, in particular, without limitation, the transfer of NFTs to third parties, may constitute and/or otherwise fall within the scope of regulated activities under applicable laws in certain jurisdictions. You acknowledge that you may not use Alien Worlds to engage into any such activities and that Dacoco makes no representation in respect of, or otherwise in connection with, the suitability of Alien Worlds and/or any output generated by using Alien Worlds, to engage into any regulated activity or Alien Worlds' or such output's compliance with laws and regulations applicable to such activities. Dacoco neither recommends, nor otherwise advises that you engage in such activities. If you choose to engage in regulated activities, you do so at your own risk and sole responsibility. </p>
+      <p>In particular, you are solely responsible for your compliance with any applicable laws and regulatory requirements, including any applicable provisions of financial markets laws. You herewith expressly agree to ensure compliance with any applicable legal requirements at your own cost and responsibility in using Alien Worlds and/or any output generated by using Alien Worlds. </p>
 
-      <h2 class="short-hr-left">TERM AND TERMINATION</h2>
+      <h2 class="short-hr-left"><span class="colored">8. Posting Policy</span></h2>
 
-      <p>These Terms of Use shall remain in full force and effect while you use the Site. WITHOUT LIMITING ANY OTHER PROVISION OF THESE TERMS OF USE, WE RESERVE THE RIGHT TO, IN OUR SOLE DISCRETION AND WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SITE (INCLUDING BLOCKING CERTAIN IP ADDRESSES), TO ANY PERSON FOR ANY REASON OR FOR NO REASON, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY REPRESENTATION, WARRANTY, OR COVENANT CONTAINED IN THESE TERMS OF USE OR OF ANY APPLICABLE LAW OR REGULATION. WE MAY TERMINATE YOUR USE OR PARTICIPATION IN THE SITE OR DELETE ANY CONTENT OR INFORMATION THAT YOU POSTED AT ANY TIME, WITHOUT WARNING, IN OUR SOLE DISCRETION.</p>
+      <p>This Posting Policy applies to any comments you post or any statements you make in any manner in connection with Alien Worlds, in particular on the Website (which includes for the avoidance of doubt any associated forums, chat rooms and/or other messaging services) or any messages you send to other users of the Materials and Services (including as part of the Alien Worlds gameplay) in any way, whether facilitated or otherwise allowable by the Materials and Services ("Posts"). </p>
 
-      <p>If we terminate or suspend your account for any reason, you are prohibited from registering and creating a new account under your name, a fake or borrowed name, or the name of any third party, even if you may be acting on behalf of the third party. In addition to terminating or suspending your account, we reserve the right to take appropriate legal action, including without limitation pursuing civil, criminal, and injunctive redress.</p>
+      <p>Posts may neither, without the prior written approval of Dacoco:</p>
 
-      <h2 class="short-hr-left">MODIFICATIONS AND INTERRUPTIONS</h2>
+      <ul><li>- represent any views or opinions other than your genuine opinion of the matter in question; nor</li>
+        <li>
+          - contain any personal abuse, foul language, inappropriate subject matter, obscene, harassing, threatening, hateful, or discriminatory or defamatory remarks of any nature, as may be determined by Dacoco at its sole discretion, or otherwise breach or infringe on any third party rights (in particular, without limitation, third party intellectual property rights) and/or applicable laws or court orders; </li>
+        <li>
+          - advertise or promote any person or entity or their goods or services; nor</li>
+        <li>
+          - breach any of the representations below.</li></ul>
 
-      <p>We reserve the right to change, modify, or remove the contents of the Site at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Site. We also reserve the right to modify or discontinue all or part of the Site without notice at any time. We will not be liable to you or any third party for any modification, price change, suspension, or discontinuance of the Site. </p>
+      <p>You herewith grant Dacoco a perpetual, non-revocable, worldwide and royalty-free license to: </p>
+      <ul><li>
+        - make use of any Posts as Dacoco deems appropriate in relation to Alien Worlds and/or any of the Website, Materials and Services or the promotion of the same; and</li>
+        <li>- sub-license third parties, on such terms as Dacoco deems appropriate, to make use of any Posts as Dacoco deems appropriate in relation to any to Alien Worlds and/or any of the Website, Materials and Services or the promotion thereof.</li>
 
-      <p>We cannot guarantee the Site will be available at all times. We may experience hardware, software, or other problems or need to perform maintenance related to the Site, resulting in interruptions, delays, or errors. We reserve the right to change, revise, update, suspend, discontinue, or otherwise modify the Site at any time or for any reason without notice to you. You agree that we have no liability whatsoever for any loss, damage, or inconvenience caused by your inability to access or use the Site during any downtime or discontinuance of the Site. Nothing in these Terms of Use will be construed to obligate us to maintain and support the Site or to supply any corrections, updates, or releases in connection therewith.</p>
+        <p>You herewith unconditionally represent that, as of the date of any Post:</p>
 
-      <h2 class="short-hr-left">GOVERNING LAW</h2>
+        <ul><li>- you own all rights to your Posts or, alternatively, that you have all necessary rights to grant Dacoco the rights described above;</li>
+          <li>- you have paid and will pay in full any fees or other payments that may be related to the publication or other use of your Posts; and</li>
+          <li>- your Posts do not infringe the intellectual property rights, privacy rights, publicity rights, or other legal rights of any third party.</li></ul>
 
-      <p>These conditions are governed by and interpreted following the laws of Switzerland, and the use of the United Nations Convention of Contracts for the International Sale of Goods is expressly excluded. If your habitual residence is in the EU, and you are a consumer, you additionally possess the protection provided to you by obligatory provisions of the law of your country of residence. Dacoco GbmH and yourself both agree to submit to the non-exclusive jurisdiction of the courts of Zug, which means that you may make a claim to defend your consumer protection rights in regards to these Conditions of Use in Switzerland, or in the EU country in which you reside.</p>
+        <p>Dacoco reserves the right without notice, explanation or liability to: </p>
+        <ul><li>- restrict or remove your ability to make Posts;</li>
+          <li>
+            - disallow the posting of any specific Posts;</li>
+          <li>- edit any specific Posts; and/or</li>
+          <li>- fully remove any Posts from Alien Worlds, the Website or anywhere else related to the Materials and Services (including as part of the Alien Worlds' gameplay) where they appear or are stored.</li></ul>
 
-      <h2 class="short-hr-left">DISPUTE RESOLUTION</h2>
+        <h2 class="short-hr-left"><span class="colored">9. Image Policy</span></h2>
 
-      <p>Binding Arbitration</p>
+        <p>This Image Policy applies to any images you make available in any manner in relation to any of the Website, Materials and Services (including as part of the Alien Worlds gameplay) ("Images").</p>
 
-      <p>Any dispute arising from the relationships between the parties to this contract shall be determined by one arbitrator who will be chosen in accordance with the Arbitration and Internal Rules of the European Court of Arbitration being part of the European Centre of Arbitration having its seat in Strasbourg, and which are in force at the time the application for arbitration is filed, and of which adoption of this clause constitutes acceptance. The seat of arbitration shall be Zug, Switzerland. The language of the proceedings shall be English. Applicable rules of substantive law shall be the law of Switzerland.</p>
+        <p>All rights of whatever nature (including without limitation copyright, registered and unregistered trade mark rights, rights of personality, privacy, confidentiality and any other intellectual property rights) in any Images must belong to you or you must have the right to make the images available in relation to Alien Worlds, the Website, Materials and Services in accordance with this Image Policy.</p>
+        <p>Pornographic, obscene, harassing, threatening, hateful, discriminatory or defamatory Images, as may be determined by Dacoco within its sole discretion, or Images otherwise in breach of or infringing on any third party rights and/or any applicable law or court order, are not permitted.</p>
+        You herewith grant Dacoco a perpetual, non-revocable, worldwide and royalty-free license to: <p></p>
 
-      <h2 class="short-hr-left">Restrictions</h2>
+        <ul><li>- make use of any Posts as Dacoco deems appropriate in relation to Alien Worlds and/or any of the Website, Materials and Services or the promotion of the same; and</li>
+          <li>
+            - sub-license third parties, on such terms as Dacoco deems appropriate, to make use of any Posts as Dacoco deems appropriate in relation to any to Alien Worlds and/or any of the Website, Materials and Services or the promotion thereof.</li></ul>
+        <p>
+          Dacoco reserves the right without notice, explanation or liability to: </p>
+        <ul><li>
+          - restrict or remove your ability to share Images or otherwise make them available;</li>
+          <li>- disallow the use of any specific Images;</li>
+          <li>- edit any specific Images; and/or</li>
+          <li>- fully remove any Images from Alien Worlds, the Website or anywhere else related to the Materials and Services (including as part of the Alien Worlds' gameplay) where they appear or are stored.</li></ul>
 
-      <p>The Parties agree that any arbitration shall be limited to the Dispute between the Parties individually. To the full extent permitted by law, (a) no arbitration shall be joined with any other proceeding; (b) there is no right or authority for any Dispute to be arbitrated on a class-action basis or to utilize class action procedures; and (c) there is no right or authority for any Dispute to be brought in a purported representative capacity on behalf of the general public or any other persons.</p>
+        <h2 class="short-hr-left"><span class="colored">10. Support, Updates, Alterations, Discontinuation</span></h2>
 
-      <h2 class="short-hr-left">Exceptions to Arbitration</h2>
+        <p>Dacoco may, but has no obligation to, offer and subsequently amend, alter suspend or discontinue support services with regard to Alien Worlds on such terms as Dacoco may determine within its sole discretion.</p>
 
-      <p>The Parties agree that the following Disputes are not subject to the above provisions concerning binding arbitration: (a) any Disputes seeking to enforce or protect, or concerning the validity of, any of the intellectual property rights of a Party; (b) any Dispute related to, or arising from, allegations of theft, piracy, invasion of privacy, or unauthorized use; and (c) any claim for injunctive relief. If this provision is found to be illegal or unenforceable, then neither Party will elect to arbitrate any Dispute falling within that portion of this provision found to be illegal or unenforceable and such Dispute shall be decided by a court of competent jurisdiction within the courts listed for jurisdiction above, and the Parties agree to submit to the personal jurisdiction of that court.</p>
+        <p>At all times, Dacoco retains the right to use and/or dispose of the Rights as Dacoco, at its sole discretion, deems appropriate, including without limitation the right, without notice, to alter, modify, redesign, suspend or discontinue, at any time, any aspect or feature of the Website, Materials (including without limitation the Virtual Items) and Services.</p>
 
-      <h2 class="short-hr-left">CORRECTIONS</h2>
+        <p>In particular, without limitation, Dacoco has the right, but no obligation, to maintain, modify and/or update Alien Worlds within its sole discretion. Dacoco may, but has no obligation to, provide technical support in respect of Alien Worlds. </p>
 
-      <p>There may be information on the Site that contains typographical errors, inaccuracies, or omissions, including descriptions, pricing, availability, and various other information. We reserve the right to correct any errors, inaccuracies, or omissions and to change or update the information on the Site at any time, without prior notice.</p>
+        <p>You acknowledge and agree that such maintenance, updates, alterations, modifications, redesigns, suspensions or discontinuations may affect (also including by limiting or terminating) the functionality of Alien Worlds.</p>
 
-      <h2 class="short-hr-left">DISCLAIMER</h2>
+        <p>Dacoco does not undertake to keep any of the Website, Materials or Services updated. To the greatest extent permitted by law Dacoco does not accept liability for any loss or damage which may result either directly or indirectly from reliance by you upon the accuracy or currency of information contained in any of the Website, Materials or Services or in relation to any Posts or Images, including without limitation where such loss or damage is a result of or contributed to by the negligence of Dacoco.</p>
 
-      <p>THE SITE IS PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU AGREE THAT YOUR USE OF THE SITE AND OUR SERVICES WILL BE AT YOUR SOLE RISK. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, IN CONNECTION WITH THE SITE AND YOUR USE THEREOF, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY OR COMPLETENESS OF THE SITE’S CONTENT OR THE CONTENT OF ANY WEBSITES LINKED TO THE SITE AND WE WILL ASSUME NO LIABILITY OR RESPONSIBILITY FOR ANY (1) ERRORS, MISTAKES, OR INACCURACIES OF CONTENT AND MATERIALS, (2) PERSONAL INJURY OR PROPERTY DAMAGE, OF ANY NATURE WHATSOEVER, RESULTING FROM YOUR ACCESS TO AND USE OF THE SITE, (3) ANY UNAUTHORIZED ACCESS TO OR USE OF OUR SECURE SERVERS AND/OR ANY AND ALL PERSONAL INFORMATION AND/OR FINANCIAL INFORMATION STORED THEREIN, (4) ANY INTERRUPTION OR CESSATION OF TRANSMISSION TO OR FROM THE SITE, (5) ANY BUGS, VIRUSES, TROJAN HORSES, OR THE LIKE WHICH MAY BE TRANSMITTED TO OR THROUGH THE SITE BY ANY THIRD PARTY, AND/OR (6) ANY ERRORS OR OMISSIONS IN ANY CONTENT AND MATERIALS OR FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF ANY CONTENT POSTED, TRANSMITTED, OR OTHERWISE MADE AVAILABLE VIA THE SITE. WE DO NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR ANY PRODUCT OR SERVICE ADVERTISED OR OFFERED BY A THIRD PARTY THROUGH THE SITE, ANY HYPERLINKED WEBSITE, OR ANY WEBSITE OR MOBILE APPLICATION FEATURED IN ANY BANNER OR OTHER ADVERTISING, AND WE WILL NOT BE A PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION BETWEEN YOU AND ANY THIRD-PARTY PROVIDERS OF PRODUCTS OR SERVICES. AS WITH THE PURCHASE OF A PRODUCT OR SERVICE THROUGH ANY MEDIUM OR IN ANY ENVIRONMENT, YOU SHOULD USE YOUR BEST JUDGMENT AND EXERCISE CAUTION WHERE APPROPRIATE.</p>
+        <p>Dacoco reserves the right, but has no obligation, to license updated iterations of Alien Worlds separately and under different terms.</p>
 
-      <h2 class="short-hr-left">LIMITATIONS OF LIABILITY</h2>
+        <h2 class="short-hr-left"><span class="colored">11. Use of Data </span></h2>
 
-      <p>IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL, EXEMPLARY, INCIDENTAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFIT, LOST REVENUE, LOSS OF DATA, OR OTHER DAMAGES ARISING FROM YOUR USE OF THE SITE, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED HEREIN, OUR LIABILITY TO YOU FOR ANY CAUSE WHATSOEVER AND REGARDLESS OF THE FORM OF THE ACTION, WILL AT ALL TIMES BE LIMITED TO THE AMOUNT PAID, IF ANY, BY YOU TO US DURING THE SIX (6) MONTH PERIOD PRIOR TO ANY CAUSE OF ACTION ARISING. CERTAIN US STATE LAWS AND INTERNATIONAL LAWS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES OR THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES. IF THESE LAWS APPLY TO YOU, SOME OR ALL OF THE ABOVE DISCLAIMERS OR LIMITATIONS MAY NOT APPLY TO YOU, AND YOU MAY HAVE ADDITIONAL RIGHTS.</p>
+        <h3>11.1 Use of Data by Dacoco</h3>
 
-      <h2 class="short-hr-left">INDEMNIFICATION</h2>
+        <p>You agree that Dacoco may collect and use technical data and related information - including but not limited to technical information about your devices, systems and application software, and peripherals - that is gathered periodically to facilitate the provision of updates, support, and other services to you (if any) related to Alien Worlds. Dacoco may use this information in a form which does not identify individuals.</p>
 
-      <p>You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys’ fees and expenses, made by any third party due to or arising out of: (1) use of the Site; (2) breach of these Terms of Use; (3) any breach of your representations and warranties set forth in these Terms of Use; (4) your violation of the rights of a third party, including but not limited to intellectual property rights; or (5) any overt harmful act toward any other user of the Site with whom you connected via the Site. Notwithstanding the foregoing, we reserve the right, at your expense, to assume the exclusive defense and control of any matter for which you are required to indemnify us, and you agree to cooperate, at your expense, with our defense of such claims. We will use reasonable efforts to notify you of any such claim, action, or proceeding which is subject to this indemnification upon becoming aware of it.</p>
+        <p>Dacoco will use industry standard administrative, physical and technical safeguards to protect any data collected in accordance with this provision and the Privacy Policy. If a court or government agency orders us to disclose any of your personal data, you will be promptly notified so that an appropriate protective order or other remedy can be obtained unless the court or government agency prohibits prior notification.</p>
 
-      <h2 class="short-hr-left">USER DATA</h2>
+        <h3>11.2 Publicity of Data</h3>
 
-      <p>We will maintain certain data that you transmit to the Site for the purpose of managing the performance of the Site, as well as data relating to your use of the Site. Although we perform regular routine backups of data, you are solely responsible for all data that you transmit or that relates to any activity you have undertaken using the Site. You agree that we shall have no liability to you for any loss or corruption of any such data, and you hereby waive any right of action against us arising from any such loss or corruption of such data.</p>
+        <p>You acknowledge and agree that certain data pertaining to you, which you may view as sensitive, will be accessible to the public through the WAX Blockchain. Such data includes, but is not limited to information identifying and/or otherwise pertaining to your User Account and your WAX account.</p>
 
-      <h2 class="short-hr-left">ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</h2>
+        <h3>11.3 Privacy Policy</h3>
 
-      <h2 class="short-hr-left">Visiting the Site, sending us emails, and completing online forms constitute electronic communications. You consent to receive electronic communications, and you agree that all agreements, notices, disclosures, and other communications we provide to you electronically, via email and on the Site, satisfy any legal requirement that such communication be in writing. YOU HEREBY AGREE TO THE USE OF ELECTRONIC SIGNATURES, CONTRACTS, ORDERS, AND OTHER RECORDS, AND TO ELECTRONIC DELIVERY OF NOTICES, POLICIES, AND RECORDS OF TRANSACTIONS INITIATED OR COMPLETED BY US OR VIA THE SITE. You hereby waive any rights or requirements under any statutes, regulations, rules, ordinances, or other laws in any jurisdiction which require an original signature or delivery or retention of non-electronic records, or to payments or the granting of credits by any means other than electronic means. </h2>
+        <p>Unless specified otherwise herein, all use of data shall be subject Dacoco's privacy policy, as amended from time to time (the "Privacy Policy").
+          The Privacy Policy, as currently in force, is available on the alien worlds website</p>
 
-      <h2 class="short-hr-left">CALIFORNIA USERS AND RESIDENTS</h2>
+        <h2 class="short-hr-left"><span class="colored">12. Loss of Data</span></h2>
 
-      <p>If any complaint with us is not satisfactorily resolved, you can contact the Complaint Assistance Unit of the Division of Consumer Services of the California Department of Consumer Affairs in writing at 1625 North Market Blvd., Suite N 112, Sacramento, California 95834 or by telephone at (800) 952-5210 or (916) 445-1254.</p>
+        <p>In the event that any information or data (including without limitation in respect of in-game characters, achievements, Virtual Items or general Alien Worlds gameplay) relating to you or your use of any of Alien Worlds, the Website, Materials and Services held by Dacoco or any third-party on behalf of or in coordination with Dacoco is lost, corrupted or otherwise no longer reasonably available or accessible as determined by Dacoco in its sole discretion, you agree that to the greatest extent permissible at law Dacoco will have no liability to you of any nature relating to any such information or data.</p>
 
-      <h2 class="short-hr-left">MISCELLANEOUS</h2>
+        <h2 class="short-hr-left"><span class="colored">13. No Representations and Warranties</span></h2>
 
-      <p>These Terms of Use and any policies or operating rules posted by us on the Site or in respect to the Site constitute the entire agreement and understanding between you and us. Our failure to exercise or enforce any right or provision of these Terms of Use shall not operate as a waiver of such right or provision. These Terms of Use operate to the fullest extent permissible by law. We may assign any or all of our rights and obligations to others at any time. We shall not be responsible or liable for any loss, damage, delay, or failure to act caused by any cause beyond our reasonable control. If any provision or part of a provision of these Terms of Use is determined to be unlawful, void, or unenforceable, that provision or part of the provision is deemed severable from these Terms of Use and does not affect the validity and enforceability of any remaining provisions. There is no joint venture, partnership, employment or agency relationship created between you and us as a result of these Terms of Use or use of the Site. You agree that these Terms of Use will not be construed against us by virtue of having drafted them. You hereby waive any and all defenses you may have based on the electronic form of these Terms of Use and the lack of signing by the parties hereto to execute these Terms of Use.</p>
+        <p>Dacoco does not make any representation or give any warranty in respect to any characteristics of Alien Worlds. All warranties are expressly excluded to the maximal extent permitted under applicable laws. In particular, while Dacoco has endeavoured to take all reasonable measures and apply appropriate care in the preparation of the content of Alien Worlds, the Website, Materials and Services, we do neither represent nor warrant that:</p>
+        <ul><li>
+          - Alien Worlds runs uninterrupted and error-free;</li>
 
-      <h2 class="short-hr-left">CONTACT US </h2>
+          <li>- the use of Alien Worlds is fit for any particular purpose and does not infringe upon any third party's intellectual property rights;</li>
 
-      <p>In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at: </p>
+          <li>- any information contained in Alien Worlds and/or any of the Website, Materials or Services is accurate, adequate, complete or error free or that any Posts or Images are compliant with the Posting Policy and Image Policy. </li></ul>
+        <p>You use Alien Worlds at your sole risk. Alien Worlds is provided to you on an "as is"-basis, with all faults and without express or implied warranty of any kind. </p>
 
-      <p>Dacoco GbmH,
-        c/o Abafin Treuhand AG, Baarerstrasse 82,
-        Zug, Zug 6302,
-        Switzerland,</p>
-      <p>info@dacoco.io</p>
+        <h2 class="short-hr-left"><span class="colored">14. Liability</span></h2>
 
-      <p>Terms and Conditions Powered by Termly</p>
+        <p>To the maximum extent allowed by law, Dacoco's liability towards you and your associates (whether contractual or otherwise) with respect to this Agreement and the use of Alien Worlds shall be limited to damages resulting from wilful misconduct by Dacoco.</p>
 
-    </div>
+        <h2 class="short-hr-left"><span class="colored">15. Indemnity</span></h2>
+
+        <p>You herewith undertake, irrespective of any fault and knowledge, to fully compensate and indemnify Dacoco and/or any of its corporate bodies, affiliates and related parties (as directed by Dacoco) in the sense of article 111 CO for and against any and all damage incurred or sustained in contract, tort, equity, statute, regulation or otherwise by Dacoco and/or any of its corporate bodies, affiliates and related parties, including without limitation any economic loss, loss of turnover, profits, business or goodwill, whether direct or consequential, in connection with (i) your actions within Alien Worlds, and/or (ii) your breach of these Terms of Use and/or (ii) your or any third party's use of video content created or distributed by you under the permitted streaming and video sharing provisions pursuant to Section 3.4.
+        </p><p>
+          You acknowledge and agree that, in the event of a third party claim in the event that you breach these Terms of Use or in connection with your or any third party's use of video content created or distributed by you under the permitted streaming and video sharing provisions pursuant to Section 3.4, in particular in the event of a claim whereas any of your actions, Posts or Images in connection with Alien Worlds infringe on any third party's intellectual property rights, you (and not Dacoco) will be responsible to bear the cost of the investigation, defence, settlement and discharge of any such claim. You will, however, promptly notify Dacoco in writing of such a claim and Dacoco shall have the right, within its sole discretion, to direct any procedural actions in which it has a direct or indirect interest.</p>
+
+        <h2 class="short-hr-left"><span class="colored">16. External Links</span></h2><h2>
+
+          <p>Links to external websites are provided as a convenience and for informational purposes only; they do not constitute an endorsement or an approval by Dacoco of any of the products, services or opinions of the relevant entity or organization or individual. Dacoco bears no responsibility for the accuracy, legality or content of external sites or for that of subsequent links. Dacoco recommends that you read the privacy policies and the terms of use of external websites before you make use thereof or provide personal information on any external websites.</p>
+
+        </h2><h2 class="short-hr-left"><span class="colored">17. No Partnership or Agency</span></h2>
+
+        <p>Nothing in this Agreement, shall be construed to establish, and the Parties shall refrain from any representation or other act that could lead any affiliate or third party to believe that they have established, a partnership within the meaning of art. 530 et seq. of the Swiss Code of Obligations (CO) and/or any other form of partnership or company, and/or an agency within the meaning of art. 418a et seq. CO.</p>
+
+        <h2 class="short-hr-left"><span class="colored">18. Breach and Remedies</span></h2>
+
+        <p>You understand and agree that observance of your obligations hereunder is of significant importance to Dacoco and that, if you breach this Agreement, Dacoco would incur serious losses and other detrimental consequences which might not easily be cured.</p>
+
+        <p>If you breach any provision of or undertaking under this Agreement, Dacoco shall have the right to seek specific performance ("Realexekution") in respect of your obligations under this Agreement, including but not limited to the right to request that you cease and/or desist from committing any breach of such obligations, whether or not this forces you to abandon any commercial activity or not to pursue any opportunities at that time (cease and desist injunction).</p>
+
+        <p>Dacoco has the right to seek interim legal protection ("Vorsorgliche Massnahmen") to prevent detrimental consequences and effects that cannot easily be remedied or to ensure an effective enforcement of your obligations under this Agreement. In such event, you fully waive any right you may have under applicable laws to request the provision of securities ("Sicherheitsleistung") by Dacoco.</p>
+
+        <h2 class="short-hr-left"><span class="colored">19. Term and Termination</span></h2>
+
+        <p>This Agreement shall remain in effect for a term of 30 calendar days, beginning on such date as it is entered into. Upon expiry of such initial term, this Agreement shall remain in effect for successive additional terms of 30 calendar days each, unless terminated by either Party no later than 15 days prior the end of the relevant term. </p>
+
+        <p>This Agreement (and therefore your right to make Permitted Use of Alien Worlds) shall be terminated with immediate effect in the event that an Incremental Fee is not paid within the applicable 10 day period.</p>
+
+        <p>In addition, Dacoco may terminate this Agreement if, in our sole discretion, we determine that there has been a breach these Terms of Use, a material breach of any other agreement between the Parties or a violation of law. If the cause of such termination is reasonably capable of being remedied, we will provide you notice of what actions you must take to reinstate a state acceptable to us within our sole discretion. If you fail to take such actions or the cause cannot be remedied within 10 calendar days, the Agreement will be terminated with immediate effect.</p>
+
+        <p>Upon termination, all licenses granted herein end immediately. You will cease using Alien Worlds and return to us or uninstall and destroy any Materials you may have in your possession. Termination of the Agreement will not relieve you of your obligation to pay any amounts you owe up to and including the date of termination.</p>
+
+        <p>The effects of an expiry or termination of this Agreement on any NFTs are governed by Section 6 hereof.</p>
+        <h2 class="short-hr-left"><span class="colored">20. Miscellaneous</span></h2>
+
+        <h3>20.1 Notifications</h3>
+        <p>In registering your User Account, but in any event before using Alien Worlds, you will provide to Dacoco a valid email address (the "Notification Address"). You acknowledge and accept that Dacoco shall send any notifications to you hereunder (also including any invoice), by way of simple unencrypted email to the Notification Address. Any such notification shall be deemed received when it is sent by Dacoco to the Notification Address.</p>
+        <p> You undertake to keep the Notification Address valid and in effect for the entire duration of this Agreement or to promptly notify Dacoco in writing prior to any change of the Notification Address.</p>
+
+        <p>Notices to Dacoco shall be made by registered mail to Dacoco's registered address.</p>
+
+        <h3>20.2 Amendments</h3>
+        <p>Dacoco reserves the right to amend this Agreement from time to time upon placing any such amendments on the Website or by providing you direct notice of any such changes. Your continued use of any of the Website, Materials and Services thereafter will be deemed to as acceptance by you of any such changes to this Agreement.</p>
+
+        <h3>20.3 Assignment</h3>
+        <p>You may not assign any of your rights or obligations hereunder, whether by operation of the law or otherwise.</p>
+
+        <h3>20.4 No Waiver</h3>
+
+        <p>The failure of Dacoco to exercise or enforce any right under this Agreement shall neither be deemed to be a waiver of that right nor operate to bar the exercise or enforcement of it at any time or times thereafter.</p>
+
+        <h3>20.5 Severability</h3><h3>
+
+          <p>If any provision, or portion of a provision, contained in the Agreement is invalid or unenforceable, the remaining provisions, or the remaining portion of such provision, shall remain in full force and effect. Instead of the invalid provision, a rule shall apply that achieves as closely as possible the intention of the parties in drafting the invalid provision.</p>
+
+        </h3><h3>20.6 Applicable Law and Jurisdiction</h3>
+        <p>To the maximum extent allowed under applicable laws, this Agreement is governed by the substantive laws of Switzerland, to the exclusion of its rules of conflict of laws and to the exclusion of international treaties. </p>
+
+        <p>To the maximum extent allowed under applicable laws, all disputes under or in connection with this Agreement shall be subject to the exclusive jurisdiction of the ordinary courts of Zug, Switzerland, and each of the parties undertakes to fully subject itself to such jurisdiction, always provided that each of the parties shall be entitled to seek preliminary measures and injunctive relief before any competent court according to applicable law.</p>
+
+      </ul></div>
   </q-page>
 </template>
 
