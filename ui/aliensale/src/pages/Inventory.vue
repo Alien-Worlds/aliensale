@@ -55,7 +55,7 @@
           <div class="d-flex justify-content-center card-item" @click="filterCard(card.template.template_id, card.data.name)">
             <div class="d-flex flex-column flex-wrap">
               <div style="position:relative">
-                <div class="mint-number">#{{card.template_mint}}</div>
+                <div class="mint-number" v-if="card.template_mint > 0">#{{card.template_mint}}</div>
                 <img :src="ipfsRoot + card.data.img" class="mw-100" :alt="card.name" />
               </div>
             </div>
