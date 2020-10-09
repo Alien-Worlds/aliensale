@@ -45,9 +45,9 @@
       <h3>Grant of License</h3>
 
       <p>Alien Worlds is licensed, not sold, to you with the scope set out below. </p>
-      <h3>3.2 Scope<p></p>
+      <h3>3.2 Scope</h3>
         <p>The license is worldwide, non-commercial, non-exclusive, non-transferable, non-sublicensable and subject to the boundaries of the Permitted Use ("Scope"). The terms of this Agreement, including, without limitation, the Scope, will apply to Alien Worlds and its use, including upgrades, unless an upgrade is accompanied by a new version of this Agreement or a separate Agreement. </p>
-      </h3><h3>3.3 Permitted Use</h3>
+      <h3>3.3 Permitted Use</h3>
       <p>Your use of Alien Worlds and any results generated through and/or in connection with Alien Worlds must adhere to the Scope and rules set forth in this Section ("Permitted Use"):</p>
       <h3>3.4 Observation of applicable laws, gambling regulations: </h3>
 
@@ -192,7 +192,7 @@
       <p>You herewith grant Dacoco a perpetual, non-revocable, worldwide and royalty-free license to: </p>
       <ul><li>
         - make use of any Posts as Dacoco deems appropriate in relation to Alien Worlds and/or any of the Website, Materials and Services or the promotion of the same; and</li>
-        <li>- sub-license third parties, on such terms as Dacoco deems appropriate, to make use of any Posts as Dacoco deems appropriate in relation to any to Alien Worlds and/or any of the Website, Materials and Services or the promotion thereof.</li>
+        <li>- sub-license third parties, on such terms as Dacoco deems appropriate, to make use of any Posts as Dacoco deems appropriate in relation to any to Alien Worlds and/or any of the Website, Materials and Services or the promotion thereof.</li></ul>
 
         <p>You herewith unconditionally represent that, as of the date of any Post:</p>
 
@@ -282,11 +282,11 @@
         </p><p>
           You acknowledge and agree that, in the event of a third party claim in the event that you breach these Terms of Use or in connection with your or any third party's use of video content created or distributed by you under the permitted streaming and video sharing provisions pursuant to Section 3.4, in particular in the event of a claim whereas any of your actions, Posts or Images in connection with Alien Worlds infringe on any third party's intellectual property rights, you (and not Dacoco) will be responsible to bear the cost of the investigation, defence, settlement and discharge of any such claim. You will, however, promptly notify Dacoco in writing of such a claim and Dacoco shall have the right, within its sole discretion, to direct any procedural actions in which it has a direct or indirect interest.</p>
 
-        <h2 class="short-hr-left"><span class="colored">16. External Links</span></h2><h2>
+        <h2 class="short-hr-left"><span class="colored">16. External Links</span></h2>
 
           <p>Links to external websites are provided as a convenience and for informational purposes only; they do not constitute an endorsement or an approval by Dacoco of any of the products, services or opinions of the relevant entity or organization or individual. Dacoco bears no responsibility for the accuracy, legality or content of external sites or for that of subsequent links. Dacoco recommends that you read the privacy policies and the terms of use of external websites before you make use thereof or provide personal information on any external websites.</p>
 
-        </h2><h2 class="short-hr-left"><span class="colored">17. No Partnership or Agency</span></h2>
+        <h2 class="short-hr-left"><span class="colored">17. No Partnership or Agency</span></h2>
 
         <p>Nothing in this Agreement, shall be construed to establish, and the Parties shall refrain from any representation or other act that could lead any affiliate or third party to believe that they have established, a partnership within the meaning of art. 530 et seq. of the Swiss Code of Obligations (CO) and/or any other form of partnership or company, and/or an agency within the meaning of art. 418a et seq. CO.</p>
 
@@ -327,16 +327,16 @@
 
         <p>The failure of Dacoco to exercise or enforce any right under this Agreement shall neither be deemed to be a waiver of that right nor operate to bar the exercise or enforcement of it at any time or times thereafter.</p>
 
-        <h3>20.5 Severability</h3><h3>
+        <h3>20.5 Severability</h3>
 
           <p>If any provision, or portion of a provision, contained in the Agreement is invalid or unenforceable, the remaining provisions, or the remaining portion of such provision, shall remain in full force and effect. Instead of the invalid provision, a rule shall apply that achieves as closely as possible the intention of the parties in drafting the invalid provision.</p>
 
-        </h3><h3>20.6 Applicable Law and Jurisdiction</h3>
+        <h3>20.6 Applicable Law and Jurisdiction</h3>
         <p>To the maximum extent allowed under applicable laws, this Agreement is governed by the substantive laws of Switzerland, to the exclusion of its rules of conflict of laws and to the exclusion of international treaties. </p>
 
         <p>To the maximum extent allowed under applicable laws, all disputes under or in connection with this Agreement shall be subject to the exclusive jurisdiction of the ordinary courts of Zug, Switzerland, and each of the parties undertakes to fully subject itself to such jurisdiction, always provided that each of the parties shall be entitled to seek preliminary measures and injunctive relief before any competent court according to applicable law.</p>
 
-      </ul></div>
+      </div>
   </q-page>
 </template>
 
