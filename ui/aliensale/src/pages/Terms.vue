@@ -355,6 +355,10 @@
       margin: 13px 0 0 0;
     }
   }
+
+  h3 {
+    font-size: 1.25rem;
+  }
 </style>
 
 <script>
