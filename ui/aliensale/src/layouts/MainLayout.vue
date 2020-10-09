@@ -40,6 +40,7 @@
                 <a href="/terms">USER AGREEMENT / TERMS &amp; CONDITIONS</a> : <a target="_blank" href="https://drive.google.com/file/d/1nlY6SSujin8rmOEqoRDrBq7NK09EKvzh/view?usp=drivesdk">Presentation</a>
 
                 <ul class="social-links">
+                  <li><a href="mailto:help@dacoco.io"><font-awesome-icon icon="envelope-square"/></a></li>
                   <li><a href="https://www.twitter.com/alienworlds"><font-awesome-icon :icon="{ prefix: 'fab', iconName: 'twitter' }"/></a></li>
                   <li><a href="https://t.me/AlienWorldsOffical"><font-awesome-icon :icon="{ prefix: 'fab', iconName: 'telegram' }"/></a></li>
                   <li><a href="https://medium.com/@alienworlds"><font-awesome-icon :icon="{ prefix: 'fab', iconName: 'medium' }"/></a></li>
