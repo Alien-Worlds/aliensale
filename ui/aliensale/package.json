@@ -1,8 +1,8 @@
 {
   "name": "aliensale",
   "version": "0.0.1",
-  "description": "Alien Worlds sale and pack opening UI",
-  "productName": "AlienSale",
+  "description": "Alien Worlds is a Brand New defi NFT Metaverse run on the WAX and Ethereum Blockchains. This site handles the sale of packs to explorers and allows them to open the packs.",
+  "productName": "Alien Worlds Sale and Unpacking Site",
   "author": "Michael Yeates <michaeljyeates@gmail.com>",
   "private": true,
   "scripts": {
