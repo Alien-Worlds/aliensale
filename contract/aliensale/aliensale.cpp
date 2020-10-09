@@ -106,10 +106,7 @@ void aliensale::newinvoice(name native_address, uint64_t auction_id, uint8_t qty
     // get the next available foreign address
     // create the sale record so that we can give the payment address and price to the user
     auto chain_idx = _addresses.get_index<"bychain"_n>();
-    auto addr = chain_idx.begin();
-    while (addr != chain_idx.end() && addr->foreign_chain != foreign_chain){
-        addr++;
-    }
+    auto addr = chain_idx.find(foreign_chain.value);
     check(addr != chain_idx.end(), "Could not find payment address");
 
     string foreign_address = addr->foreign_address;
