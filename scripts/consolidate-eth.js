@@ -36,8 +36,35 @@ const readfilePromise = async (filename) => {
     });
 }
 
+const sendTx = async (tx, pk) => {
+    return new Promise((resolve, reject) => {
+        web3.eth.accounts.signTransaction(tx, pk).then(signed => {
+            console.log(`Sending txid ${signed.transactionHash}`)
+            web3.eth.sendSignedTransaction(signed.rawTransaction, (err, receipt) => {
+                if (err){
+                    // console.error(`Transaction error`, err);
+                    reject(err);
+                }
+                else {
+                    // console.log(`Transaction sent ${receipt.transactionHash}`);
+                    resolve(receipt);
+                }
+            });
+        });
+    });
+}
 
-const start = async () => {
+const sleep = async (ms) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
+};
+
+const start = async (dry_run) => {
+    if (dry_run){
+        console.log(`Processing dry run, tokens will not be sent`);
+    }
+
     const data = await readfilePromise('keys.txt');
 
     const [mnemonic, seed] = data.toString().split(`\n`);
@@ -56,14 +83,14 @@ const start = async () => {
         const address = ethUtil.toChecksumAddress(`0x${addr}`);
 
         const gas = 21000n;
-        const gas_price = 10n * 1000000000n;  // 10 gwei
+        const gas_price = 40n * 1000000000n;  // 10 gwei
         const balance = BigInt(await web3.eth.getBalance(address));
 
         const total_to_send = balance - gas * gas_price;
 
 
         if (total_to_send > 0 && address.toLowerCase() !== consolidate_address.toLowerCase()){
-            console.log(`sending Ξ${web3.utils.fromWei(total_to_send.toString())} from ${address} to ${consolidate_address}`);
+            console.log(`sending Ξ${web3.utils.fromWei(total_to_send.toString())} from ${address} to ${consolidate_address} (balance is ${web3.utils.fromWei(balance.toString())})`);
 
             const tx = {
                 from: address,
@@ -72,19 +99,18 @@ const start = async () => {
                 gas: '0x' + gas.toString(16),
                 gasPrice: '0x' + gas_price.toString(16)
             };
-            // console.log(tx)
 
-            const signed = await web3.eth.accounts.signTransaction(tx, pk);
-            // console.log(signed)
-            const sentTx = web3.eth.sendSignedTransaction(signed.rawTransaction);
-
-            sentTx.on("receipt", receipt => {
-                console.log(`Transaction sent ${receipt.transactionHash}`);
-            });
-            sentTx.on("error", err => {
-                // do something on transaction error
-                console.error(`Transaction error`, err);
-            });
+            if (!dry_run){
+                try {
+                    const receipt = await sendTx(tx, pk);
+                    console.log(`TXID : ${receipt}`);
+                    await sleep(500);
+                    // process.exit(0)
+                }
+                catch (e){
+                    console.error(e.message)
+                }
+            }
         }
 
         x++;
@@ -93,4 +119,11 @@ const start = async () => {
 
 }
 
-start();
+let dry_run = false;
+for (let x=0;x<process.argv.length;x++){
+    if (process.argv[x] === '--dry-run'){
+        dry_run = true;
+    }
+}
+
+start(dry_run);
