@@ -13,11 +13,13 @@
               <div class="row justify-center w-50">
                 <h2 class="highlight">{{auctionData.name}}</h2>
                 <div style="margin-bottom:100px">
-                  <div v-for="sale in auctionData.sales" :key="sale.sale_symbol">
+                  <div v-for="sale in auctionData.sales" :key="sale.sale_symbol" style="display:inline-block;margin-left: 10px">
                     <router-link :to="{ name: 'auction', params: { auction_id: sale.auction_id }}" class="btn btn-secondary">{{ sale.sale_symbol }} Sale</router-link>
                     <p class="remaining" v-if="sale.remaining > 0">{{sale.remaining}} left</p>
                     <p class="remaining sold-out" v-if="sale.remaining == 0">SOLD OUT!</p>
                   </div>
+                  <div v-html="auctionData.description" style="" class="card-desc"></div>
+<!--                  {{auctionData}}-->
                 </div>
               </div>
             </div>
@@ -93,6 +95,14 @@
     }
   }
 
+  .card-desc {
+    background-color: rgba(0,0,0,0.8);
+    padding: 5px;
+    .highlight {
+      display: none
+    }
+  }
+
 </style>
 
 <script>
@@ -141,7 +151,7 @@ export default {
             auctions[packSymbol] = {
               name: a.pack.metadata.name,
               img: a.pack.metadata.img,
-              description: a.pack.metadata.name,
+              description: a.pack.metadata.description,
               sales: []
             }
           }

@@ -49,7 +49,8 @@
 
                     <div v-if="auction.current_period < auction.period_count">
                       <h2 class="highlight">
-                        <span>Price drop in <countdown :start="Date.parse(auction.start_time)" :period="auction.period_length" :cooldown="auction.break_length" v-on:finished="finishedPeriod()" v-on:cooldown="finishedPeriod()" /></span>
+<!--                        {{auction.start_time}}-->
+                        <span>Price drop in <countdown :start="parseDate(auction.start_time)" :period="auction.period_length" :cooldown="auction.break_length" v-on:finished="finishedPeriod()" v-on:cooldown="finishedPeriod()" /></span>
                       </h2>
                       Next price <div class="next-price">{{ auction.next_price }}</div>
                     </div>
@@ -60,7 +61,7 @@
                     <p>&nbsp;</p>
                   </div>
                   <div v-else>
-                    <h2 class="colored">Sale starts in : <start-countdown :start="Date.parse(auction.start_time)" /></h2>
+                    <h2 class="colored">Sale starts in : <start-countdown :start="parseDate(auction.start_time)" /></h2>
                   </div>
 
                   <div class="col-md-1 unbox">
@@ -281,11 +282,31 @@ export default {
       }
       return null
     },
+    parseDate (fullStr) {
+      // console.log(fullStr)
+      const [fullDate] = fullStr.split('.')
+      const [dateStr, timeStr] = fullDate.split('T')
+      const [year, month, day] = dateStr.split('-')
+      const [hourStr, minuteStr, secondStr] = timeStr.split(':')
+
+      const dt = new Date()
+      dt.setUTCFullYear(year)
+      dt.setUTCMonth(month - 1)
+      dt.setUTCDate(day)
+      dt.setUTCHours(hourStr)
+      dt.setUTCMinutes(minuteStr)
+      dt.setUTCSeconds(secondStr)
+      console.log('Date', dt)
+
+      return dt.getTime()
+    },
     currentPeriod (auctionData) {
       // console.log('getting current price ', auctionData)
       const offset = (new Date()).getTimezoneOffset() * 60 * 1000
       const now = parseInt((new Date().getTime() + offset) / 1000)
-      const auctionStart = Date.parse(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
+
+      const auctionStart = this.parseDate(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
+      // console.log(auctionData.start_time, auctionStart)
       const timeIntoSale = now - auctionStart
       // console.log(`timeIntoSale ${timeIntoSale}`)
       // console.log(new Date(now * 1000), new Date(auctionStart * 1000), timeIntoSale)
@@ -348,7 +369,7 @@ export default {
       const offset = (new Date()).getTimezoneOffset() * 60 * 1000
       const periodNumber = this.currentPeriod(auctionData)
       const now = parseInt((new Date().getTime() + offset) / 1000)
-      const auctionStart = Date.parse(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
+      const auctionStart = this.parseDate(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
       const timeIntoSale = now - auctionStart
       // console.log(now, auctionStart, timeIntoSale)
 
@@ -360,7 +381,7 @@ export default {
     hasStarted (auctionData) {
       const offset = (new Date()).getTimezoneOffset() * 60 * 1000
       const now = parseInt((new Date().getTime() + offset) / 1000)
-      const auctionStart = Date.parse(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
+      const auctionStart = this.parseDate(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
       const timeIntoSale = now - auctionStart
 
       return (timeIntoSale >= 0)

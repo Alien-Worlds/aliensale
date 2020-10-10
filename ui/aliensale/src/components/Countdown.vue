@@ -20,8 +20,10 @@ export default {
   },
   methods: {
     updateRemaining: function () {
-      const offset = (new Date()).getTimezoneOffset() * 60 * 1000
-      const now = parseInt((new Date().getTime() + offset))
+      // const offset = (new Date()).getTimezoneOffset() * 60 * 1000
+      // console.log(offset, new Date())
+      const now = parseInt((new Date().getTime()))
+      console.log('now', new Date(now))
       const period = this.period + this.cooldown
       const diff = parseInt((now - this.start) / 1000)
       let remainder = period - (diff % period)
