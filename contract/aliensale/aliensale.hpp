@@ -229,6 +229,9 @@ namespace alienworlds {
          /* Redeem, called by our script */
         [[eosio::action]] void redeemswap(uint64_t ethswap_id, checksum160 eth_address, name address);
 
+         /* Request a refund, just to prove ownership of the wax_address and indicate address for refund */
+        [[eosio::action]] void reqrefund(name wax_address, string refund_address);
+
         /* Receive transfers for payments in native token */
         [[eosio::on_notify("eosio.token::transfer")]] void transfer(name from, name to, asset quantity, string memo);
 

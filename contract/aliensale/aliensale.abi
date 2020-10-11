@@ -500,6 +500,20 @@
             ]
         },
         {
+            "name": "reqrefund",
+            "base": "",
+            "fields": [
+                {
+                    "name": "wax_address",
+                    "type": "name"
+                },
+                {
+                    "name": "refund_address",
+                    "type": "string"
+                }
+            ]
+        },
+        {
             "name": "sale_item",
             "base": "",
             "fields": [
@@ -660,6 +674,11 @@
         {
             "name": "redeemswap",
             "type": "redeemswap",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "reqrefund",
+            "type": "reqrefund",
             "ricardian_contract": ""
         },
         {

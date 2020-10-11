@@ -333,12 +333,16 @@ void aliensale::redeemswap(uint64_t ethswap_id, checksum160 eth_address, name ad
     ).send();
 }
 
+void aliensale::reqrefund(name wax_address, string refund_address) {
+    require_auth(wax_address);
+}
+
 void aliensale::clearinvs() {
     require_auth(get_self());
 
     auto invoice = _invoices.begin();
     while (invoice != _invoices.end()){
-      invoice = _invoices.erase(invoice);
+        invoice = _invoices.erase(invoice);
     }
 }
 
