@@ -74,7 +74,7 @@ export default {
       // get redeemable tokens on eos
       if (this.getAccountName.ethereum) {
         const key = this.getAccountName.ethereum.toLowerCase() + '0'.repeat(24)
-        console.log(key)
+        // console.log(key)
         const res = await this.$wax.rpc.get_table_rows({
           code: process.env.saleContract,
           scope: process.env.saleContract,
@@ -91,6 +91,10 @@ export default {
       }
     },
     async redeemTokenEos (quantity) {
+      if (!this.getAccountName.wax) {
+        // make sure they are logged in, they will have to click the buy button again
+        this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
+      }
       const actions = []
       actions.push({
         account: process.env.redeemContractEos,
@@ -116,11 +120,18 @@ export default {
       }
     },
     async redeemTokenEthereum (id) {
+      if (!this.getAccountName.wax) {
+        // make sure they are logged in, they will have to click the buy button again
+        this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
+      }
+      // console.log('Redeem ETH')
       const { injectedWeb3, web3 } = await this.$web3()
       if (injectedWeb3) {
+        // console.log('have web3')
         const ethAccount = await web3.eth.getAccounts()
+        // console.log(ethAccount)
         const signature = await web3.eth.personal.sign(this.getAccountName.wax, ethAccount[0])
-        console.log(signature)
+        // console.log(signature)
         const resp = await fetch(`${process.env.redeemServer}/redeem`, {
           method: 'POST',
           body: JSON.stringify({
@@ -135,6 +146,8 @@ export default {
         } else {
           this.$showError(json.error)
         }
+      } else {
+        this.$showError('Could not load Web3, please make sure you are logged in and Metamask is set up correctly')
       }
     },
     async loginEos () {
