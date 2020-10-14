@@ -168,19 +168,42 @@ namespace alienworlds {
         };
         typedef multi_index<"sales"_n, sale_item> sales_table;
 
+        /* Sales made in local currency, to track referrer payments */
+        struct [[eosio::table("reservations")]] reservation_item {
+            uint64_t       reservation_id;
+            uint64_t       auction_id;
+            uint16_t       auction_period;
+            time_point_sec reservation_time;
+            uint16_t       number_packs;
+            asset          quantity;
+            name           account;
+            bool           paid;
+            string         referrer;
+            string         referrer_payout;
+
+            uint64_t primary_key() const { return reservation_id; }
+            uint128_t by_auction_time() const { return (uint128_t)auction_id << 96 | (uint128_t)auction_period << 64 | reservation_time.sec_since_epoch(); };
+        };
+        typedef multi_index<"reservations"_n, reservation_item,
+            indexed_by<"byauction"_n, const_mem_fun<reservation_item, uint128_t, &reservation_item::by_auction_time> >
+            > reservations_table;
+
         // Local instances
-        addresses_table _addresses;
-        invoices_table  _invoices;
-        sales_table     _sales;
-        auctions_table  _auctions;
-        packs_table     _packs;
-        deposits_table  _deposits;
-        swaps_table     _swaps;
-        ethswaps_table  _ethswaps;
+        addresses_table    _addresses;
+        invoices_table     _invoices;
+        sales_table        _sales;
+        auctions_table     _auctions;
+        packs_table        _packs;
+        deposits_table     _deposits;
+        swaps_table        _swaps;
+        ethswaps_table     _ethswaps;
+        reservations_table _reservations;
 
         // uint64_t compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain);
         std::string bytetohex(unsigned char *data, int len);
+        uint32_t current_period(uint64_t auction_id);
         uint64_t auction_price(uint64_t auction_id, uint8_t qty);
+        uint64_t auction_price_from_period(uint64_t auction_id, uint32_t period_number, uint8_t qty);
 
     public:
         using contract::contract;
@@ -223,6 +246,15 @@ namespace alienworlds {
         /* Swap from EOS, will be called by the watcher script */
          [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
 
+        /* Reserve a future sale */
+        [[eosio::action]] void reserve(name buyer, uint64_t auction_id, uint16_t auction_period, uint8_t qty, string referrer);
+
+        /* Process reservations, should be called at the start of each period */
+        [[eosio::action]] void processres(uint64_t auction_id, uint16_t auction_period, uint8_t qty);
+
+        /* Refund an unfulfilled reservation */
+        [[eosio::action]] void refundres(uint64_t reservation_id);
+
         /* Swap from ETH, account must exist in the ethswap table */
          [[eosio::action]] void addethswap(checksum160 eth_address, asset quantity);
 
@@ -242,6 +274,7 @@ namespace alienworlds {
         [[eosio::action]] void clearswaps();
         [[eosio::action]] void clearaddress();
         [[eosio::action]] void clearsales();
+        [[eosio::action]] void clearres();
     };
 }
 

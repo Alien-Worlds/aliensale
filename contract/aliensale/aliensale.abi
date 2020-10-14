@@ -206,6 +206,11 @@
             "fields": []
         },
         {
+            "name": "clearres",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "clearsales",
             "base": "",
             "fields": []
@@ -482,6 +487,24 @@
             ]
         },
         {
+            "name": "processres",
+            "base": "",
+            "fields": [
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "auction_period",
+                    "type": "uint16"
+                },
+                {
+                    "name": "qty",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "redeemswap",
             "base": "",
             "fields": [
@@ -500,6 +523,16 @@
             ]
         },
         {
+            "name": "refundres",
+            "base": "",
+            "fields": [
+                {
+                    "name": "reservation_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "reqrefund",
             "base": "",
             "fields": [
@@ -509,6 +542,78 @@
                 },
                 {
                     "name": "refund_address",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "reservation_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "reservation_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "auction_period",
+                    "type": "uint16"
+                },
+                {
+                    "name": "reservation_time",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "number_packs",
+                    "type": "uint16"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "paid",
+                    "type": "bool"
+                },
+                {
+                    "name": "referrer",
+                    "type": "string"
+                },
+                {
+                    "name": "referrer_payout",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "reserve",
+            "base": "",
+            "fields": [
+                {
+                    "name": "buyer",
+                    "type": "name"
+                },
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "auction_period",
+                    "type": "uint16"
+                },
+                {
+                    "name": "qty",
+                    "type": "uint8"
+                },
+                {
+                    "name": "referrer",
                     "type": "string"
                 }
             ]
@@ -627,6 +732,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "clearres",
+            "type": "clearres",
+            "ricardian_contract": ""
+        },
+        {
             "name": "clearsales",
             "type": "clearsales",
             "ricardian_contract": ""
@@ -672,13 +782,28 @@
             "ricardian_contract": ""
         },
         {
+            "name": "processres",
+            "type": "processres",
+            "ricardian_contract": ""
+        },
+        {
             "name": "redeemswap",
             "type": "redeemswap",
             "ricardian_contract": ""
         },
         {
+            "name": "refundres",
+            "type": "refundres",
+            "ricardian_contract": ""
+        },
+        {
             "name": "reqrefund",
             "type": "reqrefund",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "reserve",
+            "type": "reserve",
             "ricardian_contract": ""
         },
         {
@@ -726,6 +851,13 @@
         {
             "name": "packs",
             "type": "pack_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "reservations",
+            "type": "reservation_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

@@ -10,6 +10,7 @@ aliensale::aliensale(name s, name code, datastream<const char *> ds) : contract(
                                                                        _packs(get_self(), get_self().value),
                                                                        _deposits(get_self(), get_self().value),
                                                                        _swaps(get_self(), get_self().value),
+                                                                       _reservations(get_self(), get_self().value),
                                                                        _ethswaps(get_self(), get_self().value) {}
 
 
@@ -217,8 +218,21 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty, string referre
     check(deposit->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Incorrect deposit symbol");
     check(qty <= auction->pack.quantity.amount, "Attempt to buy more than is available");
 
+    // check there are no outstanding reservations that have not been processed
+    auto auction_period = current_period(auction_id);
+    uint128_t start = 0;
+    start |= (uint128_t)auction_id << 96;
+//    start |= (uint128_t)auction_period << 64;
+
+    auto index = _reservations.get_index<"byauction"_n>();
+    auto reservation = index.lower_bound(start);
+
+    if (reservation != index.end() && reservation->auction_id == auction_id && auction_period >= reservation->auction_period){
+        check(false, "Please wait for reservations to be processed, try again soon");
+    }
+
     auto pack_price = auction_price(auction_id, qty);
-    print("\npack price ", pack_price);
+//    print("\npack price ", pack_price);
     check(pack_price == deposit->quantity.amount, "Incorrect amount deposited");
 
     auto pack_asset = auction->pack.quantity;
@@ -247,6 +261,139 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty, string referre
     _deposits.erase(deposit);
 }
 
+void aliensale::reserve(name buyer, uint64_t auction_id, uint16_t auction_period, uint8_t qty, string referrer) {
+    check(qty > 0, "Quantity cannot be negative");
+    require_auth(buyer);
+
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
+    check(auction_period < auction->period_count, "Auction has less periods than this");
+
+    uint64_t amount = auction_price_from_period(auction_id, auction_period, qty);
+    asset quantity(amount, auction->price_symbol.symbol);
+
+    bool paid = false;
+    if (quantity.symbol == symbol{symbol_code{"WAX"}, 8}){
+        auto deposit = _deposits.find(buyer.value);
+        check(deposit != _deposits.end(), "Deposit not found");
+
+        check(deposit->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Incorrect deposit symbol");
+        check(qty <= auction->pack.quantity.amount, "Attempt to reserve more than is available");
+        check(amount == deposit->quantity.amount, "Incorrect amount deposited");
+
+        paid = true;
+
+        _deposits.erase(deposit);
+    }
+
+    _reservations.emplace(buyer, [&](auto &r){
+        r.reservation_id   = _reservations.available_primary_key();
+        r.auction_id       = auction_id;
+        r.auction_period   = auction_period;
+        r.reservation_time = time_point(current_time_point().time_since_epoch());
+        r.number_packs     = qty;
+        r.quantity         = quantity;
+        r.paid             = paid;
+        r.account          = buyer;
+        r.referrer         = referrer;
+    });
+
+}
+
+void aliensale::processres(uint64_t auction_id, uint16_t auction_period, uint8_t loop_count) {
+    // process "loop_count" items from the reservations table, delete unpaid entries as we go
+    uint128_t start = 0;
+    start |= (uint128_t)auction_id << 96;
+    start |= (uint128_t)auction_period << 64;
+    bool is_overbuy = false;
+
+    uint32_t current = current_period(auction_id);
+    check(auction_period <= current, "Auction period hasnt started yet");
+
+    auto index = _reservations.get_index<"byauction"_n>();
+    auto reservation = index.lower_bound(start);
+    while (loop_count >= 0) {
+        if (reservation->auction_id != auction_id || reservation->auction_period != auction_period){
+            break;
+        }
+
+        auto auction = _auctions.find(auction_id);
+        uint64_t packs_reserved = 0;
+        uint64_t new_price;
+
+        if (reservation->paid && auction != _auctions.end()){
+            // send tokens
+          packs_reserved = (uint64_t)reservation->number_packs;
+          if (auction->pack.quantity.amount < packs_reserved){
+              packs_reserved = auction->pack.quantity.amount;
+              is_overbuy = true;
+              new_price = auction_price_from_period(auction_id, auction_period, reservation->number_packs - auction->pack.quantity.amount);
+          }
+          auto pack_asset = auction->pack.quantity;
+          pack_asset.amount = packs_reserved;
+          string memo = "Buying in auction (reserved purchase)";
+
+          // deduct amount bought from auction
+          _auctions.modify(auction, get_self(), [&](auto &a){
+              a.pack.quantity.amount -= pack_asset.amount;
+          });
+
+          action(
+              permission_level{get_self(), "xfer"_n},
+              auction->pack.contract, "transfer"_n,
+              make_tuple(get_self(), reservation->account, pack_asset, memo)
+          ).send();
+
+          // add sale record
+          _sales.emplace(get_self(), [&](auto &s){
+              s.sale_id    = _sales.available_primary_key();
+              s.auction_id = auction_id;
+              s.quantity   = reservation->quantity;
+              s.referrer   = reservation->referrer;
+          });
+        }
+
+        if (is_overbuy){
+            // if reservation was overbought then the auction has ended and all packs sold
+            _reservations.modify(*reservation, get_self(), [&](auto &r){
+                r.number_packs = r.number_packs - (uint16_t)packs_reserved;
+                r.quantity.amount = new_price;
+            });
+
+            break;
+        }
+        else {
+            // always delete the reservation because it was either redeemed or not paid
+            reservation = index.erase(reservation);
+        }
+
+        loop_count--;
+    }
+}
+
+void aliensale::refundres(uint64_t reservation_id) {
+    require_auth(get_self());
+
+    auto reservation = _reservations.find(reservation_id);
+    check(reservation != _reservations.end(), "Reservation not found");
+
+    // check the auction has ended
+    auto auction = _auctions.find(reservation->auction_id);
+    check(auction != _auctions.end(), "Auction is invalid");
+    check(auction->pack.quantity.amount == 0, "Auction has not completed");
+
+    check(reservation->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Can only refund WAX sales");
+
+    string memo = "Alien Worlds Reservation Refund";
+    action(
+        permission_level{get_self(), "xfer"_n},
+        "eosio.token"_n, "transfer"_n,
+        make_tuple(get_self(), reservation->account, reservation->quantity, memo)
+    ).send();
+
+    _reservations.erase(reservation);
+}
 
 void aliensale::swap(name buyer, asset quantity, checksum256 tx_id) {
     require_auth(get_self());
@@ -387,7 +534,16 @@ void aliensale::clearsales() {
 
     auto sale = _sales.begin();
     while (sale != _sales.end()){
-      sale = _sales.erase(sale);
+        sale = _sales.erase(sale);
+    }
+}
+
+void aliensale::clearres() {
+    require_auth(get_self());
+
+    auto reservation = _reservations.begin();
+    while (reservation != _reservations.end()){
+        reservation = _reservations.erase(reservation);
     }
 }
 
@@ -405,6 +561,28 @@ std::string aliensale::bytetohex(unsigned char *data, int len) {
     return s;
 }
 
+uint32_t aliensale::current_period(uint64_t auction_id) {
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
+    uint32_t time_now = current_time_point().sec_since_epoch();
+    check(time_now >= auction->start_time.sec_since_epoch(), "Auction has not started yet");
+    uint32_t time_into_sale = time_now - auction->start_time.sec_since_epoch();
+
+    auto start_price = auction->start_price;
+    uint32_t cycle_length = auction->period_length + auction->break_length;
+    uint32_t remainder = time_into_sale % cycle_length;
+    uint32_t period_number = (time_into_sale - remainder) / cycle_length;
+
+    if (period_number > auction->period_count) {
+        period_number = auction->period_count;
+    }
+
+    print("\nPeriod number ", period_number);
+
+    return period_number;
+}
+
 uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
     auto auction = _auctions.find(auction_id);
     check(auction != _auctions.end(), "Auction not found");
@@ -417,16 +595,25 @@ uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
     uint32_t cycle_length = auction->period_length + auction->break_length;
     uint32_t remainder = time_into_sale % cycle_length;
     uint32_t period_number = (time_into_sale - remainder) / cycle_length;
-    print("\nPeriod number ", period_number);
-
-    // we are in the break period
-    check(remainder <= auction->period_length, "Auction is in a rest period");
 
     if (period_number > auction->period_count) {
         period_number = auction->period_count;
     }
+    // we are in the break period
+    if (period_number < auction->period_count){
+        check(remainder <= auction->period_length, "Auction is in a rest period");
+    }
 
-    uint64_t price = start_price;
+    print("\nPeriod number ", period_number);
+
+    return auction_price_from_period(auction_id, period_number, qty);
+}
+
+uint64_t aliensale::auction_price_from_period(uint64_t auction_id, uint32_t period_number, uint8_t qty) {
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
+    uint64_t price = auction->start_price;
     if (period_number >= 1){
         price -= auction->first_step;
         price -= (period_number - 1) * auction->price_step;
