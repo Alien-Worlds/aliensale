@@ -9,7 +9,7 @@
             <div class="row justify-center text-h1 main-title">
               {{ auction.pack_data.metadata.name }}
             </div>
-            <div class="row" v-if="auction.amount">
+            <div class="row">
               <div id="full-row" class="row text-center">
                 <div class="col-md-1 unbox">
                 </div>
@@ -21,7 +21,7 @@
                 <div class="col-md-1 unbox"></div>
                 <div class="col-md-3 unbox2">
 
-                  <h2 class="highlight">
+                  <h2 class="highlight" v-if="auction.amount">
                     <div class="colored">{{ auction.amount }} Packs remaining</div>
                   </h2>
 
@@ -33,19 +33,19 @@
                 <div class="col-md-1 unbox">
                 </div>
                 <div class="col-md-3 unbox2">
-                  <div v-if="auction.has_started">
+                  <div v-if="auction.has_started && auction.amount > 0">
+                    {{auction.amount}}
+                    <country-select ref="country" @selected="startBuy" />
+
                     <h2 class="highlight">
                       <span class="colored">
                         Current price <div class="price">{{ auction.current_price }}</div>
                       </span>
                     </h2>
 
-                    <p class="qty-control">
-                      <button type="minus" class="button" style="display:inline;" @click="decrementCounter('buyQty' + auction.auction_id)">-</button>
-                      <input style="display:inline;" size="2" type="buy" :id="'buyQty' + auction.auction_id" name="buyamount" placeholder="0" value="1" min="0" :max="auction.amount">
-                      <button type="plus" class="button" style="display:inline;" @click="incrementCounter('buyQty' + auction.auction_id)">+</button>
-                    </p>
-                    <p class="buy-control"><button type="Buy" class="button" style="display:inline;" @click="startBuy(auction)">Buy Now</button></p>
+                    <qty-control v-model="buyQty" :max="auction.amount" />
+
+                    <p class="buy-control"><button type="Buy" class="button" style="display:inline;" @click="preBuy">Buy Now</button></p>
 
                     <div v-if="auction.current_period < auction.period_count">
                       <h2 class="highlight">
@@ -57,27 +57,24 @@
                     <div v-else>
                       Lowest price reached
                     </div>
-
-                    <p>&nbsp;</p>
                   </div>
-                  <div v-else>
+                  <div v-else-if="!auction.has_started">
                     <h2 class="colored">Sale starts in : <start-countdown :start="parseDate(auction.start_time)" /></h2>
                   </div>
-
-                  <div class="col-md-1 unbox">
+                  <div v-if="!auction.amount" class="sold-out">
+                    Sold Out!
                   </div>
+
+                  <div v-if="!auction.has_started">
+                    <pre-bid :auction-data="auction" :accounts="getAccountName" />
+                  </div>
+
+                  <div class="col-md-1 unbox"></div>
 
                 </div>
 
               </div>
 
-            </div>
-            <div class="row text-red" v-else style="text-decoration: line-through">
-              <div class="col-2">
-                <img :src="ipfsRoot + auction.pack_data.metadata.img" style="max-width:100px" />
-              </div>
-              <div class="col-6">{{ auction.pack_data.metadata.name }}</div>
-              <div class="col-4">Sold out!</div>
             </div>
 
           </div>
@@ -200,6 +197,11 @@
   #buy-confirm-error {
     color: red;
   }
+  .sold-out {
+    color: red;
+    text-decoration: line-through;
+    font-size: 2rem;
+  }
   #country {
     width: 100%;
     padding: 10px;
@@ -212,9 +214,9 @@ import LoginWax from 'components/LoginWax'
 import PaymentRequest from 'components/PaymentRequest'
 import Countdown from 'components/Countdown'
 import StartCountdown from 'components/StartCountdown'
-import countryList from 'country-list'
-// import crypto from 'crypto'
-// import { BButton, BFormInput /* , BButtonGroup, BButtonToolbar */ } from 'bootstrap-vue'
+import PreBid from 'components/PreBid'
+import CountrySelect from 'components/CountrySelect'
+import QtyControl from 'components/QtyControl'
 import { Serialize } from 'eosjs'
 let intervalId
 
@@ -224,19 +226,18 @@ export default {
     'login-wax': LoginWax,
     'payment-request': PaymentRequest,
     countdown: Countdown,
-    'start-countdown': StartCountdown
-    // 'b-button': BButton,
-    // 'b-button-group': BButtonGroup,
-    // 'b-button-toolbar': BButtonToolbar,
-    // 'b-form-input': BFormInput
+    'start-countdown': StartCountdown,
+    'pre-bid': PreBid,
+    'country-select': CountrySelect,
+    'qty-control': QtyControl
   },
   data () {
     return {
       packs: this.$packs,
-      auction: [],
+      auction: null,
       balances: {},
       buyPack: '',
-      buyQty: [],
+      buyQty: 1,
       paymentRequest: null,
       ipfsRoot: process.env.ipfsRoot,
       showLoginModal: false
@@ -283,7 +284,6 @@ export default {
       return null
     },
     parseDate (fullStr) {
-      // console.log(fullStr)
       const [fullDate] = fullStr.split('.')
       const [dateStr, timeStr] = fullDate.split('T')
       const [year, month, day] = dateStr.split('-')
@@ -296,20 +296,14 @@ export default {
       dt.setUTCHours(hourStr)
       dt.setUTCMinutes(minuteStr)
       dt.setUTCSeconds(secondStr)
-      console.log('Date', dt)
 
       return dt.getTime()
     },
     currentPeriod (auctionData) {
-      // console.log('getting current price ', auctionData)
-      const offset = (new Date()).getTimezoneOffset() * 60 * 1000
-      const now = parseInt((new Date().getTime() + offset) / 1000)
+      const now = parseInt((new Date().getTime()) / 1000)
 
       const auctionStart = this.parseDate(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
-      // console.log(auctionData.start_time, auctionStart)
       const timeIntoSale = now - auctionStart
-      // console.log(`timeIntoSale ${timeIntoSale}`)
-      // console.log(new Date(now * 1000), new Date(auctionStart * 1000), timeIntoSale)
 
       const cycleLength = auctionData.period_length + auctionData.break_length
       const remainder = timeIntoSale % cycleLength
@@ -379,8 +373,7 @@ export default {
       return (remainder > auctionData.period_length && periodNumber < auctionData.period_count)
     },
     hasStarted (auctionData) {
-      const offset = (new Date()).getTimezoneOffset() * 60 * 1000
-      const now = parseInt((new Date().getTime() + offset) / 1000)
+      const now = parseInt((new Date().getTime()) / 1000)
       const auctionStart = this.parseDate(auctionData.start_time.replace(/\.[05]00$/, '')) / 1000
       const timeIntoSale = now - auctionStart
 
@@ -420,8 +413,11 @@ export default {
       auctionData.in_rest = this.inRestPeriod(auctionData)
       auctionData.has_started = this.hasStarted(auctionData)
 
-      this.auction = auctionData
+      // auctionData.periods = this.periodData(auctionData)
       // console.log('auctions', this.auctions)
+
+      // this.periodPrices = auctionData.periods.map(p => { return { value: p.period, text: `Period ${p.period + 1} - ${p.price_formatted}` } })
+      this.auction = auctionData
     },
     async createSale (account, qty, auction, country) {
       console.log('createSale', account, qty, auction, country)
@@ -446,22 +442,6 @@ export default {
       try {
         console.log('createsale actions', actions)
         const createResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
-        // const hash = crypto.createHash('sha256')
-        // hash.update(createResp.transaction.serializedTransaction)
-        // const txId = hash.digest('hex')
-
-        // const saleRes = await fetch(`${process.env.saleServer}/sale`, {
-        //   method: 'POST',
-        //   body: JSON.stringify({ country, txId })
-        // })
-        // console.log(await saleRes.json())
-
-        // console.log(txId, createResp)
-        // const pushResp = await this.$wax.pushSignedTransaction({
-        //   ...createResp.transaction
-        // })
-        // console.log(createResp)
-
         if (createResp.status === 'executed') {
           const txId = createResp.transactionId || createResp.transaction_id
           const logData = createResp.transaction.processed.action_traces[0].inline_traces[0].act.data
@@ -524,26 +504,17 @@ export default {
           referrer: this.$referrer
         }
       }]
-      console.log(actions)
+      // console.log(actions)
       let resp = null
       try {
         // const options = { broadcast: false }
         resp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
-        console.log(resp)
+        // console.log(resp)
 
-        // const hash = crypto.createHash('sha256')
-        // hash.update(resp.transaction.serializedTransaction)
-        // const txId = hash.digest('hex')
         const txId = resp.transactionId || resp.transaction_id
 
         // register the sale on our server
         this.logSale(country, txId)
-
-        // console.log(txId, createResp)
-        // const pushResp = await this.$wax.pushSignedTransaction({
-        //   ...resp.transaction
-        // })
-        // console.log(pushResp)
 
         this.$showSuccess('Your pack has been purchased successfully, please wait a few moments and it will appear in your inventory')
       } catch (e) {
@@ -602,182 +573,32 @@ export default {
         this.$showError('Invalid log data :/')
       }
     },
-    getCountryDropdownHTML () {
-      console.log(countryList.getData())
-      const countries = countryList.getData().sort((a, b) => (a.name < b.name) ? -1 : 1).map(d => {
-        d.name = d.name.replace('of Great Britain and Northern Ireland', '')
-        return d
-      })
-      const special = ['GB', 'US', 'CA', 'ES', 'CN', 'KR']
-      const specialCountries = countries.filter(c => special.includes(c.code))
-
-      const selectList = document.createElement('select')
-      selectList.id = 'country'
-
-      const optiona = document.createElement('option')
-      optiona.value = ''
-      optiona.text = 'Choose Country'
-      selectList.appendChild(optiona)
-
-      const optionb = document.createElement('option')
-      optionb.value = ''
-      optionb.text = '-----------------------------------'
-      optionb.disabled = true
-      selectList.appendChild(optionb)
-
-      for (let i = 0; i < specialCountries.length; i++) {
-        const option = document.createElement('option')
-        option.value = specialCountries[i].code
-        option.text = specialCountries[i].name
-        selectList.appendChild(option)
-      }
-
-      const option = document.createElement('option')
-      option.value = ''
-      option.text = '-----------------------------------'
-      option.disabled = true
-      selectList.appendChild(option)
-
-      for (let i = 0; i < countries.length; i++) {
-        const option = document.createElement('option')
-        option.value = countries[i].code
-        option.text = countries[i].name
-        selectList.appendChild(option)
-      }
-
-      return selectList.outerHTML
+    preBuy () {
+      this.$refs.country.show(this.auction)
     },
-    getConfirmHTML (auctionData) {
-      const html = '<div>' +
-              '<p>Please confirm you would like to buy the following pack</p>' +
-              `<p>${auctionData.pack_data.metadata.name}</p>` +
-              '<p>' +
-              '<label>' + this.getCountryDropdownHTML() + '</label>' +
-              '<label><input type="checkbox" id="agree18" class="checkb"> I am over 18</label>' +
-              '<br><label><input type="checkbox" id="agreeterms" class="checkb"> I have read the terms and conditions</label>' +
-              '</p>' +
-              '<div id="buy-confirm-error"></div></div>'
-      return html
-    },
-    showBuyError (msg) {
-      const err = document.getElementById('buy-confirm-error')
-      err.innerHTML = msg
-    },
-    async startBuy (auctionData) {
+    async startBuy (country) {
       if (!this.getAccountName.wax) {
         this.showLoginModal = true
         return
       }
+      console.log('start buy')
+      const auctionData = this.auction
+      const buyQty = this.buyQty
 
-      let country = ''
-      this.$swal({
-        title: 'Please Confirm',
-        preConfirm: () => {
-          const over18Ele = document.getElementById('agree18')
-          const agreeTermsEle = document.getElementById('agreeterms')
-          const countryEle = document.getElementById('country')
-          if (!over18Ele.checked) {
-            this.showBuyError('You must check the box to say you are over 18')
-            return false
-          } else if (!agreeTermsEle.checked) {
-            this.showBuyError('You must agree to the terms')
-            return false
-          } else if (!countryEle.value) {
-            this.showBuyError('Please choose your country')
-            return false
-          }
-
-          country = countryEle.value
-
-          return true
-        },
-        html: this.getConfirmHTML(auctionData)
-      }).then(async res => {
-        console.log(res)
-        if (!res.isConfirmed) {
-          console.log('Dialog not confirmed')
-          return
-        }
-
-        const buyQtyEle = document.getElementById(`buyQty${auctionData.auction_id}`)
-        if (!buyQtyEle) {
-          this.$showError('Could not get quantity')
-        }
-        let buyQty = parseInt(buyQtyEle.value)
-        if (isNaN(buyQty)) {
-          buyQty = 1
-        }
-
-        console.log(`Buying ${buyQty} of ${auctionData.pack_data.metadata.name} from account ${this.getAccountName.wax}`)
-
-        const currency = auctionData.price_symbol.symbol
-
-        switch (currency) {
-          case 'WAX':
-            await this.buyWax(this.getAccountName.wax, buyQty, auctionData, country)
-            break
-          case 'ETH':
-            await this.buyEth(this.getAccountName.wax, buyQty, auctionData, country)
-            break
-          default:
-            await this.buyEos(this.getAccountName, buyQty, auctionData, country)
-            break
-        }
-      })
-      /* const over18Ele = document.getElementById(`agree18${auctionData.auction_id}`)
-      const agreeTermsEle = document.getElementById(`agreeterms${auctionData.auction_id}`)
-      if (!over18Ele.checked) {
-        this.$showError('You must check the box to say you are over 18')
-        return
-      }
-      if (!agreeTermsEle.checked) {
-        this.$showError('You must agree to the terms')
-        return
-      }
-      console.log(auctionData)
-      const buyQtyEle = document.getElementById(`buyQty${auctionData.auction_id}`)
-      if (!buyQtyEle) {
-        this.$showError('Could not get quantity')
-      }
-      let buyQty = parseInt(buyQtyEle.value)
-      if (isNaN(buyQty)) {
-        buyQty = 1
-      }
-
-      console.log(`Buying ${buyQty} of ${auctionData.pack_data.metadata.name}`)
+      console.log(`Buying ${buyQty} of ${auctionData.pack_data.metadata.name} from account ${this.getAccountName.wax}`)
 
       const currency = auctionData.price_symbol.symbol
 
       switch (currency) {
         case 'WAX':
-          await this.buyWax(this.getAccountName.wax, buyQty, auctionData)
+          await this.buyWax(this.getAccountName.wax, buyQty, auctionData, country)
           break
         case 'ETH':
-          await this.buyEth(this.getAccountName.wax, buyQty, auctionData)
+          await this.buyEth(this.getAccountName.wax, buyQty, auctionData, country)
           break
         default:
-          await this.buyEos(this.getAccountName, buyQty, auctionData)
+          await this.buyEos(this.getAccountName, buyQty, auctionData, country)
           break
-      } */
-    },
-    decrementCounter (id) {
-      const ele = document.getElementById(id)
-      let currentVal = parseInt(ele.value)
-      if (isNaN(currentVal)) {
-        currentVal = 0
-      }
-      if (currentVal > 1) {
-        ele.value = currentVal - 1
-      }
-    },
-    incrementCounter (id) {
-      const ele = document.getElementById(id)
-      let currentVal = parseInt(ele.value)
-      if (isNaN(currentVal)) {
-        currentVal = 0
-      }
-      if (currentVal < this.auction.amount) {
-        ele.value = currentVal + 1
       }
     },
     finishedPeriod () {
