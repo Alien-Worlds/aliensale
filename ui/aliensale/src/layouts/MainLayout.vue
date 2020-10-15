@@ -7,7 +7,7 @@
 
           <div id="mobile_logo_header">
             <button data-trigger="#navbar_mobile" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav">  <font-awesome-icon icon="bars" /> </button>
-            <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
+            <a id="logo" class="navbar-brand" href="https://alienworlds.io"><img class="img-fluid" src="https://alienworlds.io/images/our%20logo.png" alt="site logo"></a>
           </div>
 
           <nav id="navbar_mobile" class="mobile-offcanvas navbar navbar-dark">
@@ -37,7 +37,7 @@
           <div class="container">
             <div class="row">
               <div class="col-md-12"><a target="_blank" href="https://dacoco.io">Copyright Dacoco GmbH 2020</a> :
-                <a href="/terms">USER AGREEMENT / TERMS &amp; CONDITIONS</a> : <a target="_blank" href="https://drive.google.com/file/d/1nlY6SSujin8rmOEqoRDrBq7NK09EKvzh/view?usp=drivesdk">Presentation</a>
+                <a href="/terms">USER AGREEMENT / TERMS &amp; CONDITIONS</a> : <a target="_blank" href="https://drive.google.com/file/d/18FBmlTQn781xoaIPj6gfYhI_5pe8W6fp/view">Presentation</a>
 
                 <ul class="social-links">
                   <li><a href="mailto:help@dacoco.io"><font-awesome-icon icon="envelope-square"/></a></li>

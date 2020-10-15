@@ -1,6 +1,9 @@
 <template>
   <ul class="navbar-nav">
     <li class="nav-item">
+      <a href="https://alienworlds.io" class="nav-link"><span @click="toggleMobileNav">Main Website</span></a>
+    </li>
+    <li class="nav-item">
       <router-link to="/inventory" class="nav-link"><span @click="toggleMobileNav">Inventory</span></router-link>
     </li>
     <li class="nav-item">
