@@ -19,6 +19,7 @@
     "fastify-oas": "^3.0.3",
     "fs": "^0.0.1-security",
     "hdkey": "^2.0.1",
+    "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
     "text-encoding": "^0.7.0",
     "web3": "^1.2.11"

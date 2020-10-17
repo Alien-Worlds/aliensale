@@ -17,7 +17,7 @@ import CountrySelect from 'components/CountrySelect'
 import { Serialize } from 'eosjs'
 
 export default {
-  name: 'PreBid',
+  name: 'PreOrder',
   components: {
     'b-form-select': BFormSelect,
     'qty-control': QtyControl,
@@ -102,23 +102,29 @@ export default {
       const account = this.accounts.wax
       const auction = this.auctionData
       const qty = this.qty
+      const actions = []
+      console.log('AUCTION', auction)
 
-      const actions = [{
-        account: 'eosio.token',
-        name: 'transfer',
-        authorization: [{
-          actor: account,
-          permission: 'active'
-        }],
-        data: {
-          from: account,
-          to: process.env.saleContract,
-          quantity: this.priceStrict(auction, this.preBidPeriod, qty),
-          memo: ''
-        }
-      }, {
+      if (auction.price_symbol.chain === 'wax') {
+        actions.push({
+          account: 'eosio.token',
+          name: 'transfer',
+          authorization: [{
+            actor: account,
+            permission: 'active'
+          }],
+          data: {
+            from: account,
+            to: process.env.saleContract,
+            quantity: this.priceStrict(auction, this.preBidPeriod, qty),
+            memo: ''
+          }
+        })
+      }
+
+      actions.push({
         account: process.env.saleContract,
-        name: 'reserve',
+        name: 'preorder',
         authorization: [{
           actor: account,
           permission: 'active'
@@ -130,7 +136,7 @@ export default {
           qty,
           referrer: this.$referrer
         }
-      }]
+      })
 
       let resp = null
       try {

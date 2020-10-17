@@ -66,7 +66,7 @@
                   </div>
 
                   <div v-if="!auction.has_started">
-                    <pre-bid :auction-data="auction" :accounts="getAccountName" />
+                    <pre-order :auction-data="auction" :accounts="getAccountName" />
                   </div>
 
                   <div class="col-md-1 unbox"></div>
@@ -214,7 +214,7 @@ import LoginWax from 'components/LoginWax'
 import PaymentRequest from 'components/PaymentRequest'
 import Countdown from 'components/Countdown'
 import StartCountdown from 'components/StartCountdown'
-import PreBid from 'components/PreBid'
+import PreOrder from 'components/PreOrder'
 import CountrySelect from 'components/CountrySelect'
 import QtyControl from 'components/QtyControl'
 import { Serialize } from 'eosjs'
@@ -227,7 +227,7 @@ export default {
     'payment-request': PaymentRequest,
     countdown: Countdown,
     'start-countdown': StartCountdown,
-    'pre-bid': PreBid,
+    'pre-order': PreOrder,
     'country-select': CountrySelect,
     'qty-control': QtyControl
   },
