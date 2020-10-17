@@ -169,24 +169,25 @@ namespace alienworlds {
         typedef multi_index<"sales"_n, sale_item> sales_table;
 
         /* Sales made in local currency, to track referrer payments */
-        struct [[eosio::table("reservations")]] reservation_item {
-            uint64_t       reservation_id;
+        struct [[eosio::table("preorders")]] preorder_item {
+            uint64_t       preorder_id;
             uint64_t       auction_id;
             uint16_t       auction_period;
-            time_point_sec reservation_time;
+            time_point_sec preorder_time;
             uint16_t       number_packs;
             asset          quantity;
             name           account;
+            string         foreign_address;
             bool           paid;
             string         referrer;
             string         referrer_payout;
 
-            uint64_t primary_key() const { return reservation_id; }
-            uint128_t by_auction_time() const { return (uint128_t)auction_id << 96 | (uint128_t)auction_period << 64 | reservation_time.sec_since_epoch(); };
+            uint64_t primary_key() const { return preorder_id; }
+            uint128_t by_auction_time() const { return (uint128_t)auction_id << 96 | (uint128_t)auction_period << 64 | preorder_time.sec_since_epoch(); };
         };
-        typedef multi_index<"reservations"_n, reservation_item,
-            indexed_by<"byauction"_n, const_mem_fun<reservation_item, uint128_t, &reservation_item::by_auction_time> >
-            > reservations_table;
+        typedef multi_index<"preorders"_n, preorder_item,
+            indexed_by<"byauction"_n, const_mem_fun<preorder_item, uint128_t, &preorder_item::by_auction_time> >
+            > preorders_table;
 
         // Local instances
         addresses_table    _addresses;
@@ -197,7 +198,7 @@ namespace alienworlds {
         deposits_table     _deposits;
         swaps_table        _swaps;
         ethswaps_table     _ethswaps;
-        reservations_table _reservations;
+        preorders_table    _preorders;
 
         // uint64_t compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain);
         std::string bytetohex(unsigned char *data, int len);
@@ -247,13 +248,13 @@ namespace alienworlds {
          [[eosio::action]] void swap(name buyer, asset quantity, checksum256 tx_id);
 
         /* Reserve a future sale */
-        [[eosio::action]] void reserve(name buyer, uint64_t auction_id, uint16_t auction_period, uint8_t qty, string referrer);
+        [[eosio::action]] void preorder(name buyer, uint64_t auction_id, uint16_t auction_period, uint8_t qty, string referrer);
 
         /* Process reservations, should be called at the start of each period */
         [[eosio::action]] void processres(uint64_t auction_id, uint16_t auction_period, uint8_t qty);
 
         /* Refund an unfulfilled reservation */
-        [[eosio::action]] void refundres(uint64_t reservation_id);
+        [[eosio::action]] void refundpreord(uint64_t preorder_id);
 
         /* Swap from ETH, account must exist in the ethswap table */
          [[eosio::action]] void addethswap(checksum160 eth_address, asset quantity);
@@ -274,7 +275,7 @@ namespace alienworlds {
         [[eosio::action]] void clearswaps();
         [[eosio::action]] void clearaddress();
         [[eosio::action]] void clearsales();
-        [[eosio::action]] void clearres();
+        [[eosio::action]] void clearpreord();
     };
 }
 
