@@ -218,17 +218,17 @@ void aliensale::buy(name buyer, uint64_t auction_id, uint8_t qty, string referre
     check(deposit->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Incorrect deposit symbol");
     check(qty <= auction->pack.quantity.amount, "Attempt to buy more than is available");
 
-    // check there are no outstanding reservations that have not been processed
+    // check there are no outstanding preorders that have not been processed
     auto auction_period = current_period(auction_id);
     uint128_t start = 0;
     start |= (uint128_t)auction_id << 96;
 //    start |= (uint128_t)auction_period << 64;
 
     auto index = _preorders.get_index<"byauction"_n>();
-    auto reservation = index.lower_bound(start);
+    auto preorder = index.lower_bound(start);
 
-    if (reservation != index.end() && reservation->auction_id == auction_id && auction_period >= reservation->auction_period){
-        check(false, "Please wait for reservations to be processed, try again soon");
+    if (preorder != index.end() && preorder->auction_id == auction_id && auction_period >= preorder->auction_period){
+        check(false, "Please wait for pre-orders to be processed, try again soon");
     }
 
     auto pack_price = auction_price(auction_id, qty);
