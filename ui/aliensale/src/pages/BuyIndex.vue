@@ -15,8 +15,14 @@
                 <div style="margin-bottom:100px">
                   <div v-for="sale in auctionData.sales" :key="sale.sale_symbol" style="display:inline-block;margin-left: 10px">
                     <router-link :to="{ name: 'auction', params: { auction_id: sale.auction_id }}" class="btn btn-secondary">{{ sale.sale_symbol }} Sale</router-link>
-                    <p class="remaining" v-if="sale.remaining > 0">{{sale.remaining}} left</p>
+                    <p class="remaining" v-if="sale.remaining > 0 && sale.started" style="margin:5px 0">{{sale.remaining}} remaining</p>
+                    <p v-if="sale.remaining > 0 && sale.started" class="small">&nbsp;</p>
+
+                    <p v-if="!sale.started" style="margin:5px 0">Starting in : <start-countdown :start="sale.start_time" @finished="loadAuctions" /></p>
+                    <p v-if="!sale.started" class="small">Preorder available</p>
+
                     <p class="remaining sold-out" v-if="sale.remaining == 0">SOLD OUT!</p>
+<!--                    {{sale}}-->
                   </div>
                   <div v-html="auctionData.description" style="" class="card-desc"></div>
 <!--                  {{auctionData}}-->
@@ -106,8 +112,13 @@
 </style>
 
 <script>
+import StartCountdown from 'components/StartCountdown'
+
 export default {
   name: 'BuyIndexPage',
+  components: {
+    'start-countdown': StartCountdown
+  },
   data () {
     return {
       auctions: [],
@@ -139,6 +150,7 @@ export default {
 
       if (res && res.rows.length) {
         res.rows.forEach(a => {
+          console.log(a)
           const [, saleSymbol] = a.price_symbol.symbol.split(',')
           a.sale_symbol = saleSymbol
 
@@ -156,7 +168,11 @@ export default {
             }
           }
 
+          const startTimeInt = this.parseDate(a.start_time)
+          const now = Date.now()
           auctions[packSymbol].sales.push({
+            start_time: startTimeInt,
+            started: (startTimeInt <= now),
             remaining: a.quantity_remaining,
             sale_symbol: a.sale_symbol,
             auction_id: a.auction_id
@@ -165,6 +181,22 @@ export default {
       }
 
       this.auctions = auctions
+    },
+    parseDate (fullStr) {
+      const [fullDate] = fullStr.split('.')
+      const [dateStr, timeStr] = fullDate.split('T')
+      const [year, month, day] = dateStr.split('-')
+      const [hourStr, minuteStr, secondStr] = timeStr.split(':')
+
+      const dt = new Date()
+      dt.setUTCFullYear(year)
+      dt.setUTCMonth(month - 1)
+      dt.setUTCDate(day)
+      dt.setUTCHours(hourStr)
+      dt.setUTCMinutes(minuteStr)
+      dt.setUTCSeconds(secondStr)
+
+      return dt.getTime()
     }
   },
   async mounted () {
