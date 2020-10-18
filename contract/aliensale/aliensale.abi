@@ -429,6 +429,36 @@
             ]
         },
         {
+            "name": "logpreorder",
+            "base": "",
+            "fields": [
+                {
+                    "name": "native_address",
+                    "type": "name"
+                },
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "auction_period",
+                    "type": "uint16"
+                },
+                {
+                    "name": "preorder_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "foreign_price",
+                    "type": "uint64"
+                },
+                {
+                    "name": "foreign_address",
+                    "type": "string"
+                }
+            ]
+        },
+        {
             "name": "newinvoice",
             "base": "",
             "fields": [
@@ -563,7 +593,7 @@
             ]
         },
         {
-            "name": "processres",
+            "name": "processpre",
             "base": "",
             "fields": [
                 {
@@ -776,6 +806,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "logpreorder",
+            "type": "logpreorder",
+            "ricardian_contract": ""
+        },
+        {
             "name": "newinvoice",
             "type": "newinvoice",
             "ricardian_contract": ""
@@ -791,8 +826,8 @@
             "ricardian_contract": ""
         },
         {
-            "name": "processres",
-            "type": "processres",
+            "name": "processpre",
+            "type": "processpre",
             "ricardian_contract": ""
         },
         {

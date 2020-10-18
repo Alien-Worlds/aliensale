@@ -184,9 +184,11 @@ namespace alienworlds {
 
             uint64_t primary_key() const { return preorder_id; }
             uint128_t by_auction_time() const { return (uint128_t)auction_id << 96 | (uint128_t)auction_period << 64 | preorder_time.sec_since_epoch(); };
+            uint128_t by_account_auction() const { return (uint128_t)account.value << 64 | auction_id; };
         };
         typedef multi_index<"preorders"_n, preorder_item,
-            indexed_by<"byauction"_n, const_mem_fun<preorder_item, uint128_t, &preorder_item::by_auction_time> >
+            indexed_by<"byauction"_n, const_mem_fun<preorder_item, uint128_t, &preorder_item::by_auction_time> >,
+            indexed_by<"byaccount"_n, const_mem_fun<preorder_item, uint128_t, &preorder_item::by_account_auction> >
             > preorders_table;
 
         // Local instances
@@ -250,11 +252,14 @@ namespace alienworlds {
         /* Reserve a future sale */
         [[eosio::action]] void preorder(name buyer, uint64_t auction_id, uint16_t auction_period, uint8_t qty, string referrer);
 
-        /* Process reservations, should be called at the start of each period */
-        [[eosio::action]] void processres(uint64_t auction_id, uint16_t auction_period, uint8_t qty);
+        /* Process preorders, should be called at the start of each period */
+        [[eosio::action]] void processpre(uint64_t auction_id, uint16_t auction_period, uint8_t qty);
 
         /* Refund an unfulfilled reservation */
         [[eosio::action]] void refundpreord(uint64_t preorder_id);
+
+        /* log preorder so the frontend can get the foreign address to send to */
+        [[eosio::action]] void logpreorder(name native_address, uint64_t auction_id, uint16_t auction_period, uint64_t preorder_id, uint64_t foreign_price, string foreign_address);
 
         /* Swap from ETH, account must exist in the ethswap table */
          [[eosio::action]] void addethswap(checksum160 eth_address, asset quantity);

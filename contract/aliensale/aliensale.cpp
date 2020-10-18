@@ -277,7 +277,7 @@ void aliensale::preorder(name buyer, uint64_t auction_id, uint16_t auction_perio
     asset quantity(amount, auction->price_symbol.symbol);
 
     bool paid = false;
-    string foreign_address;
+    string foreign_address = "";
 
     if (foreign_chain == "wax"_n){
         auto deposit = _deposits.find(buyer.value);
@@ -301,8 +301,10 @@ void aliensale::preorder(name buyer, uint64_t auction_id, uint16_t auction_perio
         chain_idx.erase(addr);
     }
 
+    uint64_t preorder_id = _preorders.available_primary_key();
+
     _preorders.emplace(buyer, [&](auto &r){
-        r.preorder_id      = _preorders.available_primary_key();
+        r.preorder_id      = preorder_id;
         r.auction_id       = auction_id;
         r.auction_period   = auction_period;
         r.preorder_time    = time_point(current_time_point().time_since_epoch());
@@ -314,9 +316,16 @@ void aliensale::preorder(name buyer, uint64_t auction_id, uint16_t auction_perio
         r.referrer         = referrer;
     });
 
+    action(
+        permission_level{get_self(), "log"_n},
+        get_self(), "logpreorder"_n,
+        make_tuple(buyer, auction_id, auction_period, preorder_id, amount, foreign_address)
+    ).send();
 }
 
-void aliensale::processres(uint64_t auction_id, uint16_t auction_period, uint8_t loop_count) {
+void aliensale::logpreorder(name native_address, uint64_t auction_id, uint16_t auction_period, uint64_t preorder_id, uint64_t foreign_price, string foreign_address) {}
+
+void aliensale::processpre(uint64_t auction_id, uint16_t auction_period, uint8_t loop_count) {
     // process "loop_count" items from the reservations table, delete unpaid entries as we go
     uint128_t start = 0;
     start |= (uint128_t)auction_id << 96;
