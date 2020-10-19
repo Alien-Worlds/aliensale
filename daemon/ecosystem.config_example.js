@@ -51,6 +51,16 @@ module.exports = {
             env: {
                 CONFIG
             }
+        },
+        {
+            name: "process-preorders",
+            script: "./process-preorders.js",
+            node_args: ["--max-old-space-size=8192"],
+            autorestart: true,
+            kill_timeout: 3600,
+            env: {
+                CONFIG
+            }
         }
     ]
 };
