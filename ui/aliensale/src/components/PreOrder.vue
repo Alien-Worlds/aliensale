@@ -44,7 +44,7 @@
     </div>
 
     <div style="margin-bottom: 30px">
-      <h4>My Pre-Orders</h4>
+      <h4 class="highlight" style="margin-bottom:10px">My Pre-Orders</h4>
       <div v-for="preorder of myPreorders" v-bind:key="preorder.preorder_id">
         <div class="d-flex">
           <div class="p-1 flex-grow-1 bd-highlight">Period {{preorder.auction_period}}</div>
@@ -55,7 +55,7 @@
       </div>
     </div>
     <div style="margin-bottom: 30px">
-      <h4>Pre-Orders</h4>
+      <h4 class="highlight" style="margin-bottom:10px">Pre-Orders</h4>
       <div v-for="price of periodPrices" v-bind:key="price.value">
         <div v-if="preorders[price.value] > 0" class="d-flex">
           <div class="p-1 flex-grow-1 bd-highlight">{{price.text}}</div>
