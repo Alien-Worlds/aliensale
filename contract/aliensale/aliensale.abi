@@ -283,6 +283,24 @@
             ]
         },
         {
+            "name": "editpreord",
+            "base": "",
+            "fields": [
+                {
+                    "name": "preorder_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "new_auction_period",
+                    "type": "uint16"
+                },
+                {
+                    "name": "qty",
+                    "type": "uint8"
+                }
+            ]
+        },
+        {
             "name": "ethswap_item",
             "base": "",
             "fields": [
@@ -605,7 +623,7 @@
                     "type": "uint16"
                 },
                 {
-                    "name": "qty",
+                    "name": "loop_count",
                     "type": "uint8"
                 }
             ]
@@ -625,6 +643,38 @@
                 {
                     "name": "address",
                     "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "refund",
+            "base": "",
+            "fields": [
+                {
+                    "name": "refund_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "refund_item",
+            "base": "",
+            "fields": [
+                {
+                    "name": "refund_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                },
+                {
+                    "name": "number_packs",
+                    "type": "uint16"
                 }
             ]
         },
@@ -801,6 +851,11 @@
             "ricardian_contract": ""
         },
         {
+            "name": "editpreord",
+            "type": "editpreord",
+            "ricardian_contract": ""
+        },
+        {
             "name": "loginvoice",
             "type": "loginvoice",
             "ricardian_contract": ""
@@ -833,6 +888,11 @@
         {
             "name": "redeemswap",
             "type": "redeemswap",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "refund",
+            "type": "refund",
             "ricardian_contract": ""
         },
         {
@@ -897,6 +957,13 @@
         {
             "name": "preorders",
             "type": "preorder_item",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "refunds",
+            "type": "refund_item",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

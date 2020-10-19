@@ -191,6 +191,21 @@ namespace alienworlds {
             indexed_by<"byaccount"_n, const_mem_fun<preorder_item, uint128_t, &preorder_item::by_account_auction> >
             > preorders_table;
 
+
+        /*
+         * Refunds, mainly for preorders
+         */
+        struct [[eosio::table("refunds")]] refund_item {
+            uint64_t refund_id;
+            name     account;
+            asset    quantity;
+            uint16_t number_packs;
+
+            uint64_t primary_key() const { return refund_id; }
+        };
+        typedef multi_index<"refunds"_n, refund_item> refunds_table;
+
+
         // Local instances
         addresses_table    _addresses;
         invoices_table     _invoices;
@@ -201,6 +216,7 @@ namespace alienworlds {
         swaps_table        _swaps;
         ethswaps_table     _ethswaps;
         preorders_table    _preorders;
+        refunds_table    _refunds;
 
         // uint64_t compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain);
         std::string bytetohex(unsigned char *data, int len);
@@ -253,10 +269,16 @@ namespace alienworlds {
         [[eosio::action]] void preorder(name buyer, uint64_t auction_id, uint16_t auction_period, uint8_t qty, string referrer);
 
         /* Process preorders, should be called at the start of each period */
-        [[eosio::action]] void processpre(uint64_t auction_id, uint16_t auction_period, uint8_t qty);
+        [[eosio::action]] void processpre(uint64_t auction_id, uint16_t auction_period, uint8_t loop_count);
 
         /* Refund an unfulfilled reservation */
         [[eosio::action]] void refundpreord(uint64_t preorder_id);
+
+        /* Refund */
+        [[eosio::action]] void refund(uint64_t refund_id);
+
+        /* Refund an unfulfilled reservation */
+        [[eosio::action]] void editpreord(uint64_t preorder_id, uint16_t new_auction_period, uint8_t qty);
 
         /* log preorder so the frontend can get the foreign address to send to */
         [[eosio::action]] void logpreorder(name native_address, uint64_t auction_id, uint16_t auction_period, uint64_t preorder_id, uint64_t foreign_price, string foreign_address);
