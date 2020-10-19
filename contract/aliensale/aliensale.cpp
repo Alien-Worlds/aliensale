@@ -375,28 +375,30 @@ void aliensale::processpre(uint64_t auction_id, uint16_t auction_period, uint8_t
 
             check(packs_reserved < 250, "Excessive packs being sent");
 
-            auto pack_asset = auction->pack.quantity;
-            pack_asset.amount = packs_reserved;
-            string memo = "Buying in auction (pre-order)";
+            if (packs_reserved > 0){
+                auto pack_asset = auction->pack.quantity;
+                pack_asset.amount = packs_reserved;
+                string memo = "Buying in auction (pre-order)";
 
-            // deduct amount bought from auction
-            _auctions.modify(auction, get_self(), [&](auto &a){
-                a.pack.quantity.amount -= pack_asset.amount;
-            });
+                // deduct amount bought from auction
+                _auctions.modify(auction, get_self(), [&](auto &a){
+                    a.pack.quantity.amount -= pack_asset.amount;
+                });
 
-            action(
-                permission_level{get_self(), "xfer"_n},
-                auction->pack.contract, "transfer"_n,
-                make_tuple(get_self(), preorder->account, pack_asset, memo)
-            ).send();
+                action(
+                    permission_level{get_self(), "xfer"_n},
+                    auction->pack.contract, "transfer"_n,
+                    make_tuple(get_self(), preorder->account, pack_asset, memo)
+                ).send();
 
-            // add sale record
-            _sales.emplace(get_self(), [&](auto &s){
-                s.sale_id    = _sales.available_primary_key();
-                s.auction_id = auction_id;
-                s.quantity   = preorder->quantity;
-                s.referrer   = preorder->referrer;
-            });
+                // add sale record
+                _sales.emplace(get_self(), [&](auto &s){
+                    s.sale_id    = _sales.available_primary_key();
+                    s.auction_id = auction_id;
+                    s.quantity   = preorder->quantity;
+                    s.referrer   = preorder->referrer;
+                });
+            }
         }
 
         if (is_overbuy){
