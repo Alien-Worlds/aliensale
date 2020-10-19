@@ -62,7 +62,7 @@ export default {
         d.name = d.name.replace('of Great Britain and Northern Ireland', '')
         return d
       })
-      const special = ['GB', 'US', 'CA', 'ES', 'CN', 'KR']
+      const special = ['GB', 'US', 'CA', 'SE', 'CN', 'KR']
       const specialCountries = countries.filter(c => special.includes(c.code))
 
       const selectList = document.createElement('select')
