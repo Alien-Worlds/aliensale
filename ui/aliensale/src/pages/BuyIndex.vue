@@ -18,7 +18,7 @@
                     <p class="remaining" v-if="sale.remaining > 0 && sale.started" style="margin:5px 0">{{sale.remaining}} remaining</p>
                     <p v-if="sale.remaining > 0 && sale.started" class="small">&nbsp;</p>
 
-                    <p v-if="!sale.started" style="margin:5px 0">Starting in : <start-countdown :start="sale.start_time" @finished="loadAuctions" /></p>
+                    <p v-if="!sale.started" style="margin:5px 0">Starts in : <start-countdown :start="sale.start_time" @finished="loadAuctions" /></p>
                     <p v-if="!sale.started" class="small">Preorder available</p>
 
                     <p class="remaining sold-out" v-if="sale.remaining == 0" style="margin:5px 0">SOLD OUT!</p>
