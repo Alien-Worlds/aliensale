@@ -34,7 +34,6 @@
                 </div>
                 <div class="col-md-3 unbox2">
                   <div v-if="auction.has_started && auction.amount > 0">
-                    {{auction.amount}}
                     <country-select ref="country" @selected="startBuy" />
 
                     <h2 class="highlight">
@@ -52,7 +51,7 @@
 <!--                        {{auction.start_time}}-->
                         <span>Price drop in <countdown :start="parseDate(auction.start_time)" :period="auction.period_length" :cooldown="auction.break_length" v-on:finished="finishedPeriod()" v-on:cooldown="finishedPeriod()" /></span>
                       </h2>
-                      Next price <div class="next-price">{{ auction.next_price }}</div>
+                      Next price <div class="next-price highlight">{{ auction.next_price }}</div>
                     </div>
                     <div v-else>
                       Lowest price reached
@@ -65,7 +64,7 @@
                     Sold Out!
                   </div>
 
-                  <div v-if="!auction.has_started">
+                  <div>
                     <pre-order :auction-data="auction" :accounts="getAccountName" />
                   </div>
 
