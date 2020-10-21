@@ -421,6 +421,20 @@ void aliensale::processpre(uint64_t auction_id, uint16_t auction_period, uint8_t
     }
 }
 
+void aliensale::paymentpre(uint64_t preorder_id, string tx_id) {
+    require_auth(get_self());
+
+    auto preorder = _preorders.find(preorder_id);
+    check(preorder != _preorders.end(), "Pre-order not found");
+
+    auto auction = _auctions.find(preorder->auction_id);
+    check(auction != _auctions.end(), "Auction is invalid");
+
+    _preorders.modify(*preorder, same_payer, [&](auto &p){
+        p.paid = true;
+    });
+}
+
 void aliensale::refundpreord(uint64_t preorder_id) {
     require_auth(get_self());
 

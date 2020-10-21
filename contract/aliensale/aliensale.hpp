@@ -216,7 +216,7 @@ namespace alienworlds {
         swaps_table        _swaps;
         ethswaps_table     _ethswaps;
         preorders_table    _preorders;
-        refunds_table    _refunds;
+        refunds_table      _refunds;
 
         // uint64_t compute_price(vector<extended_asset> items, extended_symbol settlement_currency, name foreign_chain);
         std::string bytetohex(unsigned char *data, int len);
@@ -273,6 +273,9 @@ namespace alienworlds {
 
         /* Refund an unfulfilled reservation */
         [[eosio::action]] void refundpreord(uint64_t preorder_id);
+
+        /* oracle notification that preorder was paid */
+        [[eosio::action]] void paymentpre(uint64_t preorder_id, string tx_id);
 
         /* Refund */
         [[eosio::action]] void refund(uint64_t refund_id);

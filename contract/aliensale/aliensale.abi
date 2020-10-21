@@ -535,6 +535,20 @@
             ]
         },
         {
+            "name": "paymentpre",
+            "base": "",
+            "fields": [
+                {
+                    "name": "preorder_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "tx_id",
+                    "type": "string"
+                }
+            ]
+        },
+        {
             "name": "preorder",
             "base": "",
             "fields": [
@@ -873,6 +887,11 @@
         {
             "name": "payment",
             "type": "payment",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "paymentpre",
+            "type": "paymentpre",
             "ricardian_contract": ""
         },
         {
