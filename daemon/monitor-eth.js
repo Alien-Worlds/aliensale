@@ -23,7 +23,7 @@ const signatureProvider = new JsSignatureProvider([config.private_key]);
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
 let my_accounts = [];
-let invoices = {};
+let invoices = {}, preorders = {};
 const validations = {};
 
 
@@ -71,23 +71,40 @@ const validate_transaction = async (block_num, tx) => {
         balance = parseInt(bal_json.result);
         // balance = tx.balance;
         console.log(`balance is ${balance}`);
-        const invoice = invoices[tx.to.toLowerCase()];
-        console.log(`invoice price ${invoice.price}`);
 
-        // get invoice and check that our balance is > the required amount
-        if (invoice.price <= balance){
-            console.log(`Invoice ${invoice.invoice_id} is fully paid!!  ${invoice.native_address} is getting some packs!`, invoice);
+        if (typeof invoices[tx.to.toLowerCase()] !== 'undefined'){
+            const invoice = invoices[tx.to.toLowerCase()];
+            console.log(`invoice price ${invoice.price}`);
 
-            send_action(invoice, tx.hash);
+            // get invoice and check that our balance is > the required amount
+            if (invoice.price <= balance){
+                console.log(`Invoice ${invoice.invoice_id} is fully paid!!  ${invoice.native_address} is getting some packs!`, invoice);
+
+                send_action(invoice, tx.hash);
+            }
         }
+        else if (typeof preorders[tx.to.toLowerCase()] !== 'undefined'){
+            const preorder = preorders[tx.to.toLowerCase()];
+            const [expected_str] = preorder.quantity.split(' ');
+            const expected_float = parseFloat(expected_str);
+            const balance_float = balance / Math.pow(10, 18);
+
+            // console.log(preorder, expected_float, balance_float);
+
+            if (expected_float <= balance_float || expected_float.toFixed(6) === balance_float.toFixed(6)){
+                console.log(`Balance received for preorder`);
+                send_preorder_action(preorder, tx.hash);
+            }
+        }
+
     }
 };
 
 
 const update_accounts = async () => {
     my_accounts = [];
-    let first_run = true;
     console.log(`Update accounts`);
+    let first_run = true;
     let res = {rows:[]};
     let lower_bound = 0;
     while (res.rows.length || first_run){
@@ -100,6 +117,26 @@ const update_accounts = async () => {
                 invoices[addr] = row;
             }
             lower_bound = row.invoice_id + 1;
+        });
+
+        first_run = false;
+    }
+
+
+    console.log(`Update preorder accounts`);
+    first_run = true;
+    res = {rows:[]};
+    lower_bound = 0;
+    while (res.rows.length || first_run){
+        res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'preorders', limit: 100, lower_bound});
+
+        res.rows.forEach((row) => {
+            if (row.quantity.substr(-3) === 'ETH' && !row.paid){
+                const addr = row.foreign_address.toLowerCase();
+                my_accounts.push(addr);
+                preorders[addr] = row;
+            }
+            lower_bound = row.preorder_id + 1;
         });
 
         first_run = false;
@@ -134,6 +171,37 @@ const send_action = async (invoice, tx_id) => {
         console.error(e.message);
     }
 
+};
+
+
+
+const send_preorder_action = async (preorder, tx_id) => {
+    const actions = [];
+    actions.push({
+        account: config.contract,
+        name: 'paymentpre',
+        authorization: [{
+            actor: config.contract,
+            permission: config.payment_permission,
+        }],
+        data: {
+            preorder_id: preorder.preorder_id,
+            tx_id
+        }
+    });
+
+    // console.log(actions);
+
+    try {
+        const eos_res = await api.transact({actions}, {
+            blocksBehind: 3,
+            expireSeconds: 30,
+        });
+        console.log(`Sent payment to contract ${eos_res.transaction_id}`);
+    }
+    catch (e) {
+        console.error(e.message);
+    }
 };
 
 const sleep = async (ms) => {
@@ -172,7 +240,7 @@ const check = async () => {
         const res = await fetch(url);
         const json = await res.json();
 
-        // console.log(json);
+        // console.log(config.eth.etherscan_endpoint);
 
         if (json.result.length) {
             const with_balance = json.result.filter(r => r.balance !== '0');
@@ -181,7 +249,7 @@ const check = async () => {
 
             for (let r = 0; r < with_balance.length; r++){
                 const {account, balance} = with_balance[r];
-                const url = `${config.eth.etherscan_endpoint}?module=account&action=txlist&address=${account.toLowerCase()}&startblock=${block_num - 1000}&endblock=${block_num}&sort=asc&apikey=${config.eth.etherscan_api_key}`;
+                const url = `${config.eth.etherscan_endpoint}?module=account&action=txlist&address=${account.toLowerCase()}&startblock=${block_num - 5000}&endblock=${block_num}&sort=asc&apikey=${config.eth.etherscan_api_key}`;
                 const res = await fetch(url);
                 const json = await res.json();
 
@@ -190,16 +258,21 @@ const check = async () => {
                     console.error(`Failed to get transactions for ${account}`, json);
                     continue;
                 }
+                if (json.status === '0'){
+                    continue;
+                }
+
                 const tx = json.result[0];
 
-                if (!tx.to){
+                if (!tx || !tx.to){
                     console.error(`Transaction didnt contain "to"`, json);
                     continue;
                 }
                 const invoice = invoices[tx.to.toLowerCase()];
+                const preorder = preorders[tx.to.toLowerCase()];
                 // console.log(tx)
 
-                if (typeof invoice !== 'undefined'){
+                if (typeof invoice !== 'undefined' || typeof preorder !== 'undefined'){
                     tx.balance = balance;
 
                     if (typeof validations[tx.blockNumber] === 'undefined'){
@@ -253,7 +326,7 @@ const run = async () => {
             await sleep(4000);
         }
 
-        await sleep(60000);
+        await sleep(120000);
 
     }
 }
