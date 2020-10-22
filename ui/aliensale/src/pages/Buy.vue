@@ -18,8 +18,8 @@
                   <img  :src="ipfsRoot + auction.pack_data.metadata.img" class="img-fluid b-lazy pack b-loaded pack-img" alt="Pack">
 
                 </div>
-                <div class="col-md-1 unbox"></div>
-                <div class="col-md-3 unbox2">
+                <div class="col-lg-1 unbox"></div>
+                <div class="col-lg-3 unbox2">
 
                   <h2 class="highlight" v-if="auction.amount">
                     <div class="colored">{{ auction.amount }} Packs remaining</div>
@@ -30,9 +30,9 @@
                   <div id="description" v-html="auction.pack_data.metadata.description"></div>
 
                 </div>
-                <div class="col-md-1 unbox">
+                <div class="col-lg-1 unbox">
                 </div>
-                <div class="col-md-3 unbox2">
+                <div class="col-lg-3 unbox2">
                   <div v-if="auction.has_started && auction.amount > 0">
                     <country-select ref="country" @selected="startBuy" />
 
@@ -68,7 +68,7 @@
                     <pre-order :auction-data="auction" :accounts="getAccountName" />
                   </div>
 
-                  <div class="col-md-1 unbox"></div>
+                  <div class="col-lg-1 unbox"></div>
 
                 </div>
 
