@@ -43,7 +43,7 @@
       <p class="buy-control"><button type="Buy" class="button" style="display:inline;" @click="startPreOrder">Pre-Order</button></p>
     </div>
 
-    <div style="margin-bottom: 30px">
+    <div style="margin-bottom: 30px" v-if="myPreorders.length">
       <h4 class="highlight" style="margin-bottom:10px">My Pre-Orders</h4>
       <div v-for="preorder of myPreorders" v-bind:key="preorder.preorder_id">
         <div class="d-flex">
