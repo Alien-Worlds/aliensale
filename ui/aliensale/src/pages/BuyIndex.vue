@@ -144,7 +144,8 @@ export default {
       const res = await this.$wax.rpc.get_table_rows({
         code: process.env.saleContract,
         scope: process.env.saleContract,
-        table: 'auctions'
+        table: 'auctions',
+        reverse: true
       })
 
       const auctions = {}
