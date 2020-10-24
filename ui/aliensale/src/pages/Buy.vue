@@ -46,7 +46,7 @@
 
                     <p class="buy-control"><button type="Buy" class="button" style="display:inline;" @click="preBuy">Buy Now</button></p>
 
-                    <div v-if="auction.current_period < auction.period_count">
+                    <div v-if="auction.current_period + 1 < auction.period_count">
                       <h2 class="highlight">
 <!--                        {{auction.start_time}}-->
                         <span>Price drop in <countdown :start="parseDate(auction.start_time)" :period="auction.period_length" :cooldown="auction.break_length" v-on:finished="finishedPeriod()" v-on:cooldown="finishedPeriod()" /></span>
