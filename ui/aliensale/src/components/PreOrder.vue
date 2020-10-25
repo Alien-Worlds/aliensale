@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div style="margin-bottom: 30px">
+    <div style="margin-bottom: 30px" v-if="preordersTotal">
       <h4 class="highlight" style="margin-bottom:10px">Pre-Orders</h4>
       <div v-for="price of periodPrices" v-bind:key="price.value">
         <div v-if="preorders[price.value] > 0" class="d-flex">
@@ -94,6 +94,7 @@ export default {
     return {
       preorders: [],
       myPreorders: [],
+      prordersTotal: 0,
       preOrderPeriod: null,
       periodPrices: null,
       qty: 1,
@@ -334,6 +335,8 @@ export default {
         }
         preorders[row.auction_period] += row.number_packs
       }
+
+      this.preordersTotal = preorders.reduce((t, v) => t + v)
 
       return preorders
     },
