@@ -307,14 +307,15 @@ export default {
       const cycleLength = auctionData.period_length + auctionData.break_length
       const remainder = timeIntoSale % cycleLength
       let periodNumber = (timeIntoSale - remainder) / cycleLength
-      if (periodNumber > auctionData.period_count) {
-        periodNumber = auctionData.period_count
+      if (periodNumber > auctionData.period_count - 1) {
+        periodNumber = auctionData.period_count - 1
       }
 
       return periodNumber
     },
     currentPrice (auctionData) {
       const periodNumber = this.currentPeriod(auctionData)
+      // console.log('periodNumber', periodNumber)
 
       const startPrice = parseInt(auctionData.start_price)
       // console.log(`Start prioce ${startPrice}`)
@@ -325,6 +326,7 @@ export default {
         priceSats -= firstStepPrice
         priceSats -= stepPrice * (periodNumber - 1)
       }
+      // console.log(priceSats)
       const price = priceSats / Math.pow(10, auctionData.price_symbol.precision)
       // console.log(`startPrice ${startPrice}, stepPrice ${stepPrice}, firstStepPrice ${firstStepPrice}, priceSats ${priceSats}, price ${price}, periodNumber ${periodNumber}`)
 
@@ -338,9 +340,9 @@ export default {
       return `${amount.toFixed(auctionData.price_symbol.precision)} ${sym}`
     },
     nextPrice (auctionData) {
-      const periodNumber = this.currentPeriod(auctionData) + 1
+      const periodNumber = this.currentPeriod(auctionData)
 
-      if (periodNumber > auctionData.period_count) {
+      if (periodNumber > auctionData.period_count - 1) {
         return this.currentPrice(auctionData)
       }
 
