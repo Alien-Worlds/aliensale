@@ -76,6 +76,17 @@ void aliensale::addauction(extended_asset pack, time_point start_time, foreign_s
     });
 }
 
+void aliensale::closeauction(uint64_t auction_id) {
+    require_auth(get_self());
+
+    auto auction = _auctions.find(auction_id);
+    check(auction != _auctions.end(), "Auction not found");
+
+    _auctions.modify(*auction, get_self(), [&](auto &a){
+        a.pack.quantity.amount = 0;
+    });
+}
+
 void aliensale::delauction(uint64_t auction_id) {
     require_auth(get_self());
 

@@ -221,6 +221,16 @@
             "fields": []
         },
         {
+            "name": "closeauction",
+            "base": "",
+            "fields": [
+                {
+                    "name": "auction_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "delauction",
             "base": "",
             "fields": [
@@ -842,6 +852,11 @@
         {
             "name": "clearswaps",
             "type": "clearswaps",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "closeauction",
+            "type": "closeauction",
             "ricardian_contract": ""
         },
         {

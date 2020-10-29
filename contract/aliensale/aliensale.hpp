@@ -241,6 +241,9 @@ namespace alienworlds {
         /* Add auction */
         [[eosio::action]] void addauction(extended_asset pack, time_point start_time, foreign_symbol price_symbol, uint64_t start_price, uint32_t period_length, uint32_t break_length, uint64_t first_step, uint64_t price_step, uint8_t period_count);
 
+        /* Close an auction by making number of packs available 0 */
+        [[eosio::action]] void closeauction(uint64_t auction_id);
+
         /* Delete auction */
         [[eosio::action]] void delauction(uint64_t auction_id);
 
