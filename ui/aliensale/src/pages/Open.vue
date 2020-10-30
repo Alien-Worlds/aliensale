@@ -533,7 +533,7 @@ export default {
     height: 420px;
     perspective: 1000px; /* Remove this if you don't want the 3D effect */
     position: absolute;
-    top: -520px;
+    top: -620px;
     transition: all 0.3s;
     transition-timing-function: cubic-bezier(.64,.22,.45,1.26);
     cursor: pointer;
