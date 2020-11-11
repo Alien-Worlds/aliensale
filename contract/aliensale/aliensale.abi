@@ -227,6 +227,10 @@
                 {
                     "name": "auction_id",
                     "type": "uint64"
+                },
+                {
+                    "name": "new_total",
+                    "type": "uint64"
                 }
             ]
         },

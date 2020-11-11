@@ -76,14 +76,14 @@ void aliensale::addauction(extended_asset pack, time_point start_time, foreign_s
     });
 }
 
-void aliensale::closeauction(uint64_t auction_id) {
+void aliensale::closeauction(uint64_t auction_id, uint64_t new_total) {
     require_auth(get_self());
 
     auto auction = _auctions.find(auction_id);
     check(auction != _auctions.end(), "Auction not found");
 
     _auctions.modify(*auction, get_self(), [&](auto &a){
-        a.pack.quantity.amount = 0;
+        a.pack.quantity.amount = new_total;
     });
 }
 
@@ -473,7 +473,7 @@ void aliensale::refund(uint64_t refund_id) {
     require_auth(get_self());
 
     auto refund = _refunds.find(refund_id);
-    check(refund != _refunds.end(), "Pre-order not found");
+    check(refund != _refunds.end(), "Refund not found");
 
     check(refund->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Can only refund WAX sales");
 
