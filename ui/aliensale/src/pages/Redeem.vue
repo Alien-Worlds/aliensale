@@ -1,6 +1,9 @@
 <template>
   <q-page class="full-width column wrap justify-start content-center planet-bg-page">
     <div class="text-h1">Claim Airdrop</div>
+
+    <p><a href="https://docs.google.com/spreadsheets/d/1YzxPsf_6fs_HmNmhNtkVBLCDYUBpiNnlfVF7ViC-p2A/edit" target="_blank">View list of Ethereum addresses entitled to airdrop</a></p>
+
     <div class="d-flex flex-row flex-wrap">
 
       <div class="p-4 w-50">
