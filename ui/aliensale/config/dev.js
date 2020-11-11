@@ -12,5 +12,5 @@ module.exports = {
     redeemBurnEos: 'alienworlds1',
     redeemServer: 'http://127.0.0.1:6565',
     saleServer: 'http://127.0.0.1:6767',
-    ipfsRoot: 'https://cloudflare-ipfs.com/ipfs/'
+    ipfsRoot: 'https://ipfs.io/ipfs/'
 }
