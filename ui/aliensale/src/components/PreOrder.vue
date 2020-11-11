@@ -172,7 +172,7 @@ export default {
       this.$refs.country.show(this.auctionData)
     },
     async preBid (country) {
-      // console.log('bidwax', this.preOrderPeriod, this.accounts.wax, this.qty, this.auctionData, country)
+      console.log('bidwax', this.preOrderPeriod, this.accounts.wax, this.qty, this.auctionData, country)
       const account = this.accounts.wax
       const auction = this.auctionData
       const qty = this.qty
@@ -244,6 +244,17 @@ export default {
             precision: 18,
             to: log.foreign_address,
             memo: ''
+          }
+        } else if (auction.price_symbol.chain === 'eos') {
+          this.paymentRequest = {
+            network: 'eos',
+            contract: auction.price_symbol.contract,
+            amount: log.foreign_price / Math.pow(10, auction.price_symbol.precision),
+            symbol: auction.price_symbol.symbol,
+            precision: auction.price_symbol.precision,
+            from: this.accounts.eos,
+            to: process.env.redeemContractEos,
+            memo: log.foreign_address
           }
         }
 

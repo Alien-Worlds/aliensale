@@ -24,6 +24,8 @@
             <p>Please pay the following amount</p>
             <p class="text-h6">{{ value.amount }} {{ value.symbol }}</p>
             <p>To : {{ value.to }}</p>
+            <p v-if="value.memo">Memo : {{ value.memo }}</p>
+            <p v-if="value.memo">IMPORTANT : Make sure you use the correct memo</p>
           </div>
         </q-card-section>
         <q-card-section>
@@ -73,6 +75,10 @@ export default {
       const val = this.value
 
       if (val.network === 'eos') {
+        if (!this.getAccountName.eos) {
+          this.$store.dispatch('ual/renderLoginModal', val.network, { root: true })
+          return
+        }
         console.log('val changed', val)
         const actions = [{
           account: val.contract,

@@ -22,14 +22,14 @@
           <b-dropdown-item href="#" @click="login('wax')" v-if="!getAccountName.wax">Login</b-dropdown-item>
           <b-dropdown-item href="#" @click="logout('wax')" v-if="getAccountName.wax">Logout</b-dropdown-item>
         </b-dropdown>
-        <!-- <b-dropdown style="margin-right:20px">
+        <b-dropdown style="margin-right:20px">
           <template v-slot:button-content>
             <img src="/images/eos-logo.png" :class="eosLogoClass" />
           </template>
           <b-dropdown-item href="#" disabled v-if="getAccountName.eos">{{getAccountName.eos}}</b-dropdown-item>
           <b-dropdown-item href="#" @click="login('eos')" v-if="!getAccountName.eos">Login</b-dropdown-item>
           <b-dropdown-item href="#" @click="logout('eos')" v-if="getAccountName.eos">Logout</b-dropdown-item>
-        </b-dropdown> -->
+        </b-dropdown>
         <b-dropdown>
           <template v-slot:button-content>
             <img src="/images/ethereum-logo.png" :class="ethereumLogoClass" />
