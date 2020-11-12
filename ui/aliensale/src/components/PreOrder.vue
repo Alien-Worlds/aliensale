@@ -50,7 +50,7 @@
           <div class="p-1 flex-grow-1 bd-highlight">Period {{preorder.auction_period}}</div>
           <div class="p-1 flex-grow-1 bd-highlight">{{preorder.number_packs}} packs</div>
           <div class="p-1 flex-grow-1 bd-highlight">{{preorder.quantity}}</div>
-          <div class="p-1 flex-grow-1 bd-highlight"><b-button><font-awesome-icon @click="startEditPreorder(preorder)" icon="edit"/></b-button></div>
+          <div class="p-1 flex-grow-1 bd-highlight"><b-button class="preorder-edit"><font-awesome-icon @click="startEditPreorder(preorder)" icon="edit"/></b-button></div>
         </div>
       </div>
     </div>
@@ -70,6 +70,12 @@
   </div>
 </template>
 
+<style lang="scss">
+  .preorder-edit {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+</style>
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { BFormSelect, BButton } from 'bootstrap-vue'
