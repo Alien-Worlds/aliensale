@@ -8,8 +8,8 @@ module.exports = {
     saleContract: 'sale.worlds',
     openContract: 'open.worlds',
     packContract: 'pack.worlds',
-    redeemContractEos: 'alienpromopk',
-    redeemBurnEos: 'alienworlds1',
+    redeemContractEos: 'alienworldst',
+    redeemBurnEos: 'alienworldsr',
     redeemServer: 'https://redeem.alienworlds.io',
     saleServer: 'https://sale.alienworlds.io',
     ipfsRoot: 'https://cloudflare-ipfs.com/ipfs/'
