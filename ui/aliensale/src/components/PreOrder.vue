@@ -384,7 +384,9 @@ export default {
         limit: 100
       })
 
-      const preorders = res.rows.map(p => {
+      const preorders = res.rows.filter(p => {
+        return p.paid
+      }).map(p => {
         // console.log(p)
         const [amountStr, sym] = p.quantity.split(' ')
         // console.log([amountStr, sym])
