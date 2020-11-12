@@ -171,6 +171,10 @@ export default {
         this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
         return
       }
+      if (this.auctionData.price_symbol.chain === 'eos' && !this.accounts.eos) {
+        this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
+        return
+      }
       if (this.preOrderPeriod === null) {
         this.$showError('Please choose the period you would like to bid on')
         return
