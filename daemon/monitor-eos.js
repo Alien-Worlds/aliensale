@@ -20,6 +20,7 @@ const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), te
 
 let my_accounts = [];
 let invoices = {};
+let preorders = {};
 const validations = {}; // block_num : transaction ids to validate and send payment action after 10 blocks
 let sr;
 let watchdog_last_block = 0;
@@ -57,17 +58,47 @@ const set_start_block = async (block_num) => {
     });
 };
 
+
 const update_accounts = async () => {
     my_accounts = [];
-    const res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'invoices', limit: 1000});
-    res.rows.forEach((row) => {
-        if (row.invoice_currency.chain === 'eos'){
-            const addr = row.foreign_address.toLowerCase();
+    console.log(`Update accounts`);
+    let first_run = true;
+    let res = {rows:[]};
+    let lower_bound = 0;
+    while (res.rows.length || first_run){
+        res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'invoices', limit: 100, lower_bound});
 
-            my_accounts.push(addr);
-            invoices[addr] = row;
-        }
-    });
+        res.rows.forEach((row) => {
+            if (row.invoice_currency.chain === 'eos' && !row.completed){
+                const addr = row.foreign_address.toLowerCase();
+                my_accounts.push(addr);
+                invoices[addr] = row;
+            }
+            lower_bound = row.invoice_id + 1;
+        });
+
+        first_run = false;
+    }
+
+
+    console.log(`Update preorder accounts`);
+    first_run = true;
+    res = {rows:[]};
+    lower_bound = 0;
+    while (res.rows.length || first_run){
+        res = await rpc.get_table_rows({json: true, code: config.contract, scope: config.contract, table: 'preorders', limit: 100, lower_bound});
+
+        res.rows.forEach((row) => {
+            if (row.quantity.substr(-6) === 'EOSDAC' && !row.paid){
+                const addr = row.foreign_address.toLowerCase();
+                my_accounts.push(addr);
+                preorders[addr] = row;
+            }
+            lower_bound = row.preorder_id + 1;
+        });
+
+        first_run = false;
+    }
 };
 
 const send_action = async (invoice, tx_id) => {
@@ -95,11 +126,44 @@ const send_action = async (invoice, tx_id) => {
     console.log(`Sent payment to contract ${eos_res.transaction_id}`);
 };
 
+
+const send_preorder_action = async (preorder, tx_id) => {
+    const actions = [];
+    actions.push({
+        account: config.contract,
+        name: 'paymentpre',
+        authorization: [{
+            actor: config.contract,
+            permission: config.payment_permission,
+        }],
+        data: {
+            preorder_id: preorder.preorder_id,
+            tx_id
+        }
+    });
+
+    // console.log(actions);
+
+    try {
+        const eos_res = await api.transact({actions}, {
+            blocksBehind: 3,
+            expireSeconds: 30,
+        });
+        console.log(`Sent payment to contract ${eos_res.transaction_id}`);
+    }
+    catch (e) {
+        console.error(e.message);
+    }
+};
+
+
 const validate_transaction = async (block_num, transaction_id) => {
     console.log(`Validating ${transaction_id} from block ${block_num}`);
     const trx = await foreign_rpc.history_get_transaction(transaction_id, block_num);
-    console.log(trx.trx.trx.actions);
-    trx.trx.trx.actions.forEach((act) => {
+    // console.log(trx.trx.trx.actions);
+    for (let a = 0; a < trx.trx.trx.actions.length; a++){
+        const act = trx.trx.trx.actions[a];
+
         if (act.name === 'transfer' && act.data.to === config.eos.receive_address){
             const invoice = invoices[act.data.memo];
             if (typeof invoice !== 'undefined'){
@@ -126,8 +190,54 @@ const validate_transaction = async (block_num, transaction_id) => {
                     send_action(invoice, transaction_id.toLowerCase());
                 }
             }
+            else {
+                const preorder = preorders[act.data.memo];
+                if (typeof preorder !== 'undefined'){
+                    console.log(`Found preorder!!`, preorder);
+
+                    // get the auction
+                    const auction_res = await rpc.get_table_rows({
+                        json: true,
+                        code: config.contract,
+                        scope: config.contract,
+                        table: 'auctions',
+                        limit: 1,
+                        lower_bound: preorder.auction_id,
+                        upper_bound: preorder.auction_id
+                    });
+
+                    if (auction_res.rows.length){
+                        const auction = auction_res.rows[0];
+                        // console.log(auction);
+                        const [amount_str, sym] = act.data.quantity.split(' ');
+                        const amount = parseFloat(amount_str);
+                        const [required_precision_str, required_symbol] = auction.price_symbol.symbol.split(',');
+                        const required_precision = parseInt(required_precision_str);
+                        if (required_symbol !== sym){
+                            console.error(`Symbol does not match required`, required_symbol, sym);
+                            continue;
+                        }
+                        if (auction.price_symbol.contract != act.account){
+                            console.error(`Wrong contract ${act.account} != ${auction.price_symbol.contract}`);
+                            continue;
+                        }
+
+                        const [required_amount_str] = preorder.quantity.split(' ');
+                        const required = parseFloat(required_amount_str);
+
+                        if (required <= amount){
+                            console.log(`${preorder.account} has paid for preorder ${preorder.preorder_id}!`);
+
+                            send_preorder_action(preorder, transaction_id.toLowerCase());
+                        }
+                    }
+                    else {
+                        console.error(`Could not find auction`);
+                    }
+                }
+            }
         }
-    });
+    }
     // process.exit(0)
 
     /*const [amount_str, sym] = quantity.split(' ');
@@ -197,6 +307,20 @@ class TraceHandler {
                                             }
                                             validations[block_num].push(trx.id.toLowerCase());
 
+                                        }
+                                        else {
+                                            console.log(`Checking preorders`, preorders);
+                                            const preorder = preorders[memo.toLowerCase()];
+
+                                            if (typeof preorder !== 'undefined'){
+                                                console.log(`Found preorder `, preorder);
+
+                                                // save to validations to check after 20 blocks
+                                                if (typeof validations[block_num] === 'undefined'){
+                                                    validations[block_num] = [];
+                                                }
+                                                validations[block_num].push(trx.id.toLowerCase());
+                                            }
                                         }
                                     }
 
