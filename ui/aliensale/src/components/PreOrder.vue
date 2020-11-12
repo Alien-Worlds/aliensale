@@ -253,7 +253,7 @@ export default {
             symbol: auction.price_symbol.symbol,
             precision: auction.price_symbol.precision,
             from: this.accounts.eos,
-            to: process.env.redeemContractEos,
+            to: process.env.redeemBurnEos,
             memo: log.foreign_address
           }
         }
