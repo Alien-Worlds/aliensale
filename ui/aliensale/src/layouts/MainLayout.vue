@@ -20,7 +20,7 @@
           <nav id="navbar_lg" class="navbar fixed-top navbar-expand-lg navbar-dark">
             <div class="container">
 <!--            <button data-trigger="#navbar_main" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav"> <font-awesome-icon icon="bars" /> </button>-->
-            <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/assets/images/our-logo3-128x50.png" alt="site logo"></a>
+            <a id="logo" class="navbar-brand" href="/"><img class="img-fluid" src="https://alienworlds.io/assets/images/our-logo3-128x50.png" alt="Alien Worlds"></a>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <main-menu />
               </div>
