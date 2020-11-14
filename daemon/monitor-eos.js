@@ -367,7 +367,9 @@ const watchdog = () => {
     get_start_block().then(current_block => {
         if (current_block === watchdog_last_block && watchdog_last_block > 0) {
             console.log(`Block not increasing, restarting state receiver`);
+            sr.current_block = -1;
             sr.restart(current_block, 0xffffffff);
+            watchdog_last_block = 0;
         }
         else {
             console.log(`Blocks being received ${current_block} > ${watchdog_last_block}`);
