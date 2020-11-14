@@ -393,7 +393,7 @@ const start = async (start_block) => {
     sr.registerTraceHandler(delta_handler);
     sr.start();
 
-    setInterval(watchdog, 15000);
+    setInterval(watchdog, 30000);
 }
 
 const run = async () => {
