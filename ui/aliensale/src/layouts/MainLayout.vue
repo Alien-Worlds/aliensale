@@ -57,10 +57,10 @@
 </template>
 
 <script>
-    import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-    import MainMenu from 'components/MainMenu'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import MainMenu from 'components/MainMenu'
 
-    export default {
+export default {
   name: 'MainLayout',
   components: {
     'font-awesome-icon': FontAwesomeIcon,
