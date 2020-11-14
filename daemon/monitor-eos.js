@@ -49,6 +49,7 @@ const get_start_block = async () => {
     catch (e){}
 
     const info = await foreign_rpc.get_info();
+    console.log(info);
     return info.last_irreversible_block_num;
 };
 
