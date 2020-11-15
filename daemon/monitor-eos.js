@@ -92,6 +92,7 @@ const update_accounts = async () => {
         res.rows.forEach((row) => {
             if (row.quantity.substr(-6) === 'EOSDAC' && !row.paid){
                 const addr = row.foreign_address.toLowerCase();
+                console.log(`adding ${addr}`)
                 my_accounts.push(addr);
                 preorders[addr] = row;
             }
@@ -165,7 +166,7 @@ const validate_transaction = async (block_num, transaction_id) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({id: transaction_id})
+        body: JSON.stringify({id: `${transaction_id}`})
     });
 
     // const trx = await foreign_rpc.history_get_transaction(transaction_id, block_num);
@@ -319,8 +320,9 @@ class TraceHandler {
 
                                         }
                                         else {
-                                            console.log(`Checking preorders`, memo.toLowerCase());
-                                            const preorder = preorders[memo.toLowerCase()];
+                                            console.log(`Checking preorders`, memo.toLowerCase(), preorders);
+                                            const preorder = preorders['' + memo];
+                                            console.log(preorder)
 
                                             if (typeof preorder !== 'undefined'){
                                                 console.log(`Found preorder `, preorder);
