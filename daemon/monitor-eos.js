@@ -160,10 +160,19 @@ const send_preorder_action = async (preorder, tx_id) => {
 
 const validate_transaction = async (block_num, transaction_id) => {
     console.log(`Validating ${transaction_id} from block ${block_num}`);
-    const trx = await foreign_rpc.history_get_transaction(transaction_id, block_num);
-    // console.log(trx.trx.trx.actions);
-    for (let a = 0; a < trx.trx.trx.actions.length; a++){
-        const act = trx.trx.trx.actions[a];
+    const trx_res = await fetch(`${config.eos.endpoint}/v1/history/get_transaction`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({id: transaction_id})
+    });
+
+    // const trx = await foreign_rpc.history_get_transaction(transaction_id, block_num);
+    const trx = await trx_res.json();
+    console.log(trx.traces);
+    for (let a = 0; a < trx.traces.length; a++){
+        const act = trx.traces[a].act;
 
         if (act.name === 'transfer' && act.data.to === config.eos.receive_address){
             const invoice = invoices[act.data.memo];
@@ -310,7 +319,7 @@ class TraceHandler {
 
                                         }
                                         else {
-                                            console.log(`Checking preorders`, preorders);
+                                            console.log(`Checking preorders`, memo.toLowerCase());
                                             const preorder = preorders[memo.toLowerCase()];
 
                                             if (typeof preorder !== 'undefined'){
