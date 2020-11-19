@@ -4,7 +4,7 @@
 
     <p><a href="https://docs.google.com/spreadsheets/d/1YzxPsf_6fs_HmNmhNtkVBLCDYUBpiNnlfVF7ViC-p2A/edit" target="_blank">View list of Ethereum addresses entitled to airdrop</a></p>
 
-    <div class="d-flex flex-row flex-wrap">
+    <div class="d-flex flex-row flex-wrap" v-if="getAccountName.wax">
 
       <div class="p-4 w-50">
         <h2>EOS</h2>
@@ -12,13 +12,13 @@
           <b-button @click="loginEos">Login to EOS</b-button>
         </div>
 
-        <div v-if="getAccountName.eos && redeemableEos.length">
+        <div v-if="getAccountName.eos && redeemableEos.length" class="claim-qty">
           You have an airdrop to claim!
           <div v-for="token in redeemableEos" :key="token">
             {{token}} <b-button @click="redeemTokenEos(token)">Claim</b-button>
           </div>
         </div>
-        <div v-if="getAccountName.eos && !redeemableEos.length">
+        <div v-if="getAccountName.eos && !redeemableEos.length" class="claim-qty">
           No airdropped EOS tokens
         </div>
       </div>
@@ -30,26 +30,44 @@
           <b-button @click="loginEthereum">Login to Metamask</b-button>
         </div>
 
-        <div v-if="getAccountName.ethereum && redeemableEthereum.length">
+        <div v-if="getAccountName.ethereum && redeemableEthereum.length" class="claim-qty">
           You have an airdrop to claim!
           <div v-for="row in redeemableEthereum" :key="row.ethswap_id">
             {{row.quantity}} <b-button @click="redeemTokenEthereum(row.ethswap_id)">Claim</b-button>
           </div>
         </div>
-        <div v-if="getAccountName.ethereum && !redeemableEthereum.length">
+        <div v-if="getAccountName.ethereum && !redeemableEthereum.length" class="claim-qty">
           No airdropped ETH tokens
         </div>
       </div>
     </div>
+    <div v-else>
+      <login-wax />
+    </div>
   </q-page>
 </template>
 
+<style lang="scss">
+  .claim-qty {
+    display: block;
+    margin-top: 8px;
+    text-shadow: 2px 2px 2px black, -2px -2px 2px black, -2px 2px 2px black, 2px -2px 2px black;
+    &.sold-out {
+      color: red;
+      font-size: 1.2rem;
+    }
+  }
+</style>
+
 <script>
 import { mapGetters } from 'vuex'
+import LoginWax from 'components/LoginWax'
 
 export default {
   name: 'RedeemPage',
-  components: {},
+  components: {
+    'login-wax': LoginWax
+  },
   data () {
     return {
       redeemableEos: [],
@@ -95,8 +113,12 @@ export default {
     },
     async redeemTokenEos (quantity) {
       if (!this.getAccountName.wax) {
-        // make sure they are logged in, they will have to click the buy button again
         this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
+        return
+      }
+      if (!this.getAccountName.eos) {
+        this.$store.dispatch('ual/renderLoginModal', 'eos', { root: true })
+        return
       }
       const actions = []
       actions.push({
