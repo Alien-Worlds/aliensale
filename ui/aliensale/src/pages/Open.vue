@@ -25,7 +25,7 @@
       Waiting for pack open...
     </div>
 
-    <div id="pack-reveal-container" v-if="packReveal" class="mt-8">
+    <div id="pack-reveal-container" v-if="packReveal && videoEnded" class="mt-8">
 
       <div class="d-flex flex-row flex-nowrap justify-content-center">
         <div style="width:300px;position: absolute; top:20px">
@@ -73,6 +73,7 @@
                 <div>
                   <div>{{ pack.qty }} packs</div>
                   {{ pack.metadata.name }}
+                  <div v-if="pack.symbol == 'DACPRO'">Can be opened after 12:00 UTC on 22nd Nov 2020</div>
                 </div>
                 <!-- <div>
                   <b-button @click="openPack(pack)" label="Open one">Open</b-button>
