@@ -56,7 +56,9 @@ const get_start_block = async () => {
     }
     catch (e){}
 
-    return config.eos.default_start_block;
+    const info = await foreign_rpc.get_info();
+    console.log(info);
+    return info.last_irreversible_block_num;
 };
 
 const set_start_block = async (block_num) => {
@@ -206,11 +208,20 @@ const start = async (start_block) => {
     sr.registerTraceHandler(delta_handler);
     sr.start();
 
-    setInterval(watchdog, 15000);
+    // setInterval(watchdog, 15000);
 }
 
 const run = async () => {
-    const start_block = await get_start_block();
+    let start_block = 0;
+    if (process.argv[2]){
+        const block_num = parseInt(process.argv[2]);
+        if (!isNaN(block_num)){
+            start_block = block_num;
+        }
+    }
+    if (start_block == 0){
+        start_block = await get_start_block();
+    }
 
     console.log(`Starting at block ${start_block}`);
 
