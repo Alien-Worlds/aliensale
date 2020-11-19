@@ -69,7 +69,7 @@ export default {
       await this.$store.dispatch('ual/renderLoginModal', 'wax', { root: true })
     },
     async newWax () {
-      window.open('https://all-access.wax.io', '_blank')
+      window.open('https://wallet.wax.io', '_blank')
     },
     showVideo (e) {
       // console.log(e)
