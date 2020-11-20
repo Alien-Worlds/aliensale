@@ -219,6 +219,7 @@ const validate_transaction = async (block_num, transaction_id) => {
 
                     if (auction_res.rows.length){
                         const auction = auction_res.rows[0];
+                        console.log(`Found auction`);
                         // console.log(auction);
                         const [amount_str, sym] = act.data.quantity.split(' ');
                         const amount = parseFloat(amount_str);
@@ -241,6 +242,9 @@ const validate_transaction = async (block_num, transaction_id) => {
 
                             send_preorder_action(preorder, transaction_id.toLowerCase());
                         }
+                        else {
+                            console.log(`Incorrect amount sent! required = ${required}, sent = ${amount}`);
+                        }
                     }
                     else {
                         console.error(`Could not find auction`);
@@ -262,6 +266,85 @@ const validate_transaction = async (block_num, transaction_id) => {
         send_action(invoice, trx.id.toLowerCase());
     }*/
 }
+
+let next_action_ord = 46;
+const poll_v1 = async () => {
+    const offset = (next_action_ord === -1)?-10:10;
+    console.log(`Polling v1 for actions starting at ${next_action_ord}`);
+    const req_json = {
+      'account_name': config.eos.receive_address,
+      'pos': next_action_ord,
+      'offset': offset,
+      'json': true
+    };
+
+    const trx_res = await fetch(`${config.eos.endpoint}/v1/history/get_actions`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(req_json)
+    });
+
+    const json = await trx_res.json();
+    const actions = json.actions.sort((a, b) => {
+        return (a.account_action_seq < b.account_action_seq)?-1:1;
+    });
+
+    for (let a = 0; a < actions.length; a++){
+        const act = actions[a];
+        next_action_ord = act.account_action_seq + 1;
+        // console.log(act);
+        if (act.action_trace.act.name === 'transfer' &&
+            act.action_trace.act.data.to === config.eos.receive_address){
+            console.log(act.action_trace.trx_id);
+            received_transfer(act.action_trace.act.data.memo, act.block_num, act.action_trace.trx_id);
+        }
+    }
+    // console.log(json);
+}
+
+const received_transfer = async (memo, block_num, tx_id) => {
+    console.log(`Received transfer in block ${block_num} with tx_id ${tx_id} with memo ${memo}`);
+    // console.log(from, to, quantity, memo);
+    await update_accounts();
+
+    const invoice = invoices[memo.toLowerCase()];
+
+    if (typeof invoice !== 'undefined'){
+        console.log(`Found invoice `, invoice);
+
+        // save to validations to check after 20 blocks
+        // if (typeof validations[block_num] === 'undefined'){
+        //     validations[block_num] = [];
+        // }
+        // validations[block_num].push(tx_id);
+        setTimeout(() => {
+            validate_transaction(block_num, tx_id);
+        }, 20000);
+
+
+    }
+    else {
+        console.log(`Checking preorders`, memo.toLowerCase());
+        const preorder = preorders['' + memo];
+        // console.log(preorder)
+
+        if (typeof preorder !== 'undefined'){
+            console.log(`Found preorder `, preorder);
+
+            // save to validations to check after 20 blocks
+            // if (typeof validations[block_num] === 'undefined'){
+            //     validations[block_num] = [];
+            // }
+            setTimeout(() => {
+                console.log(`Validating transaction ${tx_id}`);
+                validate_transaction(block_num, tx_id);
+            }, config.eos.number_validations * 500);
+            // validations[block_num].push(tx_id);
+        }
+    }
+};
 
 
 class TraceHandler {
@@ -303,37 +386,7 @@ class TraceHandler {
                                     const quantity = sb.getAsset();
                                     const memo = sb.getString();
                                     if (to === this.config.eos.receive_address){
-                                        console.log(`Received transfer from ${from} in block ${block_num}`);
-                                        console.log(from, to, quantity, memo);
-                                        await update_accounts();
-
-                                        const invoice = invoices[memo.toLowerCase()];
-
-                                        if (typeof invoice !== 'undefined'){
-                                            console.log(`Found invoice `, invoice);
-
-                                            // save to validations to check after 20 blocks
-                                            if (typeof validations[block_num] === 'undefined'){
-                                                validations[block_num] = [];
-                                            }
-                                            validations[block_num].push(trx.id.toLowerCase());
-
-                                        }
-                                        else {
-                                            console.log(`Checking preorders`, memo.toLowerCase(), preorders);
-                                            const preorder = preorders['' + memo];
-                                            console.log(preorder)
-
-                                            if (typeof preorder !== 'undefined'){
-                                                console.log(`Found preorder `, preorder);
-
-                                                // save to validations to check after 20 blocks
-                                                if (typeof validations[block_num] === 'undefined'){
-                                                    validations[block_num] = [];
-                                                }
-                                                validations[block_num].push(trx.id.toLowerCase());
-                                            }
-                                        }
+                                        received_transfer(memo, block_num, trx.id.toLowerCase());
                                     }
 
                                 }
@@ -403,6 +456,9 @@ const start = async (start_block) => {
     });
     sr.registerTraceHandler(delta_handler);
     sr.start();
+
+    setInterval(poll_v1, 5000);
+    poll_v1();
 
     // setInterval(watchdog, 30000);
 }
