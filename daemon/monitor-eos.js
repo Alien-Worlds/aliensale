@@ -267,7 +267,7 @@ const validate_transaction = async (block_num, transaction_id) => {
     }*/
 }
 
-let next_action_ord = 46;
+let next_action_ord = -1;
 const poll_v1 = async () => {
     const offset = (next_action_ord === -1)?-10:10;
     console.log(`Polling v1 for actions starting at ${next_action_ord}`);
