@@ -281,7 +281,7 @@ namespace alienworlds {
         [[eosio::action]] void paymentpre(uint64_t preorder_id, string tx_id);
 
         /* Refund */
-        [[eosio::action]] void refund(uint64_t refund_id);
+        [[eosio::action]] void refund(uint64_t refund_id, string memo_override);
 
         /* Refund an unfulfilled reservation */
         [[eosio::action]] void editpreord(uint64_t preorder_id, uint16_t new_auction_period, uint8_t qty);

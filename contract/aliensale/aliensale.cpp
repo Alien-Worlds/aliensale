@@ -469,7 +469,7 @@ void aliensale::refundpreord(uint64_t preorder_id) {
     _preorders.erase(preorder);
 }
 
-void aliensale::refund(uint64_t refund_id) {
+void aliensale::refund(uint64_t refund_id, string memo_override) {
     require_auth(get_self());
 
     auto refund = _refunds.find(refund_id);
@@ -477,7 +477,12 @@ void aliensale::refund(uint64_t refund_id) {
 
     check(refund->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Can only refund WAX sales");
 
-    string memo = "Alien Worlds Pre-Order Refund";
+  string memo = "Alien Worlds Pre-Order Refund";
+    if (memo_override == ""){
+      memo = memo_override;
+      check(refund->account != "gateiowallet"_n, "Refusing to refund to gate.io exchange without memo");
+    }
+
     action(
         permission_level{get_self(), "xfer"_n},
         "eosio.token"_n, "transfer"_n,

@@ -681,6 +681,10 @@
                 {
                     "name": "refund_id",
                     "type": "uint64"
+                },
+                {
+                    "name": "memo_override",
+                    "type": "string"
                 }
             ]
         },
