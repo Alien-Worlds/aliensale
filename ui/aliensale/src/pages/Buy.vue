@@ -352,10 +352,10 @@ export default {
       console.log(`first step price = ${firstStepPrice}, this period = ${periodNumber}`)
 
       let priceSats = startPrice
-      if (periodNumber >= 1) {
-        priceSats -= firstStepPrice
-        priceSats -= stepPrice * (periodNumber - 1)
-      }
+      // if (periodNumber >= 1) {
+      priceSats -= firstStepPrice
+      priceSats -= stepPrice * periodNumber
+      // }
       const price = priceSats / Math.pow(10, auctionData.price_symbol.precision)
 
       return `${price} ${auctionData.price_symbol.symbol}`
