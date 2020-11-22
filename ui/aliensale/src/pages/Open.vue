@@ -73,7 +73,6 @@
                 <div>
                   <div>{{ pack.qty }} packs</div>
                   {{ pack.metadata.name }}
-                  <div v-if="pack.symbol == 'DACPRO'">Can be opened after 12:00 UTC on 22nd Nov 2020</div>
                 </div>
                 <!-- <div>
                   <b-button @click="openPack(pack)" label="Open one">Open</b-button>
