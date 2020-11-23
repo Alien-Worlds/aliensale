@@ -58,7 +58,7 @@
                     </div>
                   </div>
                   <div v-else-if="!auction.has_started">
-                    <h2 class="colored">Sale starts in : <start-countdown :start="parseDate(auction.start_time)" /></h2>
+                    <h2 class="colored">Sale starts in : <p><start-countdown :start="parseDate(auction.start_time)" /></p></h2>
                   </div>
                   <div v-if="!auction.amount" class="sold-out">
                     Sold Out!
