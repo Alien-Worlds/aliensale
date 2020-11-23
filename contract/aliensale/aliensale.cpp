@@ -717,8 +717,8 @@ uint64_t aliensale::auction_price(uint64_t auction_id, uint8_t qty) {
     uint32_t remainder = time_into_sale % cycle_length;
     uint32_t period_number = (time_into_sale - remainder) / cycle_length;
 
-    if (period_number > auction->period_count) {
-        period_number = auction->period_count;
+    if (period_number >= auction->period_count) {
+        period_number = auction->period_count - 1;
     }
     // we are in the break period
     if (period_number < auction->period_count){
