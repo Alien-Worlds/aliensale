@@ -13,7 +13,7 @@
               <div class="row justify-center w-50">
                 <h2 class="highlight">{{auctionData.name}}</h2>
                 <div style="margin-bottom:100px">
-                  <div v-for="sale in auctionData.sales" :key="sale.sale_symbol" style="display:inline-block;margin-left: 10px;min-width:47%">
+                  <div v-for="sale in auctionData.sales" :key="sale.sale_symbol" style="display:inline-block;margin-left: 10px;min-width:46%">
                     <router-link :to="{ name: 'auction', params: { auction_id: sale.auction_id }}" class="btn btn-secondary">{{ sale.sale_symbol }} Sale</router-link>
                     <p class="remaining" v-if="sale.remaining > 0 && sale.started" style="margin:5px 0">{{sale.remaining}} remaining</p>
                     <p v-if="sale.remaining > 0 && sale.started" class="small">&nbsp;</p>
