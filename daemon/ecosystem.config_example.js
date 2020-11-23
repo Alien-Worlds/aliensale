@@ -1,4 +1,4 @@
-const CONFIG = 'jungle'
+const CONFIG = 'dev'
 
 module.exports = {
     apps: [
@@ -55,6 +55,16 @@ module.exports = {
         {
             name: "process-preorders",
             script: "./process-preorders.js",
+            node_args: ["--max-old-space-size=8192"],
+            autorestart: true,
+            kill_timeout: 3600,
+            env: {
+                CONFIG
+            }
+        },
+        {
+            name: "dcl-redeem",
+            script: "./dcl-redeem.js",
             node_args: ["--max-old-space-size=8192"],
             autorestart: true,
             kill_timeout: 3600,
