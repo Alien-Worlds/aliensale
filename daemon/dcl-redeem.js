@@ -53,6 +53,14 @@ fastify.post('/claim', async (request, reply) => {
         "signature": "0xb88e2130e3de4f49b73ac1fdf1b3e5903adbe6377c40ca1b1a7add47976c36881bff87ecd13a845d9a3af075490b513fa15f2cfd802ceae7211e93830bed8bd81b7b45d1d20e111b86abaff75ce560ad8e74e6f0496fb21ae8087f4e1e91fb2b5011eca11d9acf0eba8e8134ecc59d3533fa2c736bdb193b27f5aa4c4f296c107a1c"
     };*/
 
+    if (req.dcl === 'undefined' || typeof req.dcl === 'undefined' || !req.dcl){
+        reply.code(500);
+        return {success: false, error: 'DCL Name not valid'};
+    }
+    if (!req.eth || req.eth === 'undefined' || req.eth === 'null'){
+        reply.code(500);
+        return {success: false, error: 'Ethereum address not valid'};
+    }
 
     const message_string = `# DCL Signed message\nwax: ${req.wax}\ndcl: ${req.dcl}\neth: ${req.eth}`;
     console.log(message_string);
