@@ -601,6 +601,47 @@ void aliensale::redeemswap(uint64_t ethswap_id, checksum160 eth_address, name ad
     ).send();
 }
 
+void aliensale::redeemdcl(checksum160 eth_address, name address) {
+    require_auth(get_self());
+
+    auto     size   = transaction_size();
+    char *   buffer = (char *)(512 < size ? malloc(size) : alloca(size));
+    uint32_t read   = read_transaction(buffer, size);
+    check(size == read, "ERR::READ_TRANSACTION_FAILED::read_transaction failed");
+    checksum256 tr_id = sha256(buffer, read);
+
+
+    auto swp_idx = _ethswaps.get_index<"byethaddr"_n>();
+    auto swap = swp_idx.find(to_checksum256(eth_address));
+     check(swap == swp_idx.end(), "Promo already sent");
+
+    // add to eth swaps as a complete swap
+    _ethswaps.emplace(get_self(), [&](auto &e){
+        e.ethswap_id = _ethswaps.available_primary_key();
+        e.eth_address = eth_address;
+        e.tx_id = tr_id;
+        e.complete = true;
+    });
+
+    // send the pack tokens out
+    auto quantity = asset{1, symbol{"PROMO", 0}};
+    check(quantity.is_valid(), "Quantity not valid");
+    auto pack_asset = extended_asset{quantity, SWAP_PACK_CONTRACT};
+    uint128_t id = pack_item::extended_asset_id(pack_asset);
+    auto asset_ind = _packs.get_index<"bypack"_n>();
+    auto pack = asset_ind.find(id);
+    check(pack != asset_ind.end(), "Pack not found with this symbol");
+
+    auto pack_to_send = pack->pack_asset;
+    pack_to_send.quantity.amount = quantity.amount;
+    string memo = "Decentraland Promo Pack";
+    action(
+        permission_level{get_self(), "xfer"_n},
+        pack_to_send.contract, "transfer"_n,
+        make_tuple(get_self(), address, pack_to_send.quantity, memo)
+    ).send();
+}
+
 void aliensale::reqrefund(name wax_address, string refund_address) {
     require_auth(wax_address);
 }

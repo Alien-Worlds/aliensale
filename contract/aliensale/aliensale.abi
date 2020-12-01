@@ -657,6 +657,20 @@
             ]
         },
         {
+            "name": "redeemdcl",
+            "base": "",
+            "fields": [
+                {
+                    "name": "eth_address",
+                    "type": "checksum160"
+                },
+                {
+                    "name": "address",
+                    "type": "name"
+                }
+            ]
+        },
+        {
             "name": "redeemswap",
             "base": "",
             "fields": [
@@ -925,6 +939,11 @@
         {
             "name": "processpre",
             "type": "processpre",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "redeemdcl",
+            "type": "redeemdcl",
             "ricardian_contract": ""
         },
         {
