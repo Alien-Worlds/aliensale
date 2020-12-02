@@ -62,6 +62,9 @@
           <div class="p-1 flex-grow-1 bd-highlight">{{preorders[price.value]}}</div>
         </div>
       </div>
+      <div>
+        Total : {{ preordersCount }}
+      </div>
     </div>
 
     <p class="small" v-if="!auctionData.has_started">Packs can be pre-ordered, you will need to pay the full amount of your bid but this will be refunded if you are not successful</p>
@@ -100,6 +103,7 @@ export default {
     return {
       preorders: [],
       myPreorders: [],
+      preordersCount: 0,
       prordersTotal: 0,
       preOrderPeriod: null,
       periodPrices: null,
@@ -457,6 +461,8 @@ export default {
   async mounted () {
     this.periodPrices = this.periodData(this.auctionData).map(p => { return { value: p.period, text: `Period ${p.period + 1} - ${p.price_formatted}`, price: p.price } })
     this.preorders = await this.getPreorders()
+    this.preordersCount = Object.values(this.preorders).reduce((a, b) => a + b)
+    console.log('preorders', this.preorders)
     this.myPreorders = await this.getMyPreorders()
     setInterval(async () => {
       this.preorders = await this.getPreorders()
