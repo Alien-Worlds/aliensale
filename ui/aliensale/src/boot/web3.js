@@ -16,9 +16,10 @@ export default async ({ Vue }) => {
         }
       } else {
         // web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545')) GANACHE FALLBACK
-        throw new Error('Unable to connect to Metamask')
+        throw new Error('Unable to connect to Metamask, window.web3 is undefined')
       }
     } catch (e) {
+      console.error(`Error enabling Metamask ${e.message}`)
       return null
     }
   }
