@@ -457,6 +457,7 @@ void aliensale::refundpreord(uint64_t preorder_id) {
     check(auction != _auctions.end(), "Auction is invalid");
     check(auction->pack.quantity.amount == 0, "Auction has not completed");
 
+    check(preorder->paid, "Preorder is not paid");
     check(preorder->quantity.symbol == symbol{symbol_code{"WAX"}, 8}, "Can only refund WAX sales");
 
     string memo = "Alien Worlds Pre-Order Refund";
