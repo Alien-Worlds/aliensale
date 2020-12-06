@@ -209,13 +209,15 @@ export default {
   }
   .mint-number {
     position:absolute;
-    top:-15px;
-    right:-15px;
+    top:-20px;
+    right:-20px;
     background-color:rgba(0,0,0,0.7);
     color:#fff;
-    padding:10px;
+    padding:6px;
     border-radius:10px;
     text-align:center;
     border: 1px solid #bbb;
+    min-width:55px;
+    font-size: 0.8rem;
   }
 </style>
