@@ -265,6 +265,16 @@
             ]
         },
         {
+            "name": "delpreord",
+            "base": "",
+            "fields": [
+                {
+                    "name": "preorder_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "deposit_item",
             "base": "",
             "fields": [
@@ -894,6 +904,11 @@
         {
             "name": "delpack",
             "type": "delpack",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "delpreord",
+            "type": "delpreord",
             "ricardian_contract": ""
         },
         {

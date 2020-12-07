@@ -277,6 +277,9 @@ namespace alienworlds {
         /* Refund an unfulfilled reservation */
         [[eosio::action]] void refundpreord(uint64_t preorder_id);
 
+        /* Remove a preorder with no refund */
+        [[eosio::action]] void delpreord(uint64_t preorder_id);
+
         /* oracle notification that preorder was paid */
         [[eosio::action]] void paymentpre(uint64_t preorder_id, string tx_id);
 

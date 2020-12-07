@@ -470,6 +470,20 @@ void aliensale::refundpreord(uint64_t preorder_id) {
     _preorders.erase(preorder);
 }
 
+void aliensale::delpreord(uint64_t preorder_id) {
+    require_auth(get_self());
+
+    auto preorder = _preorders.find(preorder_id);
+    check(preorder != _preorders.end(), "Pre-order not found");
+
+    // check the auction has ended
+    auto auction = _auctions.find(preorder->auction_id);
+    check(auction != _auctions.end(), "Auction is invalid");
+    check(auction->pack.quantity.amount == 0, "Auction has not completed");
+
+    _preorders.erase(preorder);
+}
+
 void aliensale::refund(uint64_t refund_id, string memo_override) {
     require_auth(get_self());
 
