@@ -37,7 +37,7 @@
           <div class="container">
             <div class="row">
               <div class="col-md-12"><a target="_blank" href="https://dacoco.io">Copyright Dacoco GmbH 2020</a> :
-                <a href="/terms">USER AGREEMENT / TERMS &amp; CONDITIONS</a> : <a target="_blank" href="https://drive.google.com/file/d/18FBmlTQn781xoaIPj6gfYhI_5pe8W6fp/view">Presentation</a>
+                <a href="/terms">USER AGREEMENT / TERMS &amp; CONDITIONS</a> : <a target="_blank" href="https://drive.google.com/file/d/1qmkQ33DJ5BWyHY3BKk2kkUdwj-3O1mTS/view">Presentation</a>
 
                 <ul class="social-links">
                   <li><a href="mailto:help@dacoco.io"><font-awesome-icon icon="envelope-square"/></a></li>
