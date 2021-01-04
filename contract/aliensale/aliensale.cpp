@@ -658,7 +658,9 @@ void aliensale::redeemdcl(checksum160 eth_address, name address) {
 }
 
 void aliensale::reqrefund(name wax_address, string refund_address) {
-    require_auth(wax_address);
+    if (!has_auth(get_self())){
+      require_auth(wax_address);
+    }
 }
 
 void aliensale::clearinvs() {
