@@ -8,6 +8,7 @@ module.exports = {
     saleContract: 'sale.worlds',
     openContract: 'open.worlds',
     packContract: 'pack.worlds',
+    shiningContract: 's.federation',
     redeemContractEos: 'alienpromopk',
     redeemBurnEos: 'alienworlds1',
     redeemServer: 'http://127.0.0.1:6565',

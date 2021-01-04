@@ -2,10 +2,46 @@
   <q-page class="full-width column wrap justify-start content-center planet-bg-page">
     <div class="w-75 sizer">
 
-      <inventory-tabs />
+      <div v-if="showShine" style="border: 1px solid red">
+        SHINING!
+        <div v-for="shineCard in shineCards" :key="shineCard.asset_id">
+          {{shineCard.name}} - Mint : {{shineCard.template_mint}}
+          <img :src="ipfsRoot + showAssetData.data.img" class="mw-100" :alt="showAssetData.name" style="height:50px" />
+        </div>
+
+        <div v-if="shineCards.length === 4">
+          <b-button @click="submitShine()">Shine</b-button>
+        </div>
+        <b-button @click="cancelShine()">Cancel</b-button>
+      </div>
+
+      <q-dialog v-model="showAsset">
+        <div v-if="showAssetData" class="d-flex p-3" style="background-color:#333;">
+          <div class="d-flex justify-content-center w-50">
+            <img :src="ipfsRoot + showAssetData.data.img" class="mw-100" :alt="showAssetData.name" style="max-height:100%" />
+          </div>
+          <div class="w-50 p-4">
+            <h2>{{showAssetData.name}}</h2>
+            <p>{{showAssetData.data.description}}</p>
+            <div v-for="(val, key) in showAssetData.data" :key="key">
+              <div v-if="key !== 'img' && key !== 'backimg' && key !== 'name' && key !== 'description'" class="d-flex">
+                <div class="w-50">{{key}}</div>
+                <div class="w-50">{{val}}</div>
+              </div>
+            </div>
+
+            <div class="mt-5" v-if="showAssetData.schema.schema_name !== 'land.worlds' && shineData">
+              <b-button @click="shine(showAssetData.template.template_id, showAssetData.asset_id)">Shine</b-button>
+            </div>
+
+          </div>
+        </div>
+      </q-dialog>
+
+      <inventory-tabs v-if="!showShine" />
 
       <div v-if="getAccountName.wax" class="d-flex flex-row flex-wrap">
-        <div class="full-width flex">
+        <div class="full-width flex" v-if="!showShine">
           <div class="w-25">
             <label>
               Rarity
@@ -52,7 +88,7 @@
           </div>
         </div>
         <div v-for="card in cards" :key="card.asset_id" class="p-4 w-25">
-          <div class="d-flex justify-content-center card-item" @click="filterCard(card.template.template_id, card.data.name)">
+          <div class="d-flex justify-content-center card-item" @click="showCard(card.asset_id)" v-bind:class="{ shine: shineIds.includes(card.asset_id) }">
             <div class="d-flex flex-column flex-wrap">
               <div style="position:relative">
                 <div class="mint-number" v-if="card.template_mint > 0">#{{card.template_mint}}</div>
@@ -94,7 +130,12 @@ export default {
       pageSize: 48,
       filterRarity: '',
       filterSchema: '',
-      ipfsRoot: process.env.ipfsRoot
+      ipfsRoot: process.env.ipfsRoot,
+      showAsset: false,
+      showAssetData: null,
+      showShine: false,
+      shineCards: [],
+      shineIds: []
     }
   },
   computed: {
@@ -154,6 +195,18 @@ export default {
         this.reloadCards()
       }
     },
+    showCard (assetId) {
+      console.log('show')
+      if (this.showShine) {
+        console.log('shine')
+        this.addShine(assetId)
+      } else {
+        const card = this.cards.filter(c => c.asset_id === assetId)
+        // console.log('Show card', card, this.cards)
+        this.showAsset = true
+        this.showAssetData = card[0]
+      }
+    },
     removeCard () {
       const filter = JSON.parse(JSON.stringify(this.dataQuery))
       delete filter.template
@@ -174,6 +227,103 @@ export default {
       if (this.page > 1) {
         this.page--
       }
+    },
+    async shine (templateId, assetId) {
+      this.showAsset = false
+      this.showShine = true
+      this.filterCard(templateId, '')
+      this.shineIds = [assetId]
+      this.shineCards = this.cards.filter(c => c.asset_id === assetId)
+      this.shineData = await this.getShiningData()
+    },
+    addShine (assetId) {
+      if (this.showShine && !this.shineIds.includes(assetId)) {
+        const sc = this.shineCards
+        if (sc.length < 4) {
+          sc.push(this.cards.filter(c => c.asset_id === assetId)[0])
+          // console.log(sc)
+          this.shineIds = sc.map(s => s.asset_id)
+          this.shineCards = sc
+        }
+      }
+    },
+    cancelShine () {
+      this.showShine = false
+      this.shineCards = []
+      this.shineIds = []
+      this.removeCard()
+      this.shineData = null
+    },
+    async submitShine () {
+      if (!this.shineData) {
+        return
+      }
+
+      const account = this.getAccountName.wax
+
+      const actions = [{
+        account: 'alien.worlds',
+        name: 'transfer',
+        authorization: [{
+          actor: account,
+          permission: 'active'
+        }],
+        data: {
+          from: account,
+          to: process.env.shiningContract,
+          quantity: this.shineData.cost,
+          memo: 'Shining'
+        }
+      }, {
+        account: 'atomicassets',
+        name: 'transfer',
+        authorization: [{
+          actor: account,
+          permission: 'active'
+        }],
+        data: {
+          from: account,
+          to: process.env.shiningContract,
+          asset_ids: this.shineIds,
+          memo: 'Shining'
+        }
+      }]
+
+      let retVal = null
+
+      try {
+        console.log('shine actions', actions)
+        const shineResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
+        if (shineResp.status === 'executed') {
+          const txId = shineResp.transactionId || shineResp.transaction_id
+          const logData = shineResp.transaction.processed.action_traces[0].inline_traces[0].act.data
+          logData.transaction_id = txId
+          retVal = logData
+        }
+      } catch (e) {
+        this.$showError(e.message)
+      }
+
+      return retVal
+    },
+    async getShiningData (templateId) {
+      let sd = null
+
+      const shiningRes = await this.$wax.rpc.get_table_rows({
+        code: process.env.shiningContract,
+        scope: process.env.shiningContract,
+        table: 'lookups',
+        lower_bound: templateId,
+        upper_bound: templateId,
+        limit: 1
+      })
+
+      if (shiningRes.rows.length) {
+        console.log(shiningRes)
+        sd = shiningRes.rows[0]
+      }
+
+      return sd
     }
   },
   watch: {
@@ -219,5 +369,8 @@ export default {
     border: 1px solid #bbb;
     min-width:55px;
     font-size: 0.8rem;
+  }
+  .shine {
+    border: 2px solid red;
   }
 </style>
