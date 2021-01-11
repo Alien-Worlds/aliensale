@@ -56,6 +56,9 @@ export async function attemptAutoLogin ({ state, commit, dispatch }) {
   }
 }
 async function attemptAutoLoginNetwork ({ state, commit, dispatch, network }) {
+  if (typeof state.SESSION === 'undefined' || typeof state.SESSION[network] === 'undefined' || state.SESSION[network] === null) {
+    return
+  }
   const { accountName, authenticatorName } = state.SESSION[network]
   console.log('attemptAutoLogin', accountName, authenticatorName, network, state.SESSION[network])
 
