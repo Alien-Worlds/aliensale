@@ -1,19 +1,14 @@
 <template>
   <q-page class="full-width column wrap justify-start content-center planet-bg-page">
+
     <div class="w-75 sizer">
 
-      <div v-if="showShine" style="border: 1px solid red">
-        SHINING!
-        <div v-for="shineCard in shineCards" :key="shineCard.asset_id">
-          {{shineCard.name}} - Mint : {{shineCard.template_mint}}
-          <img :src="ipfsRoot + showAssetData.data.img" class="mw-100" :alt="showAssetData.name" style="height:50px" />
-        </div>
+      <b-button v-if="shineCards.length" @click="cancelShine()" style="float:right" variant="danger">
+        <font-awesome-icon icon="times" size="lg"/>
+      </b-button>
+      <shining :cards="shineCards" :shineData="shineData" id="the-shining" />
 
-        <div v-if="shineCards.length === 4">
-          <b-button @click="submitShine()">Shine</b-button>
-        </div>
-        <b-button @click="cancelShine()">Cancel</b-button>
-      </div>
+      <hr v-if="shineCards.length" />
 
       <q-dialog v-model="showAsset">
         <div v-if="showAssetData" class="d-flex p-3" style="background-color:#333;">
@@ -108,19 +103,25 @@
 <script>
 import LoginWax from 'components/LoginWax'
 import InventoryTabs from 'components/InventoryTabs'
+import Shining from 'components/Shining'
 import { mapGetters } from 'vuex'
 import { ExplorerApi } from 'atomicassets'
 import { BFormSelect, BButton, BButtonGroup, BButtonToolbar } from 'bootstrap-vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { scroll } from 'quasar'
+const { getScrollTarget, setScrollPosition } = scroll
 
 export default {
   name: 'InventoryPage',
   components: {
     'login-wax': LoginWax,
+    shining: Shining,
     'inventory-tabs': InventoryTabs,
     'b-form-select': BFormSelect,
     'b-button': BButton,
     'b-button-group': BButtonGroup,
-    'b-button-toolbar': BButtonToolbar
+    'b-button-toolbar': BButtonToolbar,
+    'font-awesome-icon': FontAwesomeIcon
   },
   data () {
     return {
@@ -135,6 +136,7 @@ export default {
       showAssetData: null,
       showShine: false,
       shineCards: [],
+      shineData: null,
       shineIds: []
     }
   },
@@ -195,16 +197,22 @@ export default {
         this.reloadCards()
       }
     },
-    showCard (assetId) {
+    async showCard (assetId) {
       console.log('show')
       if (this.showShine) {
-        console.log('shine')
-        this.addShine(assetId)
+        if (this.shineIds.includes(assetId)) {
+          this.removeShine(assetId)
+        } else {
+          this.addShine(assetId)
+        }
       } else {
         const card = this.cards.filter(c => c.asset_id === assetId)
         // console.log('Show card', card, this.cards)
         this.showAsset = true
         this.showAssetData = card[0]
+        this.shineData = await this.getShiningData(card[0].template.template_id)
+        const target = getScrollTarget(document.getElementById('the-shining'))
+        setScrollPosition(target, target.offsetTop, 1000)
       }
     },
     removeCard () {
@@ -234,10 +242,10 @@ export default {
       this.filterCard(templateId, '')
       this.shineIds = [assetId]
       this.shineCards = this.cards.filter(c => c.asset_id === assetId)
-      this.shineData = await this.getShiningData()
+      // this.shineData = await this.getShiningData(templateId)
     },
     addShine (assetId) {
-      if (this.showShine && !this.shineIds.includes(assetId)) {
+      if (!this.shineIds.includes(assetId)) {
         const sc = this.shineCards
         if (sc.length < 4) {
           sc.push(this.cards.filter(c => c.asset_id === assetId)[0])
@@ -247,64 +255,24 @@ export default {
         }
       }
     },
+    removeShine (assetId) {
+      if (this.shineIds.includes(assetId)) {
+        let sc = this.shineCards
+        sc = sc.filter(c => c.asset_id !== assetId)
+        this.shineIds = sc.map(s => s.asset_id)
+        this.shineCards = sc
+
+        if (!sc.length) {
+          this.cancelShine()
+        }
+      }
+    },
     cancelShine () {
       this.showShine = false
       this.shineCards = []
       this.shineIds = []
       this.removeCard()
       this.shineData = null
-    },
-    async submitShine () {
-      if (!this.shineData) {
-        return
-      }
-
-      const account = this.getAccountName.wax
-
-      const actions = [{
-        account: 'alien.worlds',
-        name: 'transfer',
-        authorization: [{
-          actor: account,
-          permission: 'active'
-        }],
-        data: {
-          from: account,
-          to: process.env.shiningContract,
-          quantity: this.shineData.cost,
-          memo: 'Shining'
-        }
-      }, {
-        account: 'atomicassets',
-        name: 'transfer',
-        authorization: [{
-          actor: account,
-          permission: 'active'
-        }],
-        data: {
-          from: account,
-          to: process.env.shiningContract,
-          asset_ids: this.shineIds,
-          memo: 'Shining'
-        }
-      }]
-
-      let retVal = null
-
-      try {
-        console.log('shine actions', actions)
-        const shineResp = await this.$store.dispatch('ual/transact', { actions, network: 'wax' })
-        if (shineResp.status === 'executed') {
-          const txId = shineResp.transactionId || shineResp.transaction_id
-          const logData = shineResp.transaction.processed.action_traces[0].inline_traces[0].act.data
-          logData.transaction_id = txId
-          retVal = logData
-        }
-      } catch (e) {
-        this.$showError(e.message)
-      }
-
-      return retVal
     },
     async getShiningData (templateId) {
       let sd = null
@@ -339,6 +307,11 @@ export default {
   },
   async mounted () {
     this.reloadCards()
+    this.$root.$on('shiningComplete', () => {
+      console.log('Shining complete!')
+      this.reloadCards()
+      this.cancelShine()
+    })
   }
 }
 </script>
@@ -371,6 +344,6 @@ export default {
     font-size: 0.8rem;
   }
   .shine {
-    border: 2px solid red;
+    filter: drop-shadow(0 0 5px #ff0);
   }
 </style>
