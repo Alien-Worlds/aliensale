@@ -18,6 +18,7 @@
           <div class="w-50 p-4">
             <h2>{{showAssetData.name}}</h2>
             <p>{{showAssetData.data.description}}</p>
+            <p>Template ID : {{showAssetData.template.template_id}}</p>
             <div v-for="(val, key) in showAssetData.data" :key="key">
               <div v-if="key !== 'img' && key !== 'backimg' && key !== 'name' && key !== 'description'" class="d-flex">
                 <div class="w-50">{{key}}</div>
@@ -26,7 +27,16 @@
             </div>
 
             <div class="mt-5" v-if="showAssetData.schema.schema_name !== 'land.worlds' && shineData">
-              <b-button @click="shine(showAssetData.template.template_id, showAssetData.asset_id)">Shine</b-button>
+              <div v-if="shineData.started">
+                <b-button @click="shine(showAssetData.template.template_id, showAssetData.asset_id)">Shine</b-button>
+              </div>
+              <div v-else>
+                <b-button disabled="disabled">Shining Starts in <start-countdown :start="shineData.start_ms" /></b-button>
+              </div>
+
+            </div>
+            <div v-else class="mt-5">
+              <b-button disabled="disabled">Shining not available</b-button>
             </div>
 
           </div>
@@ -107,6 +117,7 @@ import Shining from 'components/Shining'
 import { mapGetters } from 'vuex'
 import { ExplorerApi } from 'atomicassets'
 import { BFormSelect, BButton, BButtonGroup, BButtonToolbar } from 'bootstrap-vue'
+import StartCountdown from 'components/StartCountdown'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { scroll } from 'quasar'
 const { getScrollTarget, setScrollPosition } = scroll
@@ -121,6 +132,7 @@ export default {
     'b-button': BButton,
     'b-button-group': BButtonGroup,
     'b-button-toolbar': BButtonToolbar,
+    'start-countdown': StartCountdown,
     'font-awesome-icon': FontAwesomeIcon
   },
   data () {
@@ -289,9 +301,36 @@ export default {
       if (shiningRes.rows.length) {
         console.log(shiningRes)
         sd = shiningRes.rows[0]
+
+        if (sd.start_time) {
+          const startTimeMs = this.parseDate(sd.start_time)
+          const now = (new Date()).getTime()
+          // const startTimeMs = now
+          // alert(startTimeMs)
+          sd.started = (startTimeMs <= now)
+          if (startTimeMs > now) {
+            sd.start_ms = startTimeMs
+          }
+        }
       }
 
       return sd
+    },
+    parseDate (fullStr) {
+      const [fullDate] = fullStr.split('.')
+      const [dateStr, timeStr] = fullDate.split('T')
+      const [year, month, day] = dateStr.split('-')
+      const [hourStr, minuteStr, secondStr] = timeStr.split(':')
+
+      const dt = new Date()
+      dt.setUTCFullYear(year)
+      dt.setUTCMonth(month - 1)
+      dt.setUTCDate(day)
+      dt.setUTCHours(hourStr)
+      dt.setUTCMinutes(minuteStr)
+      dt.setUTCSeconds(secondStr)
+
+      return dt.getTime()
     }
   },
   watch: {
