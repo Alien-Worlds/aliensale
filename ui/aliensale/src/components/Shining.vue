@@ -13,25 +13,17 @@
         <div class="flex-fill" style="text-align:center">
           <img :src="ipfsRoot + fromCard.immutable_data.img" class="mw-100 thumbnail" :alt="fromCard.name" />
           <p>{{fromCard.name}} ({{fromCard.immutable_data.shine}})</p>
+          <p>Mints : {{cardMints.join(', ')}}</p>
         </div>
         <div class="d-flex align-content-center flex-wrap">
-          <div>
+          <div style="text-align:center">
             <font-awesome-icon icon="arrow-right" size="5x"/>
+            <p>+ {{parseFloat(shineData.cost.replace(' TLM', '')).toFixed(0)}} TLM</p>
           </div>
         </div>
         <div class="flex-fill" style="text-align:center">
           <img :src="ipfsRoot + toCard.immutable_data.img" class="mw-100 thumbnail" :alt="toCard.name" />
           <p>{{toCard.name}} ({{toCard.immutable_data.shine}})</p>
-        </div>
-      </div>
-
-      <div class="d-flex">
-        <div class="flex-fill">
-          Combining mints :
-          {{cardMints.join(', ')}}
-        </div>
-        <div class="flex-fill">
-          Cost : {{shineData.cost}}
         </div>
       </div>
 
