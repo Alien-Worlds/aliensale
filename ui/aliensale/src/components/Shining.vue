@@ -9,6 +9,9 @@
     </q-dialog>
 
     <div v-if="cards.length" style="padding:20px" class="shine-container">
+      <div class="flex-fill" style="text-align:center">
+        TLM BALANCE : {{tlmBalance}}
+      </div>
       <div class="d-flex justify-content-around">
         <div class="flex-fill" style="text-align:center">
           <img :src="ipfsRoot + fromCard.immutable_data.img" class="mw-100 thumbnail" :alt="fromCard.name" />
@@ -103,7 +106,8 @@ export default {
       toCard: null,
       shinedCard: null,
       showShinedModal: false,
-      showVideo: false
+      showVideo: false,
+      tlmBalance: ''
     }
   },
   computed: {
@@ -192,16 +196,26 @@ export default {
       const atomic = new ExplorerApi(process.env.atomicEndpoint, 'atomicassets', { fetch, rateLimit: 4 })
       this.fromCard = await atomic.getTemplate(process.env.collectionName, this.shineData.from)
       this.toCard = await atomic.getTemplate(process.env.collectionName, this.shineData.to)
+    },
+    async loadTlmBalance () {
+      if (this.getAccountName.wax) {
+        const res = await this.$wax.rpc.get_currency_balance('alien.worlds', this.getAccountName.wax, 'TLM')
+        // console.log(res)
+        if (res && res.length) {
+          this.tlmBalance = res[0]
+        }
+      }
     }
   },
   watch: {
     cards () {
-      console.log('cards Cahnged', this.cards)
+      // console.log('cards Cahnged', this.cards)
       this.cardMints = this.cards.map(c => c.template_mint)
     },
     shineData () {
-      console.log(this.shineData)
+      // console.log(this.shineData)
       this.loadShineCards()
+      this.loadTlmBalance()
     }
   }
 }
