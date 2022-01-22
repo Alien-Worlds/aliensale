@@ -21,7 +21,7 @@
     "hdkey": "^2.0.1",
     "int64-buffer": "^1.0.0",
     "mysql": "^2.18.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.1.1",
     "text-encoding": "^0.7.0",
     "web3": "^1.2.11"
   }
