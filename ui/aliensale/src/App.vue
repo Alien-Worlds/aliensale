@@ -8,7 +8,7 @@
 <script>
 // import { mapGetters } from 'vuex'
 import ual from 'components/ual/ual'
-import { Scatter } from 'ual-scatter'
+// import { Scatter } from 'ual-scatter'
 // import { Ledger } from 'ual-ledger'
 // import { Lynx } from 'ual-lynx'
 import { Wax } from '@eosdacio/ual-wax'
@@ -55,7 +55,7 @@ export default {
 
     const authenticatorsWax = [
       new Wax(chainsWax, { appName }),
-      new Scatter(chainsWax, { appName }),
+      // new Scatter(chainsWax, { appName }),
       // new Ledger(chains),
       // new Lynx(chains, { appName: appName }),
       // new TokenPocket(chains),
@@ -63,7 +63,7 @@ export default {
       new Anchor(chainsWax, { appName })
     ]
     const authenticatorsEos = [
-      new Scatter(chainsEos, { appName }),
+      // new Scatter(chainsEos, { appName }),
       // new Ledger(chains),
       // new Lynx(chains, { appName: appName }),
       // new TokenPocket(chains),
