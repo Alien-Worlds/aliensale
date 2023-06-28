@@ -7,7 +7,7 @@
 
           <div id="mobile_logo_header">
             <button data-trigger="#navbar_mobile" class="d-lg-none btn btn-warning" type="button" @click="toggleMobileNav">  <font-awesome-icon icon="bars" /> </button>
-            <a id="logo" class="navbar-brand" href="https://alienworlds.io"><img class="img-fluid" src="https://alienworlds.io/assets/images/our-logo3-128x50.png" alt="site logo"></a>
+            <a id="logo" class="navbar-brand" href="https://alienworlds.io"><img class="img-fluid" src="public/images/our-logo3-128x50.png" alt="site logo"></a>
           </div>
 
           <nav id="navbar_mobile" class="mobile-offcanvas navbar navbar-dark">
