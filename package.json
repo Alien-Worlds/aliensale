@@ -14,7 +14,7 @@
     "eosjs": "^21.0.3",
     "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^7.0.5",
-    "fastify": "^3.5.0",
+    "fastify": "^3.29.4",
     "fastify-cors": "^4.1.0",
     "fastify-oas": "^3.0.3",
     "fs": "^0.0.1-security",
